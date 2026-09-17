@@ -1,0 +1,129 @@
+import type { ComponentType } from 'react';
+import type { CategoryId, GameEntry, GameMeta, GameScreenProps } from '@/engine/types';
+
+/**
+ * Registre central. Chaque jeu est un module qui exporte `meta` et un composant par defaut.
+ * Ajouter un jeu = ajouter un import et une entree dans MODULES.
+ */
+interface GameModule {
+  meta: GameMeta;
+  default: ComponentType<GameScreenProps>;
+}
+
+// --- Plateau ---------------------------------------------------------------
+import * as morpion from './plateau/morpion';
+import * as puissance4 from './plateau/puissance4';
+import * as othello from './plateau/othello';
+import * as dames from './plateau/dames';
+import * as gomoku from './plateau/gomoku';
+
+// --- Cartes ----------------------------------------------------------------
+import * as solitaire from './cartes/solitaire';
+import * as blackjack from './cartes/blackjack';
+import * as pyramide from './cartes/pyramide';
+import * as triPeaks from './cartes/tri-peaks';
+import * as bataille from './cartes/bataille';
+import * as huitAmericain from './cartes/huit-americain';
+import * as golf from './cartes/golf';
+import * as videoPoker from './cartes/video-poker';
+
+// --- Logique ---------------------------------------------------------------
+import * as jeu2048 from './logique/jeu2048';
+import * as demineur from './logique/demineur';
+import * as memory from './logique/memory';
+import * as taquin from './logique/taquin';
+import * as sudoku from './logique/sudoku';
+import * as hanoi from './logique/hanoi';
+import * as mastermind from './logique/mastermind';
+import * as lightsOut from './logique/lights-out';
+import * as flood from './logique/flood';
+import * as simon from './logique/simon';
+
+// --- Arcade ----------------------------------------------------------------
+import * as snake from './arcade/snake';
+import * as tetris from './arcade/tetris';
+import * as casseBriques from './arcade/casse-briques';
+import * as pong from './arcade/pong';
+import * as flappy from './arcade/flappy';
+import * as taupes from './arcade/taupes';
+import * as dino from './arcade/dino';
+
+// --- Dés -------------------------------------------------------------------
+import * as yams from './des/yams';
+
+// --- Papier-crayon ---------------------------------------------------------
+import * as pendu from './papier/pendu';
+import * as allumettes from './papier/allumettes';
+
+const MODULES: GameModule[] = [
+  morpion,
+  puissance4,
+  othello,
+  dames,
+  gomoku,
+  solitaire,
+  blackjack,
+  pyramide,
+  triPeaks,
+  bataille,
+  huitAmericain,
+  golf,
+  videoPoker,
+  jeu2048,
+  demineur,
+  memory,
+  taquin,
+  sudoku,
+  hanoi,
+  mastermind,
+  lightsOut,
+  flood,
+  simon,
+  snake,
+  tetris,
+  casseBriques,
+  pong,
+  flappy,
+  taupes,
+  dino,
+  yams,
+  pendu,
+  allumettes,
+];
+
+export const GAMES: GameEntry[] = MODULES.map((m) => ({ meta: m.meta, component: m.default }));
+
+export const GAME_COUNT = GAMES.length;
+
+const BY_ID = new Map<string, GameEntry>(GAMES.map((g) => [g.meta.id, g]));
+
+export function getGame(id: string | undefined): GameEntry | undefined {
+  return id ? BY_ID.get(id) : undefined;
+}
+
+export function gamesInCategory(category: CategoryId): GameEntry[] {
+  return GAMES.filter((g) => g.meta.category === category);
+}
+
+export function countByCategory(): Record<CategoryId, number> {
+  const out = {} as Record<CategoryId, number>;
+  for (const game of GAMES) {
+    out[game.meta.category] = (out[game.meta.category] ?? 0) + 1;
+  }
+  return out;
+}
+
+const sansAccent = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+
+/** Recherche tolerante : nom, phrase d'accroche et mots-cles, accents ignores. */
+export function searchGames(query: string): GameEntry[] {
+  const q = sansAccent(query.trim());
+  if (!q) return GAMES;
+  return GAMES.filter((g) =>
+    sansAccent([g.meta.name, g.meta.tagline, ...g.meta.tags].join(' ')).includes(q),
+  );
+}
