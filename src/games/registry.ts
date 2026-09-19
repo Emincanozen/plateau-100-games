@@ -27,6 +27,18 @@ import * as bataille from './cartes/bataille';
 import * as huitAmericain from './cartes/huit-americain';
 import * as golf from './cartes/golf';
 import * as videoPoker from './cartes/video-poker';
+import * as accordeon from './cartes/accordeon';
+import * as pouilleux from './cartes/pouilleux';
+import * as yukon from './cartes/yukon';
+import * as trenteEtUn from './cartes/trente-et-un';
+import * as freecell from './cartes/freecell';
+import * as araignee from './cartes/araignee';
+import * as quaranteVoleurs from './cartes/quarante-voleurs';
+import * as canfield from './cartes/canfield';
+import * as president from './cartes/president';
+import * as menteur from './cartes/menteur';
+import * as scopa from './cartes/scopa';
+import * as rami from './cartes/rami';
 
 // --- Logique ---------------------------------------------------------------
 import * as jeu2048 from './logique/jeu2048';
@@ -77,6 +89,18 @@ const MODULES: GameModule[] = [
   huitAmericain,
   golf,
   videoPoker,
+  accordeon,
+  pouilleux,
+  yukon,
+  trenteEtUn,
+  freecell,
+  araignee,
+  quaranteVoleurs,
+  canfield,
+  president,
+  menteur,
+  scopa,
+  rami,
   jeu2048,
   demineur,
   memory,

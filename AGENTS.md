@@ -25,7 +25,7 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 40 jeux sur 100.** Le décompte exact et la liste des jeux
+**État actuel : 52 jeux sur 100.** La catégorie Cartes est complète. Le décompte exact et la liste des jeux
 restants sont dans l'annexe.
 
 ---

@@ -16,7 +16,7 @@ entier** : va directement à la section dont tu as besoin.
 
 ## A · Catalogue des jeux livrés
 
-**40 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**52 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
@@ -37,7 +37,7 @@ dames), alpha-beta avec table de poids positionnels (Othello), évaluation de
 menaces par fenêtre glissante (Cinq en ligne), alpha-beta profondeur 6 sur les
 greniers et les prises potentielles (Awalé).
 
-### Cartes — 8 sur 20
+### Cartes — 20 sur 20 ✅
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -49,6 +49,29 @@ greniers et les prises potentielles (Awalé).
 | `video-poker` | Vidéo poker | 1 | high — jetons | `cartes/video-poker.tsx` |
 | `bataille` | Bataille | 1 | none | `cartes/bataille.tsx` |
 | `huit-americain` | Huit américain | 1 | none | `cartes/huit-americain.tsx` |
+| `freecell` | FreeCell | 1 | low — coups | `cartes/freecell.tsx` |
+| `araignee` | Araignée | 1 | low — coups | `cartes/araignee.tsx` |
+| `yukon` | Yukon | 1 | low — coups | `cartes/yukon.tsx` |
+| `canfield` | Canfield | 1 | high — cartes rangées | `cartes/canfield.tsx` |
+| `quarante-voleurs` | Les quarante voleurs | 1 | low — coups | `cartes/quarante-voleurs.tsx` |
+| `accordeon` | Accordéon | 1 | low — tas | `cartes/accordeon.tsx` |
+| `president` | Président | 1 | low — place | `cartes/president.tsx` |
+| `rami` | Rami | 1 | low — points | `cartes/rami.tsx` |
+| `scopa` | Scopa | 1 | none | `cartes/scopa.tsx` |
+| `menteur` | Le menteur | 1 | none | `cartes/menteur.tsx` |
+| `pouilleux` | Le pouilleux | 1 | none | `cartes/pouilleux.tsx` |
+| `trente-et-un` | Trente-et-un | 1 | none | `cartes/trente-et-un.tsx` |
+
+Les sept réussites (Klondike, FreeCell, Araignée, Yukon, Canfield, Quarante
+voleurs, Golf) partagent le même schéma d'interaction : toucher une carte la
+sélectionne, toucher la destination la déplace, retoucher la carte déjà
+sélectionnée tente de la monter en fondation.
+
+Scopa utilise un paquet de 40 cartes (`jeu40()`) et ses propres valeurs de
+capture (`valeurScopa()` : as = 1, sept = 7, valet = 8, dame = 9, roi = 10).
+FreeCell calcule la longueur transportable par la formule
+`(cases libres + 1) × 2^(colonnes vides)`. Araignée propose 1, 2 ou 4 couleurs,
+ce qui change radicalement la difficulté.
 
 ### Logique — 10 sur 20
 
@@ -105,7 +128,7 @@ Tout éteindre (mélange depuis une grille éteinte).
 
 ## B · Les jeux restants
 
-**60 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
+**48 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
 remplacé par un équivalent de même famille s'il se prête mieux au tactile. Garder
 les totaux par catégorie.
 
@@ -113,10 +136,6 @@ les totaux par catégorie.
 Échecs · Moulin (jeu du moulin) · Backgammon · Hex · Morpion ultime ·
 Solitaire à billes · Dames chinoises · Serpents et échelles · Petits chevaux ·
 Jeu de l'oie · Quarto · Renard et poules · Brandubh (tafl) · Amazones
-
-### Cartes — 12 restants
-FreeCell · Araignée (Spider) · Yukon · Accordéon · Les quarante voleurs ·
-Canfield · Président · Rami · Pouilleux · Menteur · Trente-et-un · Scopa
 
 ### Logique — 10 restants
 Nonogram (picross) · Futoshiki · Binairo · Sokoban · Labyrinthe ·

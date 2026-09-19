@@ -88,6 +88,21 @@ export function jeu52(): Carte[] {
   return cartes;
 }
 
+/**
+ * Jeu de 40 cartes : on retire les 8, 9 et 10, comme dans un paquet italien
+ * ou espagnol. Les rangs vont de l'as (1) au 7, puis valet, dame, roi.
+ * Sert a la scopa et aux jeux latins.
+ */
+export function jeu40(): Carte[] {
+  return jeu52().filter((c) => c.rang <= 7 || c.rang >= 11);
+}
+
+/** Valeur de capture a la scopa : as = 1, 7 = 7, valet = 8, dame = 9, roi = 10. */
+export function valeurScopa(carte: Carte): number {
+  if (carte.rang <= 7) return carte.rang;
+  return carte.rang - 3;
+}
+
 /** Jeu de 32 cartes (7 a l'as), pour la belote et la bataille corse. */
 export function jeu32(): Carte[] {
   return jeu52().filter((c) => c.rang >= 7 || c.rang === 1);
