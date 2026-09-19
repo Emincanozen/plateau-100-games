@@ -250,11 +250,14 @@ export default function Awale({ submitResult, haptic }: GameScreenProps) {
     </Row>,
   );
 
-  const Trou = ({ index }: { index: number }) => {
+  // Fonction et non composant : un composant déclaré ici serait un type neuf
+  // à chaque rendu, et React remonterait tous les trous du plateau.
+  const rendreTrou = (index: number) => {
     const graines = plateau[index];
     const jouable = mesCoups.includes(index) && (mode === 'duo' || tour === 0) && campDuTrou(index) === tour;
     return (
       <Pressable
+        key={index}
         accessibilityRole="button"
         accessibilityLabel={`Trou ${(index % 6) + 1}, ${graines} graines`}
         onPress={() => toucher(index)}
@@ -303,14 +306,10 @@ export default function Awale({ submitResult, haptic }: GameScreenProps) {
         >
           {/* Rangée adverse, affichée de droite à gauche : le semis tourne. */}
           <Row gap={6}>
-            {[11, 10, 9, 8, 7, 6].map((i) => (
-              <Trou key={i} index={i} />
-            ))}
+            {[11, 10, 9, 8, 7, 6].map((i) => rendreTrou(i))}
           </Row>
           <Row gap={6}>
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <Trou key={i} index={i} />
-            ))}
+            {[0, 1, 2, 3, 4, 5].map((i) => rendreTrou(i))}
           </Row>
         </View>
 

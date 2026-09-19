@@ -166,20 +166,22 @@ export default function Araignee({ submitScore, best, haptic }: GameScreenProps)
 
     haptic('light');
     setMessage('');
-    setEtat((prev) => {
-      const colonnes = prev.colonnes.map((colonne, i) => {
-        if (i === selection.colonne) return colonne.slice(0, selection.depuis);
-        if (i === cible) return [...colonne, ...paquet];
-        return colonne;
-      });
-      const nettoyees = retirerSuites(devoiler(colonnes));
-      if (nettoyees.retirees > 0) haptic('success');
-      return {
-        ...prev,
-        colonnes: nettoyees.colonnes,
-        suitesFinies: prev.suitesFinies + nettoyees.retirees,
-      };
+
+    // Le calcul se fait avant le setState : React peut rejouer un updater,
+    // et une vibration jouée deux fois se remarque.
+    const colonnes = etat.colonnes.map((colonne, i) => {
+      if (i === selection.colonne) return colonne.slice(0, selection.depuis);
+      if (i === cible) return [...colonne, ...paquet];
+      return colonne;
     });
+    const nettoyees = retirerSuites(devoiler(colonnes));
+    if (nettoyees.retirees > 0) haptic('success');
+
+    setEtat((prev) => ({
+      ...prev,
+      colonnes: nettoyees.colonnes,
+      suitesFinies: prev.suitesFinies + nettoyees.retirees,
+    }));
     setCoups((n) => n + 1);
     setSelection(null);
   };

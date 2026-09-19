@@ -29,6 +29,8 @@ import * as damesChinoises from './plateau/dames-chinoises';
 import * as serpentsEchelles from './plateau/serpents-echelles';
 import * as petitsChevaux from './plateau/petits-chevaux';
 import * as jeuOie from './plateau/jeu-oie';
+import * as echecs from './plateau/echecs';
+import * as backgammon from './plateau/backgammon';
 
 // --- Cartes ----------------------------------------------------------------
 import * as solitaire from './cartes/solitaire';
@@ -139,6 +141,8 @@ const MODULES: GameModule[] = [
   serpentsEchelles,
   petitsChevaux,
   jeuOie,
+  echecs,
+  backgammon,
   solitaire,
   blackjack,
   pyramide,

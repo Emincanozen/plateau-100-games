@@ -187,17 +187,14 @@ export default function BatailleNavale({ submitScore, best, haptic }: GameScreen
     </Row>,
   );
 
-  const Grille = ({
-    tirs,
-    navires,
-    montrerNavires,
-    onCase,
-  }: {
-    tirs: Tir[];
-    navires: Navire[];
-    montrerNavires: boolean;
-    onCase?: (i: number) => void;
-  }) => (
+  // Fonction et non composant : déclaré ici, un composant serait remonté à chaque
+  // rendu, et les deux grilles perdraient leurs nœuds entre deux touchers.
+  const rendreGrille = (
+    tirs: Tir[],
+    navires: Navire[],
+    montrerNavires: boolean,
+    onCase?: (i: number) => void,
+  ) => (
     <View
       style={{
         width: cellule * N,
@@ -251,7 +248,7 @@ export default function BatailleNavale({ submitScore, best, haptic }: GameScreen
         <Txt variant="caption" tone="faint">
           FLOTTE ADVERSE — touche pour tirer
         </Txt>
-        <Grille tirs={mesTirs} navires={flotteAdverse} montrerNavires={false} onCase={tirer} />
+        {rendreGrille(mesTirs, flotteAdverse, false, tirer)}
       </View>
 
       <Txt variant="label" tone="dim">
@@ -259,7 +256,7 @@ export default function BatailleNavale({ submitScore, best, haptic }: GameScreen
       </Txt>
 
       <View style={{ alignItems: 'center', gap: 4 }}>
-        <Grille tirs={sesTirs} navires={maFlotte} montrerNavires />
+        {rendreGrille(sesTirs, maFlotte, true)}
         <Txt variant="caption" tone="faint">
           TA FLOTTE
         </Txt>

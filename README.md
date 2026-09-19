@@ -7,8 +7,9 @@ un seul catalogue, à partir d'un seul code source.
 Tout fonctionne **hors ligne** : aucun compte, aucun serveur, aucune donnée
 envoyée. Les scores, records et favoris restent sur l'appareil.
 
-> **État : 98 jeux sur 100** — il ne manque que les échecs et le backgammon. Le catalogue complet
-> est dans l’[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés).
+> **État : 100 jeux sur 100.** Le catalogue est complet. Le détail est dans
+> l’[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés), la mise sur les magasins
+> dans le [guide de publication](docs/PUBLICATION.md).
 
 ---
 
@@ -16,7 +17,7 @@ envoyée. Les scores, records et favoris restent sur l'appareil.
 
 | Catégorie | Livrés | Exemples |
 |---|---|---|
-| ♟️ Plateau | 18 / 20 | Morpion, Puissance 4, Othello, Dames, Moulin, Hex, Quarto, Amazones, Brandubh, Petits chevaux… |
+| ♟️ Plateau | **20 / 20** | Échecs, Backgammon, Othello, Dames, Moulin, Hex, Quarto, Amazones, Brandubh, Petits chevaux… |
 | 🃏 Cartes | **20 / 20** | Solitaire, FreeCell, Araignée, Yukon, Canfield, Pyramide, Scopa, Président, Rami… |
 | 🧩 Logique | **20 / 20** | 2048, Démineur, Sudoku, Nonogram, Sokoban, Binairo, Futoshiki, Hitori, Mahjong, Embouteillage… |
 | 🕹️ Arcade | **20 / 20** | Snake, Briques, Envahisseurs, Astéroïdes, Labyrinthe aux fantômes, Bulles, Missiles, Traversée… |
@@ -27,7 +28,9 @@ Chaque jeu propose **trois niveaux de difficulté** et, quand la règle s'y prê
 un **mode Duo** sur le même appareil. Les adversaires sont de vraies IA : minimax
 complet au morpion, alpha-beta aux dames et au Puissance 4, évaluation
 positionnelle à Othello, recherche Monte-Carlo à Hex, évaluation de territoire
-aux Amazones, stratégie de Nim parfaite aux allumettes.
+aux Amazones, espérance sur les vingt-et-un lancers au backgammon. Le moteur
+d’échecs applique les règles complètes et sa génération de coups est vérifiée
+par dénombrement (« perft ») sur cinq positions de référence.
 
 L'application retient tes records, tes victoires et tes favoris, affiche les
 règles au premier lancement de chaque jeu, et suit le thème clair ou sombre du

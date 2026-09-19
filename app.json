@@ -3,36 +3,59 @@
     "name": "Plateau",
     "slug": "plateau",
     "scheme": "plateau",
+    "description": "Cent jeux de plateau, de cartes, de logique, d'arcade, de dés et de papier-crayon. Solo ou à deux sur le même appareil, sans compte et sans connexion.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0B0B0F"
-    },
+    "primaryColor": "#5B8DEF",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.plateau.jeux"
+      "bundleIdentifier": "com.plateau.jeux",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIRequiresFullScreen": false
+      }
     },
     "android": {
       "package": "com.plateau.jeux",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.VIBRATE"
+      ],
       "adaptiveIcon": {
-        "backgroundColor": "#0B0B0F",
+        "backgroundColor": "#101018",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
-      "edgeToEdgeEnabled": true
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 220,
+          "resizeMode": "contain",
+          "backgroundColor": "#F4F4F7",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#101018"
+          }
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

@@ -11,19 +11,22 @@ entier** : va directement à la section dont tu as besoin.
 - [E. Bibliothèques partagées](#e--bibliothèques-partagées)
 - [F. Journal des décisions et des correctifs](#f--journal-des-décisions-et-des-correctifs)
 - [G. Points ouverts](#g--points-ouverts)
+- [H. Ce que les tests couvrent](#h--ce-que-les-tests-couvrent)
 
 ---
 
 ## A · Catalogue des jeux livrés
 
-**98 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**100 jeux sur 100 — le catalogue est complet.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
-### Plateau — 18 sur 20
+### Plateau — 20 sur 20 ✅
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
+| `echecs` | Échecs | 1-2 | none | `plateau/echecs.tsx` + `lib/echecs.ts` |
+| `backgammon` | Backgammon | 1-2 | none | `plateau/backgammon.tsx` + `lib/backgammon.ts` |
 | `morpion` | Morpion | 1-2 | none | `plateau/morpion.tsx` |
 | `puissance4` | Puissance 4 | 1-2 | none | `plateau/puissance4.tsx` |
 | `othello` | Othello | 1-2 | none | `plateau/othello.tsx` |
@@ -65,6 +68,32 @@ multi-sources, choix en deux temps déplacement puis flèche (Amazones) ·
 avancement pondéré par le pion le plus en retard, avec riposte adverse en mode
 expert (Dames chinoises) · priorités rentrer / manger / sortir / avancer
 (Petits chevaux).
+
+**Les deux moteurs séparés.** Les échecs et le backgammon sont les seuls jeux
+dont les règles vivent hors du composant, dans `src/games/lib/echecs.ts` et
+`src/games/lib/backgammon.ts`. Ils n'importent rien de React et sont testables
+en ligne de commande — c'est justement pourquoi ils le sont (voir section H).
+
+- **Échecs** — règles complètes : roque des deux côtés avec contrôle des cases
+  traversées, prise en passant, promotion et sous-promotion, échec et mat, pat,
+  matériel insuffisant, règle des cinquante coups. Recherche negamax
+  alpha-beta avec tri des coups (promotions, puis prises de la plus grosse
+  pièce par la plus petite), **recherche de quiescence** sur les prises pour ne
+  jamais s'arrêter au milieu d'un échange, tables de position par pièce et
+  table de roi distincte en finale. Profondeur 2, 3 ou 4 selon le niveau, avec
+  un plafond de nœuds. La notation française abrégée du journal de partie est
+  produite par le moteur.
+- **Backgammon** — barre, rentrée, sortie au compte exact ou par-dessus, frappe,
+  doubles joués quatre fois. Les deux règles dures sont appliquées : **user le
+  plus de dés possible**, et si un seul est jouable, ce doit être le plus grand.
+  Le moteur énumère toutes les suites maximales, dédoublonnées par position
+  d'arrivée ; l'interface n'autorise qu'un coup qui reste sur l'une d'elles, ce
+  qui rend toute illégalité impossible par construction. L'évaluation mêle
+  parcours, cases tenues, mur de blocage et **risque réel des pions seuls**,
+  tiré de la table des 36 lancers. En expert, chaque suite finaliste est
+  repassée au crible des 21 lancers distincts de l'adversaire, pondérés : une
+  espérance, pas un minimax — le hasard des dés rend l'arbre classique sans
+  objet.
 
 **Générateurs et plateaux.** Le circuit des petits chevaux (52 cases), l'étoile
 des dames chinoises (121 trous) et le maillage du moulin (24 intersections,
@@ -236,21 +265,15 @@ devenir lisible à son tour.
 
 ## B · Les jeux restants
 
-**2 à écrire**, toutes deux dans la catégorie Plateau.
+**Aucun.** Les cent jeux sont livrés, et chaque catégorie atteint son total :
+20 plateau, 20 cartes, 20 logique, 20 arcade, 10 dés, 10 papier-crayon.
 
-### Plateau — 2 restants
-**Échecs** · **Backgammon**
+Ce qui reste à faire ne concerne plus le catalogue mais la finition : voir la
+section G, et le [guide de publication](PUBLICATION.md) pour la mise sur les
+magasins.
 
-Ce sont les deux plus lourds du catalogue, et pour la même raison : chacun
-demande une vraie IA, pas un choix de coup approximatif.
-
-- **Échecs** — génération de coups complète (roque, prise en passant, promotion),
-  détection d'échec et de mat, alpha-beta avec tri des coups, recherche de quiescence
-  sur les prises, tables de poids par pièce. Compter un fichier de logique séparé
-  du composant.
-- **Backgammon** — dés et doubles, barre et sortie, cube de doublement facultatif.
-  L'IA doit évaluer des positions probabilistes : énumérer les 21 lancers distincts
-  et pondérer, plutôt qu'un minimax classique.
+Si un jeu devait s'ajouter un jour, ce serait en remplacement d'un autre de la
+même catégorie, pour garder l'équilibre décidé avec l'utilisateur.
 
 ---
 
@@ -450,6 +473,9 @@ fichiers et évite une dépendance qui vieillirait mal sur six versions d'Expo.
 | Vies, points et chronos consommés pendant la lecture des règles | Les boucles tournaient derrière la feuille de règles : Astéroïdes perdait une vie, le Labyrinthe avalait 70 points, le Démineur lançait son chrono | Pause portée par le frame, consultée automatiquement par `useInterval` et `useRafLoop` |
 
 | Moulin : le retrait d’un pion ne répondait pas | Le pion visé appartenait à un moulin adverse, donc protégé par la règle | Aucun — comportement correct, confirmé en jeu : seuls les pions hors moulin portent le liseré rouge |
+| Backgammon : des touchers perdus sur les flèches | `Fleche` était déclaré dans le corps du composant : React y voyait un type neuf à chaque rendu et remontait les vingt-quatre flèches, détachant les nœuds entre deux appuis | Simple fonction `rendreFleche(i)` au lieu d'un composant. Trois autres jeux avaient le même défaut : Awalé, Bataille de dés, Bataille navale. Devenu le piège n° 7, et détecté par `npm run audit` |
+| Araignée : vibration jouée deux fois | `haptic('success')` était appelé **dans** l'updater de `setEtat`, que React peut rejouer | Calcul sorti de l'updater — c'est le piège n° 3 |
+| Compilation refusée par `expo-doctor` | `newArchEnabled` a disparu du schéma au SDK 55, `android.edgeToEdgeEnabled` au SDK 56, et `splash` est devenu un plugin | Champs retirés, `expo-splash-screen` installé et configuré avec ses variantes claire et sombre |
 
 ### Équilibrage
 
@@ -464,9 +490,34 @@ Chacun expose trois niveaux via `Segmented`.
 
 | Sujet | État |
 |---|---|
+| **Catalogue** | Terminé. 100 jeux sur 100. |
+| **Icône et écran de lancement** | Faits. Générés par `node outils/icones.mjs`, aucune dépendance : l'encodeur PNG tient dans le script. |
+| **Tests** | `npm run verifier` : types, audit des 100 fichiers, perft des échecs, invariants du backgammon. Il n'y a en revanche **aucun test d'interface** — les 98 autres jeux sont vérifiés en y jouant. |
 | **Sons** | Le réglage existe et est persisté, aucun effet sonore n'est encore produit. Il faut des fichiers audio et un lecteur (`expo-audio`). |
-| **Icône et écran de lancement** | Ceux du modèle Expo. À remplacer avant publication. |
-| **2 jeux** | Les échecs et le backgammon. Voir section B. |
+| **Captures pour les magasins** | Aucune n'est préparée. Obligatoires chez Apple comme chez Google. |
+| **Politique de confidentialité** | Une adresse web est exigée par les deux magasins, même sans collecte. À écrire et à héberger. |
+| **Licence** | `LICENSE` porte encore « Plateau » comme titulaire, pas le nom de l'utilisateur. |
 | **Traduction** | L'interface est en français uniquement. Aucune infrastructure i18n : les chaînes sont dans les composants. |
-| **Tests** | Aucun test automatisé. La vérification se fait en jouant, via `npm run web`. |
-| **Publication** | Aucun build EAS n'a encore été lancé. Voir le README. |
+| **Publication** | Configurée et validée (`expo-doctor` : 21 sur 21), mais **aucune compilation EAS n'a été lancée** : cela demande le compte Expo et les comptes développeur de l'utilisateur. Voir [PUBLICATION.md](PUBLICATION.md). |
+
+---
+
+## H · Ce que les tests couvrent
+
+`npm run verifier` enchaîne quatre contrôles. Ils ne remplacent pas le fait de
+jouer, mais ils attrapent ce que l'œil ne voit pas.
+
+| Contrôle | Méthode | Ce qu'il a déjà trouvé |
+|---|---|---|
+| `typecheck` | TypeScript strict | — |
+| `audit` | Relecture des 100 fichiers de jeu | L'effet de bord d'Araignée, les quatre composants imbriqués |
+| `test:echecs` | **Perft** : dénombrement des positions à profondeur fixe, comparé aux valeurs publiées sur cinq positions — position initiale (197 281 à la profondeur 4), Kiwipete, une position à prise en passant, une position à promotions, une position piégeuse | — |
+| `test:backgammon` | 400 parties aléatoires menées jusqu'au bout, avec vérification des invariants à chaque tour : quinze pions par camp, suites toutes de longueur maximale, aucune flèche surchargée, IA ne proposant jamais un coup hors de la liste légale | — |
+
+Le perft est la seule preuve sérieuse qu'un moteur d'échecs respecte les règles :
+un écart d'une seule position trahit un roque à travers l'échec, un clouage
+ignoré ou une prise en passant mal gérée. Les cinq positions retenues sont
+choisies pour couvrir exactement ces cas.
+
+La sonde d'exécution — ouvrir les 100 jeux dans le navigateur et relire la
+console — n'est pas scriptée dans le dépôt. Elle se fait avec `npm run web`.

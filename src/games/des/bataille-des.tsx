@@ -135,15 +135,8 @@ export default function BatailleDes({ submitScore, best, haptic }: GameScreenPro
     </Row>,
   );
 
-  const Armee = ({
-    nombre,
-    couleur,
-    label,
-  }: {
-    nombre: number;
-    couleur: string;
-    label: string;
-  }) => (
+  // Fonction et non composant : déclaré ici, un composant serait remonté à chaque rendu.
+  const rendreArmee = (nombre: number, couleur: string, label: string) => (
     <View style={{ alignItems: 'center', gap: 6, flex: 1 }}>
       <Txt variant="caption" tone="faint">
         {label}
@@ -176,8 +169,8 @@ export default function BatailleDes({ submitScore, best, haptic }: GameScreenPro
       </View>
 
       <Row style={{ width: '100%' }}>
-        <Armee nombre={attaque} couleur="#4BC4D6" label="TON ARMÉE" />
-        <Armee nombre={defense} couleur="#E0525F" label="LA DÉFENSE" />
+        {rendreArmee(attaque, '#4BC4D6', 'TON ARMÉE')}
+        {rendreArmee(defense, '#E0525F', 'LA DÉFENSE')}
       </Row>
 
       <View

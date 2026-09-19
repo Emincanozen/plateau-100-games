@@ -25,9 +25,9 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 98 jeux sur 100.** Il ne reste que **les échecs et le
-backgammon**, tous deux en catégorie Plateau. Ce sont les deux plus lourds du
-catalogue : chacun demande une vraie IA. L'annexe détaille ce qu'ils supposent.
+**État actuel : 100 jeux sur 100.** Le catalogue est complet. Les moteurs
+d'échecs et de backgammon vivent dans `src/games/lib/`, séparés de leur
+composant, et sont couverts par des tests (§8).
 
 ---
 
@@ -37,7 +37,7 @@ catalogue : chacun demande une vraie IA. L'annexe détaille ce qu'ils supposent.
 npm install
 npm start        # puis « i », « a », ou le QR code avec Expo Go
 npm run web      # itération rapide dans un navigateur
-npm run typecheck
+npm run verifier # types + audit du catalogue + tests des deux moteurs
 ```
 
 > Sous PowerShell, utiliser `npx.cmd` et non `npx` : la politique d'exécution
@@ -190,13 +190,14 @@ Et de `src/games/lib/` :
   un mode **Duo** sur le même appareil pour les jeux à deux.
 - **Les IA de jeu doivent être honnêtes** : minimax complet quand l'espace de
   recherche le permet, alpha-beta sinon, jamais de triche sur l'état caché.
-- `npm run typecheck` doit passer avant toute livraison.
+- `npm run verifier` doit passer avant toute livraison : il enchaîne le
+  contrôle de types, l'audit du catalogue et les tests des deux moteurs.
 
 ---
 
 ## 7. Pièges connus — lis-les avant de déboguer
 
-Ces six erreurs ont déjà été commises et corrigées dans ce dépôt. Elles sont
+Ces sept erreurs ont déjà été commises et corrigées dans ce dépôt. Elles sont
 faciles à réintroduire.
 
 **1. `submitScore` doit garder une identité stable.**
@@ -234,14 +235,36 @@ attendre une première action explicite (« Touche pour lancer »).
 Sa teinte ne doit pas suivre le thème, sinon les piques et trèfles deviennent
 blancs sur blanc en mode sombre.
 
+**7. Ne jamais déclarer un composant dans un composant.**
+`const Fleche = (...) => <View/>` écrit dans le corps du jeu crée un *type*
+neuf à chaque rendu : React démonte puis remonte tout le sous-arbre, perd son
+état, et les nœuds changent d'identité entre deux touchers — au point que des
+appuis se perdent. Quatre jeux avaient ce défaut. Soit le composant sort au
+niveau du module, soit — s'il a besoin de l'état du jeu — il devient une simple
+fonction appelée `{rendreFleche(i)}`, sans passer par JSX. `npm run audit`
+signale ce cas.
+
 ---
 
 ## 8. Vérifier son travail
 
 ```bash
-npm run typecheck     # obligatoire
+npm run verifier      # obligatoire — enchaîne les quatre contrôles ci-dessous
 npm run web           # puis ouvrir le jeu et y jouer réellement
 ```
+
+| Commande | Ce qu'elle contrôle |
+|---|---|
+| `npm run typecheck` | TypeScript strict sur tout le dépôt |
+| `npm run audit` | Le contrat d'un jeu et les sept pièges, sur les 100 fichiers |
+| `npm run test:echecs` | Le moteur d'échecs, par dénombrement de coups sur cinq positions de référence |
+| `npm run test:backgammon` | Le moteur de backgammon, par invariants sur 400 parties |
+
+`outils/audit.mjs` relit chaque fichier de jeu : meta complète, identifiant
+unique, catégorie cohérente avec le dossier, trois à cinq règles, pas de boucle
+brute, pas de `router.back()`, pas d'effet de bord dans un updater, pas de
+composant imbriqué, étiquettes d'accessibilité, inscription au registre,
+totaux par catégorie. Sortie vide = rien à signaler.
 
 Un jeu n'est pas terminé tant qu'une partie complète n'a pas été jouée : début,
 coups, fin de partie, enregistrement du record, bouton recommencer, mode duo si
@@ -251,7 +274,9 @@ présent. La console du navigateur doit rester vide d'erreurs.
 
 ## 9. Pour aller plus loin
 
-- [docs/ANNEXE.md](docs/ANNEXE.md) — catalogue complet des jeux faits et
-  restants, référence des jetons de design, API détaillée, journal des décisions.
+- [docs/ANNEXE.md](docs/ANNEXE.md) — catalogue complet des cent jeux, référence
+  des jetons de design, API détaillée, journal des décisions et des correctifs.
+- [docs/PUBLICATION.md](docs/PUBLICATION.md) — ce qui est prêt pour l'App Store
+  et Google Play, et ce qui demande les comptes développeur de l'utilisateur.
 - [README.md](README.md) — présentation, installation, fabrication des binaires
   iOS et Android avec EAS Build.

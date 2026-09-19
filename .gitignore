@@ -42,3 +42,10 @@ yarn-error.*
 
 # scratch
 *.tmp.json
+
+# Clés de publication — ne jamais committer
+cles/
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
