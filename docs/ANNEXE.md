@@ -16,11 +16,11 @@ entier** : va directement à la section dont tu as besoin.
 
 ## A · Catalogue des jeux livrés
 
-**33 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**40 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
-### Plateau — 5 sur 20
+### Plateau — 6 sur 20
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -29,11 +29,13 @@ record chiffré (on suit victoires/défaites).
 | `othello` | Othello | 1-2 | none | `plateau/othello.tsx` |
 | `dames` | Dames | 1-2 | none | `plateau/dames.tsx` |
 | `gomoku` | Cinq en ligne | 1-2 | none | `plateau/gomoku.tsx` |
+| `awale` | Awalé | 1-2 | none | `plateau/awale.tsx` |
 
 Tous ont trois niveaux d'IA et un mode Duo sur le même appareil.
 IA employées : minimax complet (morpion), alpha-beta profondeur 5 (Puissance 4,
 dames), alpha-beta avec table de poids positionnels (Othello), évaluation de
-menaces par fenêtre glissante (Cinq en ligne).
+menaces par fenêtre glissante (Cinq en ligne), alpha-beta profondeur 6 sur les
+greniers et les prises potentielles (Awalé).
 
 ### Cartes — 8 sur 20
 
@@ -80,29 +82,35 @@ Tout éteindre (mélange depuis une grille éteinte).
 | `taupes` | Chasse aux taupes | 1 | high — pts | `arcade/taupes.tsx` |
 | `dino` | Course sans fin | 1 | high — m | `arcade/dino.tsx` |
 
-### Dés — 1 sur 10
+### Dés — 4 sur 10
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
 | `yams` | Yams | 1 | high — pts | `des/yams.tsx` |
+| `cochon` | Cochon | 1-2 | none | `des/cochon.tsx` |
+| `421` | 421 | 1 | low — jetons | `des/quatre-cent-vingt-et-un.tsx` |
+| `fermer-la-boite` | Fermer la boîte | 1 | low — pts restants | `des/fermer-la-boite.tsx` |
 
-### Papier-crayon — 2 sur 10
+### Papier-crayon — 5 sur 10
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
 | `pendu` | Le pendu | 1 | high — série | `papier/pendu.tsx` |
 | `allumettes` | Allumettes (Nim) | 1-2 | none | `papier/allumettes.tsx` |
+| `points-et-carres` | Points et carrés | 1-2 | none | `papier/points-et-carres.tsx` |
+| `motus` | Motus | 1 | low — essais | `papier/motus.tsx` |
+| `bataille-navale` | Bataille navale | 1 | low — tirs | `papier/bataille-navale.tsx` |
 
 ---
 
 ## B · Les jeux restants
 
-**67 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
+**60 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
 remplacé par un équivalent de même famille s'il se prête mieux au tactile. Garder
 les totaux par catégorie.
 
-### Plateau — 15 restants
-Échecs · Awalé · Moulin (jeu du moulin) · Backgammon · Hex · Morpion ultime ·
+### Plateau — 14 restants
+Échecs · Moulin (jeu du moulin) · Backgammon · Hex · Morpion ultime ·
 Solitaire à billes · Dames chinoises · Serpents et échelles · Petits chevaux ·
 Jeu de l'oie · Quarto · Renard et poules · Brandubh (tafl) · Amazones
 
@@ -120,13 +128,11 @@ Envahisseurs · Astéroïdes · Traversée (Frogger) · Labyrinthe aux fantômes
 Saut de plateforme · Hélicoptère · Empilage · Bulles · Missiles · Esquive ·
 Tunnel · Squash · Test de réflexes
 
-### Dés — 9 restants
-421 · Cochon · Farkle · Dés menteurs · Craps · Fermer la boîte · Zanzibar ·
-Chicago · Bataille de dés
+### Dés — 6 restants
+Farkle · Dés menteurs · Craps · Zanzibar · Chicago · Bataille de dés
 
-### Papier-crayon — 8 restants
-Points et carrés · Bataille navale · Motus · SOS · Pierre-feuille-ciseaux ·
-Anagrammes · Mots mêlés · Boggle
+### Papier-crayon — 5 restants
+SOS · Pierre-feuille-ciseaux · Anagrammes · Mots mêlés · Boggle
 
 ---
 
@@ -278,6 +284,11 @@ SYMBOLE · NOM_COULEUR · COULEURS
 
 Une `Carte` est `{ id, couleur, rang, rouge, visible }`. `couleur` vaut `'P'`
 pique, `'C'` cœur, `'K'` carreau, `'T'` trèfle. `rang` va de 1 (as) à 13 (roi).
+
+### `src/ui/De.tsx`
+
+Un dé à six faces dessiné avec de vrais points. `valeur`, `taille`, `garde`
+(mis de côté), `eteint` (grisé), `onPress`. Utilisé par tous les jeux de dés.
 
 ### `src/games/lib/mots.ts`
 

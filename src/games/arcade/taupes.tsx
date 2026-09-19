@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
-import { Row, Segmented, Txt, GameOver } from '@/ui';
+import { Button, Row, Segmented, Txt, GameOver } from '@/ui';
 import { formatClock, useBoardSize, useInterval } from '../lib/hooks';
 import { randInt } from '../lib/rng';
 
@@ -54,6 +54,8 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
   const [score, setScore] = useState(0);
   const [restant, setRestant] = useState(DUREE_PARTIE);
   const [record, setRecord] = useState(false);
+  /** Le chrono et les apparitions n'existent qu'une fois la partie lancee. */
+  const [demarre, setDemarre] = useState(false);
   const scoreRef = useRef(0);
   const fini = restant <= 0;
 
@@ -63,6 +65,7 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
     scoreRef.current = 0;
     setRestant(DUREE_PARTIE);
     setRecord(false);
+    setDemarre(false);
   }, []);
 
   useFrameRestart(reset);
@@ -70,11 +73,11 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
     reset();
   }, [vitesse, reset]);
 
-  useInterval(() => setRestant((s) => Math.max(0, s - 1)), fini ? null : 1000);
+  useInterval(() => setRestant((s) => Math.max(0, s - 1)), fini || !demarre ? null : 1000);
 
   const comptee = useRef(false);
   useEffect(() => {
-    if (!fini) {
+    if (!fini || !demarre) {
       comptee.current = false;
       return;
     }
@@ -82,7 +85,7 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
     comptee.current = true;
     haptic('success');
     setRecord(submitScore(scoreRef.current));
-  }, [fini, haptic, submitScore]);
+  }, [fini, demarre, haptic, submitScore]);
 
   const reglage = REGLAGES[vitesse];
 
@@ -99,7 +102,7 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
       };
       return suivant;
     });
-  }, fini ? null : reglage.apparition);
+  }, fini || !demarre ? null : reglage.apparition);
 
   // Disparitions : chaque occupant a une duree de vie.
   useInterval(() => {
@@ -107,7 +110,7 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
     setOccupants((actuels) =>
       actuels.map((o) => (o && maintenant - o.ne > reglage.duree ? null : o)),
     );
-  }, fini ? null : 120);
+  }, fini || !demarre ? null : 120);
 
   const taper = (index: number) => {
     const occupant = occupants[index];
@@ -191,6 +194,21 @@ export default function Taupes({ submitScore, best, haptic }: GameScreenProps) {
           </Pressable>
         ))}
       </View>
+
+      {!demarre ? (
+        <Button
+          label="Commencer les 60 secondes"
+          accent="#F0A030"
+          onPress={() => {
+            haptic('medium');
+            setDemarre(true);
+          }}
+        />
+      ) : (
+        <Txt variant="caption" tone="faint">
+          Tape les taupes, évite les bombes
+        </Txt>
+      )}
 
       <GameOver
         visible={fini}

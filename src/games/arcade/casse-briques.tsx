@@ -82,6 +82,8 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
   const [balls, setBalls] = useState(3);
   const [level, setLevel] = useState(1);
   const [over, setOver] = useState(false);
+  /** La balle reste posee sur la raquette tant que le joueur n a pas lance. */
+  const [demarre, setDemarre] = useState(false);
   const [won, setWon] = useState(false);
   const [record, setRecord] = useState(false);
   const [, forceRender] = useState(0);
@@ -127,8 +129,8 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
     setOver(false);
     setWon(false);
     setRecord(false);
-    launch();
-  }, [W, launch]);
+    setDemarre(false);
+  }, [W]);
 
   useFrameRestart(reset);
   useEffect(() => {
@@ -162,7 +164,7 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
   );
 
   const step = useCallback(() => {
-    if (!runningRef.current) return;
+    if (!runningRef.current || !demarre) return;
     const ball = ballRef.current;
     ball.x += ball.vx;
     ball.y += ball.vy;
@@ -254,19 +256,26 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
     }
 
     forceRender((n) => (n + 1) % 1000);
-  }, [W, H, BALL_R, PADDLE_W, PADDLE_Y, PADDLE_H, BRICK_W, BRICK_H, BRICK_TOP, haptic, launch, endGame, casser]);
+  }, [demarre, W, H, BALL_R, PADDLE_W, PADDLE_Y, PADDLE_H, BRICK_W, BRICK_H, BRICK_TOP, haptic, launch, endGame, casser]);
 
   useRafLoop(step, !over);
 
-  const pan = useMemo(
-    () =>
-      Gesture.Pan()
-        .runOnJS(true)
-        .onUpdate((e) => {
-          paddleRef.current = clamp(e.x, PADDLE_W / 2, W - PADDLE_W / 2);
-        }),
-    [PADDLE_W, W],
-  );
+  const lancerBalle = useCallback(() => {
+    if (over || demarre) return;
+    launch();
+    setDemarre(true);
+    haptic('medium');
+  }, [over, demarre, launch, haptic]);
+
+  const pan = useMemo(() => {
+    const deplacer = Gesture.Pan()
+      .runOnJS(true)
+      .onUpdate((e) => {
+        paddleRef.current = clamp(e.x, PADDLE_W / 2, W - PADDLE_W / 2);
+      });
+    const lancer = Gesture.Tap().runOnJS(true).onEnd(() => lancerBalle());
+    return Gesture.Simultaneous(deplacer, lancer);
+  }, [PADDLE_W, W, lancerBalle]);
 
   useFrameStatus(
     <Row gap={space.md}>
@@ -282,7 +291,9 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
     </Row>,
   );
 
-  const ball = ballRef.current;
+  const ball = demarre
+    ? ballRef.current
+    : { ...ballRef.current, x: paddleRef.current, y: PADDLE_Y - BALL_R - 2 };
   const maintenant = Date.now();
 
   return (
@@ -363,11 +374,17 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
               backgroundColor: c.accent,
             }}
           />
+
+          {!demarre && !over ? (
+            <View style={{ position: 'absolute', left: 0, right: 0, top: H * 0.58, alignItems: 'center' }}>
+              <Txt variant="h3">Touche pour lancer la balle</Txt>
+            </View>
+          ) : null}
         </View>
       </GestureDetector>
 
       <Txt variant="caption" tone="faint">
-        Glisse ton doigt pour déplacer la raquette
+        Glisse pour déplacer la raquette · touche pour lancer
       </Txt>
 
       <GameOver

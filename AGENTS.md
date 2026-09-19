@@ -25,7 +25,7 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 33 jeux sur 100.** Le décompte exact et la liste des jeux
+**État actuel : 40 jeux sur 100.** Le décompte exact et la liste des jeux
 restants sont dans l'annexe.
 
 ---
@@ -162,6 +162,7 @@ Tout vient de `@/ui` :
 | `Sheet` | Feuille modale par le bas. |
 | `GameOver` | Écran de fin : titre, score, record, rejouer/quitter. |
 | `Carte` `EmplacementVide` | Cartes à jouer. |
+| `De` | Dé à six faces, avec points dessinés. |
 | `BoutonControle` `CroixDirectionnelle` `useClavier` | Manette tactile et clavier (web). |
 
 Et de `src/games/lib/` :

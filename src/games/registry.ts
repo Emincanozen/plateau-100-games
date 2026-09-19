@@ -16,6 +16,7 @@ import * as puissance4 from './plateau/puissance4';
 import * as othello from './plateau/othello';
 import * as dames from './plateau/dames';
 import * as gomoku from './plateau/gomoku';
+import * as awale from './plateau/awale';
 
 // --- Cartes ----------------------------------------------------------------
 import * as solitaire from './cartes/solitaire';
@@ -50,10 +51,16 @@ import * as dino from './arcade/dino';
 
 // --- Dés -------------------------------------------------------------------
 import * as yams from './des/yams';
+import * as cochon from './des/cochon';
+import * as quatreCentVingtEtUn from './des/quatre-cent-vingt-et-un';
+import * as fermerLaBoite from './des/fermer-la-boite';
 
 // --- Papier-crayon ---------------------------------------------------------
 import * as pendu from './papier/pendu';
 import * as allumettes from './papier/allumettes';
+import * as pointsEtCarres from './papier/points-et-carres';
+import * as motus from './papier/motus';
+import * as batailleNavale from './papier/bataille-navale';
 
 const MODULES: GameModule[] = [
   morpion,
@@ -61,6 +68,7 @@ const MODULES: GameModule[] = [
   othello,
   dames,
   gomoku,
+  awale,
   solitaire,
   blackjack,
   pyramide,
@@ -87,8 +95,14 @@ const MODULES: GameModule[] = [
   taupes,
   dino,
   yams,
+  cochon,
+  quatreCentVingtEtUn,
+  fermerLaBoite,
   pendu,
   allumettes,
+  pointsEtCarres,
+  motus,
+  batailleNavale,
 ];
 
 export const GAMES: GameEntry[] = MODULES.map((m) => ({ meta: m.meta, component: m.default }));
