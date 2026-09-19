@@ -16,7 +16,7 @@ entier** : va directement à la section dont tu as besoin.
 
 ## A · Catalogue des jeux livrés
 
-**52 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**65 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
@@ -93,7 +93,7 @@ la solution reste unique — les grilles sont donc toujours résolubles sans
 supposition. Même principe pour le taquin (mélange par coups légaux) et pour
 Tout éteindre (mélange depuis une grille éteinte).
 
-### Arcade — 7 sur 20
+### Arcade — 20 sur 20 ✅
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -104,6 +104,30 @@ Tout éteindre (mélange depuis une grille éteinte).
 | `flappy` | Envol | 1 | high — passages | `arcade/flappy.tsx` |
 | `taupes` | Chasse aux taupes | 1 | high — pts | `arcade/taupes.tsx` |
 | `dino` | Course sans fin | 1 | high — m | `arcade/dino.tsx` |
+| `envahisseurs` | Envahisseurs | 1 | high — pts | `arcade/envahisseurs.tsx` |
+| `asteroides` | Astéroïdes | 1 | high — pts | `arcade/asteroides.tsx` |
+| `labyrinthe-fantomes` | Labyrinthe aux fantômes | 1 | high — pts | `arcade/labyrinthe-fantomes.tsx` |
+| `missiles` | Missiles | 1 | high — pts | `arcade/missiles.tsx` |
+| `bulles` | Bulles | 1 | high — pts | `arcade/bulles.tsx` |
+| `traversee` | Traversée | 1 | high — pts | `arcade/traversee.tsx` |
+| `saut-plateforme` | Saut de plateforme | 1 | high — m | `arcade/saut-plateforme.tsx` |
+| `helicoptere` | Hélicoptère | 1 | high — m | `arcade/helicoptere.tsx` |
+| `tunnel` | Tunnel | 1 | high — m | `arcade/tunnel.tsx` |
+| `empilage` | Empilage | 1 | high — étages | `arcade/empilage.tsx` |
+| `esquive` | Esquive | 1 | high — s | `arcade/esquive.tsx` |
+| `squash` | Squash | 1 | high — échanges | `arcade/squash.tsx` |
+| `reflexes` | Réflexes | 1 | time — ms | `arcade/reflexes.tsx` |
+
+Tous les jeux d'action tiennent leur état de boucle dans des `useRef` et ne
+poussent vers React que ce qui doit s'afficher. Les boucles passent par
+`useRafLoop` (60 images par seconde) ou `useInterval` (jeux à cases : Snake,
+Briques, Labyrinthe), qui se figent automatiquement quand le jeu est en pause.
+
+Le labyrinthe aux fantômes est décrit par un plan en caractères (`#` mur,
+`.` pastille, `o` super-pastille) : le modifier suffit à changer le niveau.
+Les fantômes choisissent leur direction à chaque intersection en se rapprochant
+du joueur, ou en le fuyant quand ils sont vulnérables, avec 22 % de hasard pour
+qu'ils ne soient pas parfaitement prévisibles.
 
 ### Dés — 4 sur 10
 
@@ -128,7 +152,7 @@ Tout éteindre (mélange depuis une grille éteinte).
 
 ## B · Les jeux restants
 
-**48 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
+**35 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
 remplacé par un équivalent de même famille s'il se prête mieux au tactile. Garder
 les totaux par catégorie.
 
@@ -141,11 +165,6 @@ Jeu de l'oie · Quarto · Renard et poules · Brandubh (tafl) · Amazones
 Nonogram (picross) · Futoshiki · Binairo · Sokoban · Labyrinthe ·
 Embouteillage (Rush Hour) · Hitori · Le compte est bon · Tri de couleurs ·
 Mahjong solitaire
-
-### Arcade — 13 restants
-Envahisseurs · Astéroïdes · Traversée (Frogger) · Labyrinthe aux fantômes ·
-Saut de plateforme · Hélicoptère · Empilage · Bulles · Missiles · Esquive ·
-Tunnel · Squash · Test de réflexes
 
 ### Dés — 6 restants
 Farkle · Dés menteurs · Craps · Zanzibar · Chicago · Bataille de dés
@@ -347,6 +366,7 @@ fichiers et évite une dépendance qui vieillirait mal sur six versions d'Expo.
 | Envol injouable | La vitesse de chute n'était pas plafonnée : l'oiseau accélérait sans limite | Plafond `chute` par niveau, gravité réduite |
 | Tours de Hanoï à l'envers | En colonne, le premier enfant s'affiche en haut, or `tour[0]` est le disque du bas | Rendu de la pile inversée |
 | Briques impossible à piloter | Zones tactiles invisibles découpant le plateau en trois | Vrais boutons + clavier sur le web |
+| Vies, points et chronos consommés pendant la lecture des règles | Les boucles tournaient derrière la feuille de règles : Astéroïdes perdait une vie, le Labyrinthe avalait 70 points, le Démineur lançait son chrono | Pause portée par le frame, consultée automatiquement par `useInterval` et `useRafLoop` |
 
 ### Équilibrage
 

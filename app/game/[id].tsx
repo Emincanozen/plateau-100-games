@@ -28,7 +28,7 @@ function GameHost({ id }: { id?: string }) {
   const retour = useRetour();
   const { settings } = useSettings();
   const { statFor, markPlayed, submitScore, submitResult, isFavorite, toggleFavorite } = useProgress();
-  const { restart, runId, bumpRun } = useGameFrame();
+  const { restart, runId, bumpRun, setPause } = useGameFrame();
 
   const entry = getGame(id);
   const stat = entry ? statFor(entry.meta.id) : undefined;
@@ -43,6 +43,13 @@ function GameHost({ id }: { id?: string }) {
     markPlayed(entry.meta.id);
     if (firstTime && settings.autoRules) setRulesOpen(true);
   }, [entry, stat, markPlayed, settings.autoRules]);
+
+  // Le jeu se fige tant que la feuille de règles est ouverte : sans cela,
+  // les boucles tournent en fond et le joueur perd des vies ou du temps
+  // avant même d'avoir commencé.
+  useEffect(() => {
+    setPause(rulesOpen);
+  }, [rulesOpen, setPause]);
 
   const haptic = useCallback(
     (kind: HapticKind = 'light') => {

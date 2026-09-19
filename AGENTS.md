@@ -25,7 +25,7 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 52 jeux sur 100.** La catégorie Cartes est complète. Le décompte exact et la liste des jeux
+**État actuel : 65 jeux sur 100.** Les catégories Cartes et Arcade sont complètes. Le décompte exact et la liste des jeux
 restants sont dans l'annexe.
 
 ---
@@ -170,7 +170,7 @@ Et de `src/games/lib/` :
 | Module | Contenu |
 |---|---|
 | `rng.ts` | `randInt` `randBetween` `pick` `shuffle` `seeded` `clamp` `range` |
-| `hooks.ts` | `useInterval` `useRafLoop` `useTimer` `formatClock` `useBoardSize` `useUndoable` |
+| `hooks.ts` | `useInterval` `useRafLoop` `useTimer` `formatClock` `useBoardSize` `useUndoable`. Les deux hooks de boucle se figent tout seuls quand le jeu est en pause. |
 | `cartes.ts` | Jeux de 52/32 cartes, valeurs blackjack, suites circulaires |
 | `mots.ts` | Listes de mots français avec indices |
 
@@ -220,7 +220,16 @@ Ouvrir un jeu par son URL laisse une pile vide → *GO_BACK was not handled*.
 `canGoBack()` ne sauve pas : sur le web il consulte l'historique du navigateur.
 Utiliser `useRetour()` de `engine/navigation.ts`, qui fait `dismissTo('/')`.
 
-**5. Une carte à jouer a toujours un fond clair.**
+**5. Une boucle de jeu ne doit pas tourner pendant la lecture des règles.**
+L'hôte met le jeu en pause tant que la feuille de règles est ouverte, et
+`useInterval` comme `useRafLoop` consultent cette pause d'eux-mêmes via
+`usePauseJeu()`. Un jeu qui fabrique sa propre boucle — `setInterval` brut ou
+`requestAnimationFrame` direct — contourne ce garde-fou : le joueur perdait des
+vies, du temps au chrono et des points avant même d'avoir commencé. **Toujours
+passer par les hooks partagés.** En plus de la pause, un jeu d'action gagne à
+attendre une première action explicite (« Touche pour lancer »).
+
+**6. Une carte à jouer a toujours un fond clair.**
 Sa teinte ne doit pas suivre le thème, sinon les piques et trèfles deviennent
 blancs sur blanc en mode sombre.
 

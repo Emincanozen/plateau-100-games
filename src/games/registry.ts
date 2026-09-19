@@ -60,6 +60,19 @@ import * as pong from './arcade/pong';
 import * as flappy from './arcade/flappy';
 import * as taupes from './arcade/taupes';
 import * as dino from './arcade/dino';
+import * as envahisseurs from './arcade/envahisseurs';
+import * as empilage from './arcade/empilage';
+import * as esquive from './arcade/esquive';
+import * as reflexes from './arcade/reflexes';
+import * as squash from './arcade/squash';
+import * as helicoptere from './arcade/helicoptere';
+import * as traversee from './arcade/traversee';
+import * as sautPlateforme from './arcade/saut-plateforme';
+import * as tunnel from './arcade/tunnel';
+import * as asteroides from './arcade/asteroides';
+import * as missiles from './arcade/missiles';
+import * as bulles from './arcade/bulles';
+import * as labyrintheFantomes from './arcade/labyrinthe-fantomes';
 
 // --- Dés -------------------------------------------------------------------
 import * as yams from './des/yams';
@@ -118,6 +131,19 @@ const MODULES: GameModule[] = [
   flappy,
   taupes,
   dino,
+  envahisseurs,
+  empilage,
+  esquive,
+  reflexes,
+  squash,
+  helicoptere,
+  traversee,
+  sautPlateforme,
+  tunnel,
+  asteroides,
+  missiles,
+  bulles,
+  labyrintheFantomes,
   yams,
   cochon,
   quatreCentVingtEtUn,

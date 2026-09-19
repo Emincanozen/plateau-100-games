@@ -1,29 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
+import { usePauseJeu } from '@/engine/frame';
 
-/** setInterval piloté par React. delay = null met en pause. */
+/**
+ * setInterval piloté par React. delay = null met en pause.
+ * Le hook se fige aussi tout seul quand le jeu est en pause — pendant la
+ * lecture des règles, par exemple : ni chrono ni boucle ne doivent tourner.
+ */
 export function useInterval(callback: () => void, delay: number | null) {
   const saved = useRef(callback);
+  const pause = usePauseJeu();
   useEffect(() => {
     saved.current = callback;
   }, [callback]);
 
   useEffect(() => {
-    if (delay === null) return;
+    if (delay === null || pause) return;
     const id = setInterval(() => saved.current(), delay);
     return () => clearInterval(id);
-  }, [delay]);
+  }, [delay, pause]);
 }
 
-/** Boucle de jeu à base de requestAnimationFrame, avec delta en millisecondes. */
+/**
+ * Boucle de jeu à base de requestAnimationFrame, avec delta en millisecondes.
+ * Elle se fige aussi quand le jeu est en pause.
+ */
 export function useRafLoop(callback: (dtMs: number) => void, running: boolean) {
   const saved = useRef(callback);
+  const pause = usePauseJeu();
   useEffect(() => {
     saved.current = callback;
   }, [callback]);
 
   useEffect(() => {
-    if (!running) return;
+    if (!running || pause) return;
     let frame = 0;
     let last = Date.now();
     const tick = () => {
@@ -34,7 +44,7 @@ export function useRafLoop(callback: (dtMs: number) => void, running: boolean) {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [running]);
+  }, [running, pause]);
 }
 
 /** Chronomètre en secondes, qui démarre et s'arrête à la demande. */

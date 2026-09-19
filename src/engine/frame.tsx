@@ -23,12 +23,20 @@ interface FrameState {
   /** Incremente a chaque remontage force : sert de cle de remontage du jeu. */
   runId: number;
   bumpRun: () => void;
+  /**
+   * Vrai quand le jeu doit se figer : feuille de regles ouverte, par exemple.
+   * `useInterval` et `useRafLoop` le consultent tout seuls, donc un jeu n'a
+   * rien a faire pour en beneficier.
+   */
+  pause: boolean;
+  setPause: (valeur: boolean) => void;
 }
 
 const Ctx = createContext<FrameState | null>(null);
 
 export function GameFrameProvider({ children }: { children: React.ReactNode }) {
   const [runId, setRunId] = useState(0);
+  const [pause, setPause] = useState(false);
   const statusRef = useRef<React.ReactNode>(null);
   const listenersRef = useRef(new Set<() => void>());
   const restartRef = useRef<(() => void) | null>(null);
@@ -55,8 +63,10 @@ export function GameFrameProvider({ children }: { children: React.ReactNode }) {
       },
       runId,
       bumpRun: () => setRunId((n) => n + 1),
+      pause,
+      setPause,
     }),
-    [runId],
+    [runId, pause],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -104,4 +114,12 @@ export function useStableCallback<T extends (...args: never[]) => unknown>(fn: T
   const ref = useRef(fn);
   ref.current = fn;
   return useCallback(((...args: never[]) => ref.current(...args)) as T, []);
+}
+
+/**
+ * Le jeu est-il fige ? Renvoie false hors d'un GameFrameProvider, pour que
+ * les hooks de boucle restent utilisables ailleurs dans l'application.
+ */
+export function usePauseJeu(): boolean {
+  return useContext(Ctx)?.pause ?? false;
 }
