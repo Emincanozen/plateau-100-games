@@ -25,7 +25,7 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 65 jeux sur 100.** Les catégories Cartes et Arcade sont complètes. Le décompte exact et la liste des jeux
+**État actuel : 75 jeux sur 100.** Les catégories Cartes, Arcade et Logique sont complètes. Le décompte exact et la liste des jeux
 restants sont dans l'annexe.
 
 ---

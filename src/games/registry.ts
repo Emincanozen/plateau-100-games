@@ -51,6 +51,16 @@ import * as mastermind from './logique/mastermind';
 import * as lightsOut from './logique/lights-out';
 import * as flood from './logique/flood';
 import * as simon from './logique/simon';
+import * as triCouleurs from './logique/tri-couleurs';
+import * as labyrinthe from './logique/labyrinthe';
+import * as compteEstBon from './logique/compte-est-bon';
+import * as binairo from './logique/binairo';
+import * as nonogram from './logique/nonogram';
+import * as futoshiki from './logique/futoshiki';
+import * as hitori from './logique/hitori';
+import * as sokoban from './logique/sokoban';
+import * as embouteillage from './logique/embouteillage';
+import * as mahjong from './logique/mahjong';
 
 // --- Arcade ----------------------------------------------------------------
 import * as snake from './arcade/snake';
@@ -124,6 +134,16 @@ const MODULES: GameModule[] = [
   lightsOut,
   flood,
   simon,
+  triCouleurs,
+  labyrinthe,
+  compteEstBon,
+  binairo,
+  nonogram,
+  futoshiki,
+  hitori,
+  sokoban,
+  embouteillage,
+  mahjong,
   snake,
   tetris,
   casseBriques,

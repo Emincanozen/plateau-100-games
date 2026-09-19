@@ -7,7 +7,7 @@ un seul catalogue, à partir d'un seul code source.
 Tout fonctionne **hors ligne** : aucun compte, aucun serveur, aucune donnée
 envoyée. Les scores, records et favoris restent sur l'appareil.
 
-> **État : 65 jeux sur 100** — les catégories Cartes et Arcade sont complètes. Le catalogue complet et la liste des jeux restants
+> **État : 75 jeux sur 100** — les catégories Cartes, Arcade et Logique sont complètes. Le catalogue complet et la liste des jeux restants
 > sont dans l'[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés).
 
 ---
@@ -18,7 +18,7 @@ envoyée. Les scores, records et favoris restent sur l'appareil.
 |---|---|---|
 | ♟️ Plateau | 6 / 20 | Morpion, Puissance 4, Othello, Dames, Cinq en ligne, Awalé |
 | 🃏 Cartes | **20 / 20** | Solitaire, FreeCell, Araignée, Yukon, Canfield, Pyramide, Scopa, Président, Rami… |
-| 🧩 Logique | 10 / 20 | 2048, Démineur, Sudoku, Taquin, Mastermind, Tours de Hanoï |
+| 🧩 Logique | **20 / 20** | 2048, Démineur, Sudoku, Nonogram, Sokoban, Binairo, Futoshiki, Hitori, Mahjong, Embouteillage… |
 | 🕹️ Arcade | **20 / 20** | Snake, Briques, Envahisseurs, Astéroïdes, Labyrinthe aux fantômes, Bulles, Missiles, Traversée… |
 | 🎲 Dés | 4 / 10 | Yams, Cochon, 421, Fermer la boîte |
 | ✏️ Papier-crayon | 5 / 10 | Le pendu, Allumettes, Points et carrés, Motus, Bataille navale |

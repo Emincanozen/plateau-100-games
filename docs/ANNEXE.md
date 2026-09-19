@@ -16,7 +16,7 @@ entier** : va directement à la section dont tu as besoin.
 
 ## A · Catalogue des jeux livrés
 
-**65 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**75 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
@@ -73,7 +73,7 @@ FreeCell calcule la longueur transportable par la formule
 `(cases libres + 1) × 2^(colonnes vides)`. Araignée propose 1, 2 ou 4 couleurs,
 ce qui change radicalement la difficulté.
 
-### Logique — 10 sur 20
+### Logique — 20 sur 20 ✅
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -87,11 +87,34 @@ ce qui change radicalement la difficulté.
 | `lights-out` | Tout éteindre | 1 | low — coups | `logique/lights-out.tsx` |
 | `flood` | Inondation | 1 | low — coups | `logique/flood.tsx` |
 | `simon` | Séquence | 1 | high — niveau | `logique/simon.tsx` |
+| `nonogram` | Nonogram | 1 | time | `logique/nonogram.tsx` |
+| `binairo` | Binairo | 1 | time | `logique/binairo.tsx` |
+| `futoshiki` | Futoshiki | 1 | time | `logique/futoshiki.tsx` |
+| `hitori` | Hitori | 1 | time | `logique/hitori.tsx` |
+| `sokoban` | Sokoban | 1 | low — poussées | `logique/sokoban.tsx` |
+| `embouteillage` | Embouteillage | 1 | low — coups | `logique/embouteillage.tsx` |
+| `labyrinthe` | Labyrinthe | 1 | low — coups | `logique/labyrinthe.tsx` |
+| `mahjong` | Mahjong solitaire | 1 | time | `logique/mahjong.tsx` |
+| `tri-couleurs` | Tri de couleurs | 1 | low — coups | `logique/tri-couleurs.tsx` |
+| `compte-est-bon` | Le compte est bon | 1 | low — écart | `logique/compte-est-bon.tsx` |
 
-Le sudoku génère ses grilles par retour arrière puis retire des cases tant que
-la solution reste unique — les grilles sont donc toujours résolubles sans
-supposition. Même principe pour le taquin (mélange par coups légaux) et pour
-Tout éteindre (mélange depuis une grille éteinte).
+**Aucune grille impossible n'est jamais proposée.** Chaque générateur le
+garantit, mais par un moyen différent :
+
+| Jeu | Garantie |
+|---|---|
+| Sudoku, Binairo, Futoshiki | Grille complète par retour arrière, puis retrait de cases tant que la solution reste **unique** |
+| Taquin | Mélange par coups légaux depuis la position résolue |
+| Tout éteindre | Mélange depuis une grille éteinte |
+| Labyrinthe | Creusage en profondeur : labyrinthe « parfait », un seul chemin entre deux cases |
+| Hitori | Construit depuis sa solution : carré latin, puis cases noircies non adjacentes à complément connexe, puis doublons introduits |
+| Tri de couleurs | Distribution aléatoire **vérifiée par un solveur** en profondeur, plafonné à 40 000 nœuds |
+| Mahjong | Distribution par simulation de résolution : on retire deux places libres et on leur attribue la même tuile |
+| Nonogram | La victoire compare les indices, pas le motif : une grille à plusieurs solutions reste gagnable |
+| Sokoban, Embouteillage | Niveaux écrits à la main, six chacun |
+
+Le compte est bon embarque un solveur exhaustif sur les paires, qui sert à
+afficher la meilleure approche possible quand le joueur abandonne.
 
 ### Arcade — 20 sur 20 ✅
 
@@ -152,7 +175,7 @@ qu'ils ne soient pas parfaitement prévisibles.
 
 ## B · Les jeux restants
 
-**35 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
+**25 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
 remplacé par un équivalent de même famille s'il se prête mieux au tactile. Garder
 les totaux par catégorie.
 
@@ -160,11 +183,6 @@ les totaux par catégorie.
 Échecs · Moulin (jeu du moulin) · Backgammon · Hex · Morpion ultime ·
 Solitaire à billes · Dames chinoises · Serpents et échelles · Petits chevaux ·
 Jeu de l'oie · Quarto · Renard et poules · Brandubh (tafl) · Amazones
-
-### Logique — 10 restants
-Nonogram (picross) · Futoshiki · Binairo · Sokoban · Labyrinthe ·
-Embouteillage (Rush Hour) · Hitori · Le compte est bon · Tri de couleurs ·
-Mahjong solitaire
 
 ### Dés — 6 restants
 Farkle · Dés menteurs · Craps · Zanzibar · Chicago · Bataille de dés
@@ -366,6 +384,7 @@ fichiers et évite une dépendance qui vieillirait mal sur six versions d'Expo.
 | Envol injouable | La vitesse de chute n'était pas plafonnée : l'oiseau accélérait sans limite | Plafond `chute` par niveau, gravité réduite |
 | Tours de Hanoï à l'envers | En colonne, le premier enfant s'affiche en haut, or `tour[0]` est le disque du bas | Rendu de la pile inversée |
 | Briques impossible à piloter | Zones tactiles invisibles découpant le plateau en trois | Vrais boutons + clavier sur le web |
+| Mahjong bloqué dès le départ | Symboles semés au hasard sur la disposition : une seule paire jouable, table souvent insoluble | Distribution par simulation de résolution — quatre à six paires jouables au départ, solution garantie |
 | Vies, points et chronos consommés pendant la lecture des règles | Les boucles tournaient derrière la feuille de règles : Astéroïdes perdait une vie, le Labyrinthe avalait 70 points, le Démineur lançait son chrono | Pause portée par le frame, consultée automatiquement par `useInterval` et `useRafLoop` |
 
 ### Équilibrage
