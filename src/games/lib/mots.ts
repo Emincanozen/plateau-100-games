@@ -180,3 +180,41 @@ export const MOTS_CINQ = [
   'TERRE', 'VOILE', 'BRUIT', 'CHAMP', 'DROIT', 'ETAGE', 'FRUIT', 'GLACE',
   'JARDIN', 'LUNDI', 'MUSEE', 'NUAGE', 'PIANO', 'ROBOT', 'SOLEIL', 'TIGRE',
 ].filter((m) => m.length === 5);
+
+/**
+ * Vocabulaire de validation pour les jeux de lettres : anagrammes, mots mêlés,
+ * boggle. Uniquement des majuscules sans accent, de 3 à 8 lettres, pour que la
+ * comparaison lettre à lettre reste directe.
+ */
+export const MOTS_JEU = [
+  'ARBRE', 'AMOUR', 'ANGLE', 'AVION', 'ARGENT', 'AMIS', 'AILE', 'AUTO', 'ACTEUR', 'ADRESSE',
+  'BATEAU', 'BALLE', 'BANC', 'BIJOU', 'BLEU', 'BOIS', 'BOUCHE', 'BRAS', 'BRUIT', 'BUREAU',
+  'CADEAU', 'CAFE', 'CANARD', 'CARTE', 'CAVE', 'CHAISE', 'CHAMP', 'CHANT', 'CHAT', 'CHEMIN',
+  'CIEL', 'CITRON', 'CLASSE', 'CLOCHE', 'COEUR', 'COIN', 'COLLINE', 'CORDE', 'COTE', 'COUR',
+  'CRAIE', 'CREME', 'CUISINE', 'CYGNE', 'DANSE', 'DENT', 'DESSIN', 'DOIGT', 'DOUCE', 'DRAP',
+  'EAU', 'ECOLE', 'ECRAN', 'EGLISE', 'ENCRE', 'ENFANT', 'EPEE', 'ETAGE', 'ETANG', 'ETOILE',
+  'FACE', 'FEE', 'FENETRE', 'FER', 'FERME', 'FETE', 'FEU', 'FEUILLE', 'FIL', 'FLEUR',
+  'FOIRE', 'FORCE', 'FORET', 'FOUR', 'FRAISE', 'FRERE', 'FROID', 'FRUIT', 'FUMEE', 'GANT',
+  'GARE', 'GATEAU', 'GEANT', 'GENOU', 'GLACE', 'GOUT', 'GRAIN', 'GRAND', 'GRIS', 'GUIDE',
+  'HAIE', 'HERBE', 'HEURE', 'HIVER', 'HOMME', 'HOTEL', 'HUILE', 'IDEE', 'ILE', 'IMAGE',
+  'JARDIN', 'JAUNE', 'JEU', 'JOIE', 'JOUR', 'JOURNAL', 'JUPE', 'LAC', 'LAINE', 'LAIT',
+  'LAMPE', 'LANGUE', 'LAPIN', 'LARGE', 'LETTRE', 'LEVRE', 'LIGNE', 'LIT', 'LIVRE', 'LOUP',
+  'LUMIERE', 'LUNDI', 'LUNE', 'MAIN', 'MAISON', 'MALLE', 'MANTEAU', 'MARCHE', 'MARIN', 'MATIN',
+  'MER', 'MERE', 'MIEL', 'MILIEU', 'MINUTE', 'MIROIR', 'MOIS', 'MONDE', 'MONTRE', 'MOT',
+  'MOUTON', 'MUR', 'MUSEE', 'NAGE', 'NEIGE', 'NEZ', 'NID', 'NOIR', 'NOM', 'NOTE',
+  'NUAGE', 'NUIT', 'OCEAN', 'OEIL', 'OEUF', 'OISEAU', 'OMBRE', 'ONCLE', 'ORAGE', 'ORANGE',
+  'ORDRE', 'OREILLE', 'OS', 'OURS', 'PAGE', 'PAIN', 'PAIX', 'PALAIS', 'PANIER', 'PAPIER',
+  'PARC', 'PATE', 'PAYS', 'PEAU', 'PECHE', 'PEINE', 'PERE', 'PETIT', 'PEUR', 'PIED',
+  'PIERRE', 'PLACE', 'PLAGE', 'PLUIE', 'PLUME', 'POCHE', 'POIRE', 'POISSON', 'POMME', 'PONT',
+  'PORTE', 'POT', 'POULE', 'PRE', 'PRIX', 'PUITS', 'QUEUE', 'RADIO', 'RAISIN', 'RAT',
+  'REINE', 'REVE', 'RICHE', 'RIRE', 'RIVE', 'RIZ', 'ROBE', 'ROCHER', 'ROI', 'ROSE',
+  'ROUE', 'ROUGE', 'ROUTE', 'RUE', 'SABLE', 'SAC', 'SAISON', 'SALLE', 'SANG', 'SAUCE',
+  'SAUT', 'SAVON', 'SEL', 'SIEGE', 'SOEUR', 'SOIE', 'SOIF', 'SOIR', 'SOLEIL', 'SOMME',
+  'SON', 'SOURIS', 'SUCRE', 'TABLE', 'TACHE', 'TAILLE', 'TAPIS', 'TARTE', 'TASSE', 'TEMPS',
+  'TERRE', 'TETE', 'THE', 'TIGRE', 'TOIT', 'TOUR', 'TRAIN', 'TRAIT', 'TROU', 'USINE',
+  'VACHE', 'VAGUE', 'VALISE', 'VEAU', 'VELO', 'VENT', 'VERRE', 'VERT', 'VESTE', 'VIE',
+  'VILLE', 'VIN', 'VISAGE', 'VOILE', 'VOIX', 'VOL', 'VOYAGE', 'ZEBRE', 'ZONE',
+];
+
+/** Recherche rapide : l'ensemble sert aux jeux qui valident une saisie. */
+export const DICTIONNAIRE = new Set(MOTS_JEU);

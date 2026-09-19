@@ -7,7 +7,7 @@ un seul catalogue, à partir d'un seul code source.
 Tout fonctionne **hors ligne** : aucun compte, aucun serveur, aucune donnée
 envoyée. Les scores, records et favoris restent sur l'appareil.
 
-> **État : 75 jeux sur 100** — les catégories Cartes, Arcade et Logique sont complètes. Le catalogue complet et la liste des jeux restants
+> **État : 86 jeux sur 100** — seule la catégorie Plateau reste à compléter. Le catalogue complet et la liste des jeux restants
 > sont dans l'[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés).
 
 ---
@@ -20,8 +20,8 @@ envoyée. Les scores, records et favoris restent sur l'appareil.
 | 🃏 Cartes | **20 / 20** | Solitaire, FreeCell, Araignée, Yukon, Canfield, Pyramide, Scopa, Président, Rami… |
 | 🧩 Logique | **20 / 20** | 2048, Démineur, Sudoku, Nonogram, Sokoban, Binairo, Futoshiki, Hitori, Mahjong, Embouteillage… |
 | 🕹️ Arcade | **20 / 20** | Snake, Briques, Envahisseurs, Astéroïdes, Labyrinthe aux fantômes, Bulles, Missiles, Traversée… |
-| 🎲 Dés | 4 / 10 | Yams, Cochon, 421, Fermer la boîte |
-| ✏️ Papier-crayon | 5 / 10 | Le pendu, Allumettes, Points et carrés, Motus, Bataille navale |
+| 🎲 Dés | **10 / 10** | Yams, Farkle, 421, Dés menteurs, Craps, Zanzibar, Chicago… |
+| ✏️ Papier-crayon | **10 / 10** | Le pendu, Motus, Bataille navale, Boggle, Mots mêlés, SOS, Anagrammes… |
 
 Chaque jeu propose **trois niveaux de difficulté** et, quand la règle s'y prête,
 un **mode Duo** sur le même appareil. Les adversaires sont de vraies IA : minimax

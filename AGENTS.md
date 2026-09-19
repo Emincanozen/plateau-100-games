@@ -25,7 +25,7 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 75 jeux sur 100.** Les catégories Cartes, Arcade et Logique sont complètes. Le décompte exact et la liste des jeux
+**État actuel : 86 jeux sur 100.** Seule la catégorie Plateau reste à compléter : 14 jeux. Le décompte exact et la liste des jeux
 restants sont dans l'annexe.
 
 ---
@@ -172,7 +172,7 @@ Et de `src/games/lib/` :
 | `rng.ts` | `randInt` `randBetween` `pick` `shuffle` `seeded` `clamp` `range` |
 | `hooks.ts` | `useInterval` `useRafLoop` `useTimer` `formatClock` `useBoardSize` `useUndoable`. Les deux hooks de boucle se figent tout seuls quand le jeu est en pause. |
 | `cartes.ts` | Jeux de 52/32 cartes, valeurs blackjack, suites circulaires |
-| `mots.ts` | Listes de mots français avec indices |
+| `mots.ts` | Mots avec indices, mots de cinq lettres, vocabulaire de validation (`MOTS_JEU`, `DICTIONNAIRE`) |
 
 ---
 

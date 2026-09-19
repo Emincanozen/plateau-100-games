@@ -89,6 +89,12 @@ import * as yams from './des/yams';
 import * as cochon from './des/cochon';
 import * as quatreCentVingtEtUn from './des/quatre-cent-vingt-et-un';
 import * as fermerLaBoite from './des/fermer-la-boite';
+import * as farkle from './des/farkle';
+import * as desMenteurs from './des/des-menteurs';
+import * as craps from './des/craps';
+import * as zanzibar from './des/zanzibar';
+import * as chicago from './des/chicago';
+import * as batailleDes from './des/bataille-des';
 
 // --- Papier-crayon ---------------------------------------------------------
 import * as pendu from './papier/pendu';
@@ -96,6 +102,11 @@ import * as allumettes from './papier/allumettes';
 import * as pointsEtCarres from './papier/points-et-carres';
 import * as motus from './papier/motus';
 import * as batailleNavale from './papier/bataille-navale';
+import * as sos from './papier/sos';
+import * as pierreFeuilleCiseaux from './papier/pierre-feuille-ciseaux';
+import * as anagrammes from './papier/anagrammes';
+import * as motsMeles from './papier/mots-meles';
+import * as boggle from './papier/boggle';
 
 const MODULES: GameModule[] = [
   morpion,
@@ -168,11 +179,22 @@ const MODULES: GameModule[] = [
   cochon,
   quatreCentVingtEtUn,
   fermerLaBoite,
+  farkle,
+  desMenteurs,
+  craps,
+  zanzibar,
+  chicago,
+  batailleDes,
   pendu,
   allumettes,
   pointsEtCarres,
   motus,
   batailleNavale,
+  sos,
+  pierreFeuilleCiseaux,
+  anagrammes,
+  motsMeles,
+  boggle,
 ];
 
 export const GAMES: GameEntry[] = MODULES.map((m) => ({ meta: m.meta, component: m.default }));

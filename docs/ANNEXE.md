@@ -16,7 +16,7 @@ entier** : va directement à la section dont tu as besoin.
 
 ## A · Catalogue des jeux livrés
 
-**75 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**86 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
@@ -152,7 +152,7 @@ Les fantômes choisissent leur direction à chaque intersection en se rapprochan
 du joueur, ou en le fuyant quand ils sont vulnérables, avec 22 % de hasard pour
 qu'ils ne soient pas parfaitement prévisibles.
 
-### Dés — 4 sur 10
+### Dés — 10 sur 10 ✅
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -160,8 +160,18 @@ qu'ils ne soient pas parfaitement prévisibles.
 | `cochon` | Cochon | 1-2 | none | `des/cochon.tsx` |
 | `421` | 421 | 1 | low — jetons | `des/quatre-cent-vingt-et-un.tsx` |
 | `fermer-la-boite` | Fermer la boîte | 1 | low — pts restants | `des/fermer-la-boite.tsx` |
+| `farkle` | Farkle | 1 | none | `des/farkle.tsx` |
+| `des-menteurs` | Dés menteurs | 1 | none | `des/des-menteurs.tsx` |
+| `craps` | Craps | 1 | high — jetons | `des/craps.tsx` |
+| `zanzibar` | Zanzibar | 1 | none | `des/zanzibar.tsx` |
+| `chicago` | Chicago | 1-2 | high — pts | `des/chicago.tsx` |
+| `bataille-des` | Bataille de dés | 1 | high — victoires | `des/bataille-des.tsx` |
 
-### Papier-crayon — 5 sur 10
+Tous utilisent le composant `De`, un dé à six faces dessiné avec de vrais
+points. Les fonctions de décompte sont exportées et testables isolément :
+`evaluerLancer` (Farkle), `evaluerZanzibar`, `valeurFigure` (Yams).
+
+### Papier-crayon — 10 sur 10 ✅
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -170,12 +180,27 @@ qu'ils ne soient pas parfaitement prévisibles.
 | `points-et-carres` | Points et carrés | 1-2 | none | `papier/points-et-carres.tsx` |
 | `motus` | Motus | 1 | low — essais | `papier/motus.tsx` |
 | `bataille-navale` | Bataille navale | 1 | low — tirs | `papier/bataille-navale.tsx` |
+| `sos` | SOS | 1-2 | none | `papier/sos.tsx` |
+| `pierre-feuille-ciseaux` | Pierre-feuille-ciseaux | 1 | high — manches | `papier/pierre-feuille-ciseaux.tsx` |
+| `anagrammes` | Anagrammes | 1 | high — mots | `papier/anagrammes.tsx` |
+| `mots-meles` | Mots mêlés | 1 | time | `papier/mots-meles.tsx` |
+| `boggle` | Boggle | 1 | high — pts | `papier/boggle.tsx` |
+
+Les jeux de lettres partagent `MOTS_JEU` (environ 270 mots français, en
+majuscules sans accent) et `DICTIONNAIRE`, l'ensemble correspondant pour les
+recherches rapides. Boggle ne se contente pas de lettres aléatoires : il trace
+d'abord cinq mots réels le long de chemins de cases voisines, puis comble avec
+des lettres fréquentes en français, et recense enfin tous les mots traçables
+pour situer le score du joueur. Pierre-feuille-ciseaux construit une table de
+transition — après tel coup, le joueur a joué tel autre — et contre la
+prédiction sept fois sur neuf, en gardant une part de hasard pour ne pas
+devenir lisible à son tour.
 
 ---
 
 ## B · Les jeux restants
 
-**25 à écrire.** Cette liste est une intention, pas un contrat : un jeu peut être
+**14 à écrire**, toutes dans la catégorie Plateau. Cette liste est une intention, pas un contrat : un jeu peut être
 remplacé par un équivalent de même famille s'il se prête mieux au tactile. Garder
 les totaux par catégorie.
 
@@ -183,12 +208,6 @@ les totaux par catégorie.
 Échecs · Moulin (jeu du moulin) · Backgammon · Hex · Morpion ultime ·
 Solitaire à billes · Dames chinoises · Serpents et échelles · Petits chevaux ·
 Jeu de l'oie · Quarto · Renard et poules · Brandubh (tafl) · Amazones
-
-### Dés — 6 restants
-Farkle · Dés menteurs · Craps · Zanzibar · Chicago · Bataille de dés
-
-### Papier-crayon — 5 restants
-SOS · Pierre-feuille-ciseaux · Anagrammes · Mots mêlés · Boggle
 
 ---
 
