@@ -16,11 +16,11 @@ entier** : va directement à la section dont tu as besoin.
 
 ## A · Catalogue des jeux livrés
 
-**86 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
+**98 jeux sur 100.** Colonne « Score » : mode de comparaison des records —
 `high` le plus grand gagne, `low` et `time` le plus petit gagne, `none` pas de
 record chiffré (on suit victoires/défaites).
 
-### Plateau — 6 sur 20
+### Plateau — 18 sur 20
 
 | id | Nom | Joueurs | Score | Fichier |
 |---|---|---|---|---|
@@ -30,12 +30,48 @@ record chiffré (on suit victoires/défaites).
 | `dames` | Dames | 1-2 | none | `plateau/dames.tsx` |
 | `gomoku` | Cinq en ligne | 1-2 | none | `plateau/gomoku.tsx` |
 | `awale` | Awalé | 1-2 | none | `plateau/awale.tsx` |
+| `moulin` | Moulin | 1-2 | none | `plateau/moulin.tsx` |
+| `hex` | Hex | 1-2 | none | `plateau/hex.tsx` |
+| `morpion-ultime` | Morpion ultime | 1-2 | none | `plateau/morpion-ultime.tsx` |
+| `quarto` | Quarto | 1-2 | none | `plateau/quarto.tsx` |
+| `amazones` | Amazones | 1-2 | none | `plateau/amazones.tsx` |
+| `brandubh` | Brandubh | 1-2 | none | `plateau/brandubh.tsx` |
+| `renard-poules` | Renard et poules | 1-2 | none | `plateau/renard-poules.tsx` |
+| `solitaire-billes` | Solitaire à billes | 1 | low | `plateau/solitaire-billes.tsx` |
+| `dames-chinoises` | Dames chinoises | 1-2 | none | `plateau/dames-chinoises.tsx` |
+| `serpents-echelles` | Serpents et échelles | 2-4 | none | `plateau/serpents-echelles.tsx` |
+| `petits-chevaux` | Petits chevaux | 2-4 | none | `plateau/petits-chevaux.tsx` |
+| `jeu-oie` | Jeu de l'oie | 2-4 | none | `plateau/jeu-oie.tsx` |
 
-Tous ont trois niveaux d'IA et un mode Duo sur le même appareil.
-IA employées : minimax complet (morpion), alpha-beta profondeur 5 (Puissance 4,
-dames), alpha-beta avec table de poids positionnels (Othello), évaluation de
-menaces par fenêtre glissante (Cinq en ligne), alpha-beta profondeur 6 sur les
-greniers et les prises potentielles (Awalé).
+Tous les jeux à adversaire ont trois niveaux d'IA et un mode Duo sur le même
+appareil. Les jeux asymétriques (`renard-poules`, `brandubh`) laissent en plus
+choisir son camp ; les jeux de parcours (`serpents-echelles`, `petits-chevaux`,
+`jeu-oie`) se jouent de deux à quatre, contre l'ordinateur ou entre humains.
+
+**IA employées.** Minimax complet (morpion) · alpha-beta profondeur 5
+(Puissance 4, dames) · alpha-beta avec table de poids positionnels (Othello) ·
+évaluation de menaces par fenêtre glissante (Cinq en ligne) · alpha-beta
+profondeur 6 sur les greniers (Awalé) · alpha-beta sur matériel, moulins,
+menaces et mobilité, le retrait d'un pion comptant pour un demi-coup (Moulin) ·
+alpha-beta sur les grilles gagnées et les doubles menaces, profondeur réduite
+quand les coups légaux sont trop nombreux (Morpion ultime) · **Monte-Carlo** :
+quelques dizaines de parties aléatoires jouées jusqu'au bout depuis chaque case
+candidate, précédées d'un test de gain et de blocage immédiats (Hex) ·
+résolution exacte quand il reste peu de pièces, sinon minimisation du nombre de
+pièces devenues gagnantes (Quarto) · alpha-beta avec tri des coups agressifs et
+budget de nœuds (Brandubh) · alpha-beta profondeur 5 sur une note vue du renard
+(Renard et poules) · **évaluation de territoire** par distances de dame
+multi-sources, choix en deux temps déplacement puis flèche (Amazones) ·
+avancement pondéré par le pion le plus en retard, avec riposte adverse en mode
+expert (Dames chinoises) · priorités rentrer / manger / sortir / avancer
+(Petits chevaux).
+
+**Générateurs et plateaux.** Le circuit des petits chevaux (52 cases), l'étoile
+des dames chinoises (121 trous) et le maillage du moulin (24 intersections,
+16 alignements) sont construits par programme à partir de tables de
+coordonnées, pas saisis case par case. Le solitaire à billes dérive ses deux
+formes — croix anglaise de 33 trous, européenne de 37 — de la même règle
+géométrique.
 
 ### Cartes — 20 sur 20 ✅
 
@@ -200,14 +236,21 @@ devenir lisible à son tour.
 
 ## B · Les jeux restants
 
-**14 à écrire**, toutes dans la catégorie Plateau. Cette liste est une intention, pas un contrat : un jeu peut être
-remplacé par un équivalent de même famille s'il se prête mieux au tactile. Garder
-les totaux par catégorie.
+**2 à écrire**, toutes deux dans la catégorie Plateau.
 
-### Plateau — 14 restants
-Échecs · Moulin (jeu du moulin) · Backgammon · Hex · Morpion ultime ·
-Solitaire à billes · Dames chinoises · Serpents et échelles · Petits chevaux ·
-Jeu de l'oie · Quarto · Renard et poules · Brandubh (tafl) · Amazones
+### Plateau — 2 restants
+**Échecs** · **Backgammon**
+
+Ce sont les deux plus lourds du catalogue, et pour la même raison : chacun
+demande une vraie IA, pas un choix de coup approximatif.
+
+- **Échecs** — génération de coups complète (roque, prise en passant, promotion),
+  détection d'échec et de mat, alpha-beta avec tri des coups, recherche de quiescence
+  sur les prises, tables de poids par pièce. Compter un fichier de logique séparé
+  du composant.
+- **Backgammon** — dés et doubles, barre et sortie, cube de doublement facultatif.
+  L'IA doit évaluer des positions probabilistes : énumérer les 21 lancers distincts
+  et pondérer, plutôt qu'un minimax classique.
 
 ---
 
@@ -406,6 +449,8 @@ fichiers et évite une dépendance qui vieillirait mal sur six versions d'Expo.
 | Mahjong bloqué dès le départ | Symboles semés au hasard sur la disposition : une seule paire jouable, table souvent insoluble | Distribution par simulation de résolution — quatre à six paires jouables au départ, solution garantie |
 | Vies, points et chronos consommés pendant la lecture des règles | Les boucles tournaient derrière la feuille de règles : Astéroïdes perdait une vie, le Labyrinthe avalait 70 points, le Démineur lançait son chrono | Pause portée par le frame, consultée automatiquement par `useInterval` et `useRafLoop` |
 
+| Moulin : le retrait d’un pion ne répondait pas | Le pion visé appartenait à un moulin adverse, donc protégé par la règle | Aucun — comportement correct, confirmé en jeu : seuls les pions hors moulin portent le liseré rouge |
+
 ### Équilibrage
 
 Les jeux d'arcade ont tous été ralentis après essai : les valeurs d'origine
@@ -421,7 +466,7 @@ Chacun expose trois niveaux via `Segmented`.
 |---|---|
 | **Sons** | Le réglage existe et est persisté, aucun effet sonore n'est encore produit. Il faut des fichiers audio et un lecteur (`expo-audio`). |
 | **Icône et écran de lancement** | Ceux du modèle Expo. À remplacer avant publication. |
-| **67 jeux** | Voir section B. |
+| **2 jeux** | Les échecs et le backgammon. Voir section B. |
 | **Traduction** | L'interface est en français uniquement. Aucune infrastructure i18n : les chaînes sont dans les composants. |
 | **Tests** | Aucun test automatisé. La vérification se fait en jouant, via `npm run web`. |
 | **Publication** | Aucun build EAS n'a encore été lancé. Voir le README. |

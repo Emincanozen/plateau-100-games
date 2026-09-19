@@ -7,8 +7,8 @@ un seul catalogue, à partir d'un seul code source.
 Tout fonctionne **hors ligne** : aucun compte, aucun serveur, aucune donnée
 envoyée. Les scores, records et favoris restent sur l'appareil.
 
-> **État : 86 jeux sur 100** — seule la catégorie Plateau reste à compléter. Le catalogue complet et la liste des jeux restants
-> sont dans l'[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés).
+> **État : 98 jeux sur 100** — il ne manque que les échecs et le backgammon. Le catalogue complet
+> est dans l’[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés).
 
 ---
 
@@ -16,7 +16,7 @@ envoyée. Les scores, records et favoris restent sur l'appareil.
 
 | Catégorie | Livrés | Exemples |
 |---|---|---|
-| ♟️ Plateau | 6 / 20 | Morpion, Puissance 4, Othello, Dames, Cinq en ligne, Awalé |
+| ♟️ Plateau | 18 / 20 | Morpion, Puissance 4, Othello, Dames, Moulin, Hex, Quarto, Amazones, Brandubh, Petits chevaux… |
 | 🃏 Cartes | **20 / 20** | Solitaire, FreeCell, Araignée, Yukon, Canfield, Pyramide, Scopa, Président, Rami… |
 | 🧩 Logique | **20 / 20** | 2048, Démineur, Sudoku, Nonogram, Sokoban, Binairo, Futoshiki, Hitori, Mahjong, Embouteillage… |
 | 🕹️ Arcade | **20 / 20** | Snake, Briques, Envahisseurs, Astéroïdes, Labyrinthe aux fantômes, Bulles, Missiles, Traversée… |
@@ -26,7 +26,8 @@ envoyée. Les scores, records et favoris restent sur l'appareil.
 Chaque jeu propose **trois niveaux de difficulté** et, quand la règle s'y prête,
 un **mode Duo** sur le même appareil. Les adversaires sont de vraies IA : minimax
 complet au morpion, alpha-beta aux dames et au Puissance 4, évaluation
-positionnelle à Othello, stratégie de Nim parfaite aux allumettes.
+positionnelle à Othello, recherche Monte-Carlo à Hex, évaluation de territoire
+aux Amazones, stratégie de Nim parfaite aux allumettes.
 
 L'application retient tes records, tes victoires et tes favoris, affiche les
 règles au premier lancement de chaque jeu, et suit le thème clair ou sombre du

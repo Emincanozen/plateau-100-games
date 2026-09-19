@@ -17,6 +17,18 @@ import * as othello from './plateau/othello';
 import * as dames from './plateau/dames';
 import * as gomoku from './plateau/gomoku';
 import * as awale from './plateau/awale';
+import * as moulin from './plateau/moulin';
+import * as hex from './plateau/hex';
+import * as morpionUltime from './plateau/morpion-ultime';
+import * as quarto from './plateau/quarto';
+import * as amazones from './plateau/amazones';
+import * as brandubh from './plateau/brandubh';
+import * as renardPoules from './plateau/renard-poules';
+import * as solitaireBilles from './plateau/solitaire-billes';
+import * as damesChinoises from './plateau/dames-chinoises';
+import * as serpentsEchelles from './plateau/serpents-echelles';
+import * as petitsChevaux from './plateau/petits-chevaux';
+import * as jeuOie from './plateau/jeu-oie';
 
 // --- Cartes ----------------------------------------------------------------
 import * as solitaire from './cartes/solitaire';
@@ -115,6 +127,18 @@ const MODULES: GameModule[] = [
   dames,
   gomoku,
   awale,
+  moulin,
+  hex,
+  morpionUltime,
+  quarto,
+  amazones,
+  brandubh,
+  renardPoules,
+  solitaireBilles,
+  damesChinoises,
+  serpentsEchelles,
+  petitsChevaux,
+  jeuOie,
   solitaire,
   blackjack,
   pyramide,

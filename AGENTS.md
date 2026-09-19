@@ -25,8 +25,9 @@ question sans le lui demander :**
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
-**État actuel : 86 jeux sur 100.** Seule la catégorie Plateau reste à compléter : 14 jeux. Le décompte exact et la liste des jeux
-restants sont dans l'annexe.
+**État actuel : 98 jeux sur 100.** Il ne reste que **les échecs et le
+backgammon**, tous deux en catégorie Plateau. Ce sont les deux plus lourds du
+catalogue : chacun demande une vraie IA. L'annexe détaille ce qu'ils supposent.
 
 ---
 
@@ -195,7 +196,7 @@ Et de `src/games/lib/` :
 
 ## 7. Pièges connus — lis-les avant de déboguer
 
-Ces cinq erreurs ont déjà été commises et corrigées dans ce dépôt. Elles sont
+Ces six erreurs ont déjà été commises et corrigées dans ce dépôt. Elles sont
 faciles à réintroduire.
 
 **1. `submitScore` doit garder une identité stable.**
