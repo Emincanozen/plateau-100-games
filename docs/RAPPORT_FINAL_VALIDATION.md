@@ -1,11 +1,18 @@
 # Rapport de validation — Plateau
 
-Deuxième campagne, menée le 20 septembre 2026 : correction des cinq défauts
-relevés à l'audit, et intégration de la monétisation publicitaire.
+Deuxième et troisième campagnes, menées le 20 septembre 2026 : correction des
+cinq défauts relevés à l'audit, intégration de la monétisation publicitaire,
+puis production d'un **APK réel**.
 
-> **Le statut global n'est pas « terminé ».** Le code est complet et éprouvé
-> hors appareil ; **aucune publicité réelle n'a jamais été affichée**, et rien
-> n'a tourné sur un téléphone. Le détail est en section 9.
+> **Ce qui a changé à la troisième campagne.** Un APK installable existe,
+> compilé localement avec Gradle — le JDK 17 et le SDK Android étaient déjà
+> sur la machine, aucun compte Expo n'a été nécessaire. Le produire a révélé
+> trois défauts qu'aucune lecture du code ne donnait, et les premiers tests
+> de barèmes en ont révélé deux autres.
+>
+> **Le statut global n'est toujours pas « terminé ».** Personne n'a encore
+> installé cet APK, **aucune publicité n'a jamais été vue à l'écran**, et
+> aucun paquet publiable n'existe. Le détail est en section 9.
 
 ---
 
@@ -195,6 +202,30 @@ retirées par `android.blockedPermissions`, et l'audit lit maintenant le
 manifeste **fusionné**. (4) code mort remplacé par un commentaire qui dit ce
 qui se passait vraiment. (5) définition unique dans `outils/lib/catalogue.mjs`.
 
+### Cinq défauts de plus, trouvés à la troisième campagne
+
+Tous par des moyens que les campagnes précédentes n'avaient pas employés :
+compiler pour de vrai, et tester les barèmes.
+
+| # | Défaut | Gravité | Comment il a été trouvé |
+|---|---|---|---|
+| 6 | **Un APK de release sans identifiants AdMob n'affiche aucune annonce.** Rigoureusement conforme à la règle « jamais de bloc de test en production » — et rigoureusement inutile pour vérifier la publicité sur un téléphone | Élevée | En relisant le paquet JavaScript de l'APK produit |
+| 7 | **Le drapeau qui corrige le point 6 n'avait, dans sa première version, aucun effet.** Écrit avec `process.env.EXPO_PUBLIC_*`, il était bien inliné par Babel — mais Metro met les transformées en cache, et la valeur de la variable ne fait pas partie de la clé. Deux paquets construits avec et sans sortaient identiques, **empreinte comprise** | Élevée | En comparant les empreintes des deux paquets, au lieu de supposer |
+| 8 | **L'APK livré porte neuf permissions, pas quatre.** `WAKE_LOCK` et les trois `ACCESS_ADSERVICES_*` viennent de Google Mobile Ads, par la fusion des manifestes. Ni `app.json` ni le manifeste de `prebuild` ne pouvaient les montrer | Élevée | `aapt dump permissions` sur l'APK |
+| 9 | **Zanzibar : la petite suite 1-2-3 n'était jamais reconnue.** La condition la cherchait dans cet ordre sur des dés triés par ordre **décroissant**, où elle se lit 3-2-1. Elle retombait dans le cas général et valait 321 — moins qu'une simple paire | Élevée | Premier test de barème écrit |
+| 10 | **421 : une main quelconque pouvait battre une suite.** Les mains ordinaires montaient à 654, les suites plafonnaient à 606. Un 6-5-2 battait donc un 6-5-4, tout en rapportant cinq fois moins de jetons | Élevée | Même test |
+
+**Corrections.** (6) un drapeau `forcerTest` réservé aux profils d'essai.
+(7) ce drapeau passe par `app.config.js`, réévalué à chaque compilation et
+**vérifiable dans l'APK** — `forcerTest":true` s'y lit en clair. (8) l'audit
+lit désormais le manifeste du paquet livré, et la politique documente les
+quatre permissions héritées ; `RECORD_AUDIO` est bien absente, vérifié sur
+l'APK. (9) et (10) corrigées dans `src/games/lib/regles.ts`, avec les tests
+qui les auraient attrapées.
+
+> Deux autres échecs de ces mêmes tests venaient de **mes propres attentes**
+> sur Motus, pas du moteur. Vérifiés à la main avant de toucher au code.
+
 ### Trois défauts de l'outil de mesure, pas du code
 
 La sonde de navigateur a accusé cinq jeux à tort. Chaque fois, c'est elle qui
@@ -280,12 +311,33 @@ Distinguer ce qui existe vraiment :
 | Configuration Expo | **PASS** | `npx expo-doctor` : 21 / 21 |
 | Projet natif Android | **PASS** | `expo prebuild` ; manifeste relu permission par permission |
 | Projet natif iOS | **PASS (en CI)** | Impossible sous Windows : *« Run npx expo prebuild again from macOS or Linux »*. Produit par la CI sur Ubuntu, et son `Info.plist` contient bien `GADApplicationIdentifier` |
-| Compilation EAS (APK, AAB, IPA) | **BLOCKED** | `eas login` requis |
-| Application installée | **NOT RUN** | — |
+| **APK Android** | **PASS** | `android/app/build/outputs/apk/release/app-release.apk`, copié en `D:\claude\Plateau-essai-1.0.0.apk` |
+| AAB de production | **BLOCKED** | Demande une clé de signature, donc `eas login` |
+| IPA iOS | **BLOCKED** | Demande un compte Apple Developer |
+| Application installée | **NOT RUN** | L'APK existe, personne ne l'a encore installé |
 
-**Aucun APK, AAB ou IPA n'existe.** Il n'y a que des paquets JavaScript et
-deux projets natifs non compilés — Android en local, iOS en intégration
-continue. Produire un projet natif n'est pas le compiler.
+### L'APK, en détail
+
+Compilé par Gradle sur cette machine, avec le JDK 17 et le SDK Android déjà
+présents. **Aucun compte Expo n'a été nécessaire** — c'est la principale
+surprise de cette campagne, puisque tout le monde tenait EAS pour obligatoire.
+
+| | |
+|---|---|
+| Taille | 108 Mo, universel (arm64-v8a, armeabi-v7a, x86, x86_64) |
+| Paquet | `com.plateau.jeux` 1.0.0, `versionCode` 1 |
+| Android | minimum API 24, cible API 36 |
+| Signature | `CN=Android Debug` — **vérifiée** par `apksigner` (schéma v2) |
+| Publicités | blocs de test — `forcerTest":true` vérifié dans le manifeste embarqué |
+| Permissions | 9, relevées par `aapt dump permissions`, toutes justifiées |
+
+**Il s'installe, il ne se publie pas.** Google Play exige une clé de signature
+de production, que seul un compte développeur peut créer.
+
+**108 Mo, c'est gros**, et c'est normal pour un APK universel sans
+minification : les quatre architectures y sont, et R8 est désactivé par défaut
+chez Expo. L'AAB de production laissera Google découper par appareil, ce qui
+ramènera le téléchargement autour de 35 à 45 Mo.
 
 ---
 
@@ -401,15 +453,16 @@ rien payé et ne paierai rien sans ton accord.**
 | Paquets JavaScript | **PASS** | iOS, Android, web |
 | Projet natif Android | **PASS** | Produit, manifeste vérifié |
 | Projet natif iOS | **PASS** | Produit par la CI sur Ubuntu — impossible sous Windows |
-| Compilations natives (APK, AAB, IPA) | **BLOCKED** | `eas login` |
-| Application installée | **NOT RUN** | — |
+| **APK Android installable** | **PASS** | Compilé, signé, vérifié — §6 |
+| AAB et IPA | **BLOCKED** | Clé de signature et compte Apple |
+| Application installée | **NOT RUN** | L'APK attend sur le disque |
 | Essais sur appareil | **NOT RUN** | Protocole écrit, rien d'exécuté |
 | **Publicité réelle affichée** | **NOT RUN** | Aucune annonce n'a jamais été vue |
 | Fiches des magasins | **PARTIEL** | Textes prêts ; identité, contact, URL et captures manquants |
 | Publication | **NOT RUN** | Aucune soumission, aucune dépense |
 
-**Statut global : développement fonctionnellement complet, validation
-matérielle non entamée.**
+**Statut global : un APK installable existe ; aucune publicité n'a encore été
+vue fonctionner.**
 
 Le plus gros angle mort tient en une phrase : **la fonctionnalité centrale de
 cette campagne — afficher une publicité — n'a jamais été vue fonctionner.**

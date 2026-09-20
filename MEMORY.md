@@ -43,12 +43,19 @@ sans lui** :
 | Configuration de compilation | `npx expo-doctor` : **21 / 21**. Bundles iOS (5,1 Mo) et Android (5,3 Mo) produits localement. |
 | Projet natif Android | **Produit** par `expo prebuild`, manifeste relu permission par permission. |
 | Projet natif iOS | **Produit par la CI** sur Ubuntu (impossible sous Windows). `Info.plist` vérifié. |
-| Compilation EAS | **Jamais lancée.** Demande le compte Expo de l'utilisateur. |
+| **APK Android** | **Compilé et signé sur cette machine, sans EAS** : Gradle + JDK 17 + SDK Android étaient déjà installés. `D:\claude\Plateau-essai-1.0.0.apk`, 108 Mo, annonces de test actives, signature de débogage. |
+| Compilation EAS (AAB, IPA) | **Jamais lancée.** Demande le compte Expo de l'utilisateur. |
 | Publication | **Non faite.** Demande les comptes développeur Apple et Google. |
 
-Statut global : **code complet et éprouvé hors appareil ; rien n'a encore
-tourné sur un téléphone.** Le développement ne sera pas déclaré terminé tant
-que la publicité n'aura pas été vue fonctionner sur un appareil réel.
+Statut global : **un APK installable existe ; rien n'a encore tourné sur un
+téléphone.** Le développement ne sera pas déclaré terminé tant que la
+publicité n'aura pas été vue fonctionner sur un appareil réel.
+
+> **Ne pas croire qu'EAS est obligatoire pour obtenir un APK.** Il ne l'est
+> pas : `cd android && ./gradlew assembleRelease` suffit dès que le JDK et le
+> SDK Android sont là, et le `release` d'Expo est signé par le certificat de
+> débogage, donc installable. EAS ne redevient indispensable que pour un
+> paquet **publiable** — clé de signature de production, AAB, iOS.
 
 ---
 
