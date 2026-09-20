@@ -42,7 +42,7 @@ sans lui** :
 | Publicité — annonce réelle | **Jamais affichée.** Demande une compilation native et un compte AdMob. |
 | Configuration de compilation | `npx expo-doctor` : **21 / 21**. Bundles iOS (5,1 Mo) et Android (5,3 Mo) produits localement. |
 | Projet natif Android | **Produit** par `expo prebuild`, manifeste relu permission par permission. |
-| Projet natif iOS | **NOT RUN** — impossible sous Windows, demande macOS ou Linux. |
+| Projet natif iOS | **Produit par la CI** sur Ubuntu (impossible sous Windows). `Info.plist` vérifié. |
 | Compilation EAS | **Jamais lancée.** Demande le compte Expo de l'utilisateur. |
 | Publication | **Non faite.** Demande les comptes développeur Apple et Google. |
 

@@ -279,12 +279,13 @@ Distinguer ce qui existe vraiment :
 | Paquet JavaScript web | **PASS** | et **sans le SDK publicitaire** — vérifié par `grep` |
 | Configuration Expo | **PASS** | `npx expo-doctor` : 21 / 21 |
 | Projet natif Android | **PASS** | `expo prebuild` ; manifeste relu permission par permission |
-| Projet natif iOS | **NOT RUN** | Impossible sous Windows : *« Run npx expo prebuild again from macOS or Linux »*. La CI le produit sur Ubuntu |
+| Projet natif iOS | **PASS (en CI)** | Impossible sous Windows : *« Run npx expo prebuild again from macOS or Linux »*. Produit par la CI sur Ubuntu, et son `Info.plist` contient bien `GADApplicationIdentifier` |
 | Compilation EAS (APK, AAB, IPA) | **BLOCKED** | `eas login` requis |
 | Application installée | **NOT RUN** | — |
 
-**Aucun APK, AAB ou IPA n'existe.** Il n'y a que des paquets JavaScript et un
-projet natif Android non compilé.
+**Aucun APK, AAB ou IPA n'existe.** Il n'y a que des paquets JavaScript et
+deux projets natifs non compilés — Android en local, iOS en intégration
+continue. Produire un projet natif n'est pas le compiler.
 
 ---
 
@@ -399,7 +400,7 @@ rien payé et ne paierai rien sans ton accord.**
 | Audit de confidentialité | **PASS** | Automatisé, y compris le manifeste fusionné |
 | Paquets JavaScript | **PASS** | iOS, Android, web |
 | Projet natif Android | **PASS** | Produit, manifeste vérifié |
-| Projet natif iOS | **NOT RUN** | Windows ne peut pas le produire |
+| Projet natif iOS | **PASS** | Produit par la CI sur Ubuntu — impossible sous Windows |
 | Compilations natives (APK, AAB, IPA) | **BLOCKED** | `eas login` |
 | Application installée | **NOT RUN** | — |
 | Essais sur appareil | **NOT RUN** | Protocole écrit, rien d'exécuté |
