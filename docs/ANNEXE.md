@@ -476,6 +476,13 @@ fichiers et évite une dépendance qui vieillirait mal sur six versions d'Expo.
 | Backgammon : des touchers perdus sur les flèches | `Fleche` était déclaré dans le corps du composant : React y voyait un type neuf à chaque rendu et remontait les vingt-quatre flèches, détachant les nœuds entre deux appuis | Simple fonction `rendreFleche(i)` au lieu d'un composant. Trois autres jeux avaient le même défaut : Awalé, Bataille de dés, Bataille navale. Devenu le piège n° 7, et détecté par `npm run audit` |
 | Araignée : vibration jouée deux fois | `haptic('success')` était appelé **dans** l'updater de `setEtat`, que React peut rejouer | Calcul sorti de l'updater — c'est le piège n° 3 |
 | Compilation refusée par `expo-doctor` | `newArchEnabled` a disparu du schéma au SDK 55, `android.edgeToEdgeEnabled` au SDK 56, et `splash` est devenu un plugin | Champs retirés, `expo-splash-screen` installé et configuré avec ses variantes claire et sombre |
+| `npm run verifier` passait malgré des anomalies | `outils/audit.mjs` affichait les problèmes mais sortait toujours en code 0 : la chaîne continuait | `process.exit(1)` sur anomalie. Les **cinq** contrôles ont ensuite été éprouvés un par un sur un défaut injecté volontairement |
+| 2048 injouable au navigateur | Piloté au balayage seul : aucun bouton, aucun clavier, aucune cible pour un lecteur d'écran | Clavier et croix directionnelle, comme au Snake. Bulles et Casse-briques avaient le même défaut |
+| Sélecteurs muets pour un lecteur d'écran | `Segmented` n'avait pas d'`accessibilityLabel` — et il est présent dans presque tous les jeux | Étiquette ajoutée dans le composant : une correction, ~90 jeux |
+| Cibles tactiles trop petites | `Segmented` faisait 32 px de haut, `Button size="sm"` 36 px, sous les 44 points recommandés par Apple | Minimum porté à 44 dans les deux composants partagés |
+| `'OS'` dans le dictionnaire | Deux lettres, alors que le Boggle en exige trois : le mot était inatteignable | Retiré. Le test des règles vérifie désormais l'invariant |
+| L'application aurait planté hors Expo Go | `expo-audio`, ajouté pour les sons, réclame `expo-asset` en dépendance de pair — absente | `expo-asset` installé. Trouvé par `expo-doctor`, pas en jouant : un build réel aurait planté au premier son |
+| Thème automatique incomplet sur Android | `userInterfaceStyle: "automatic"` exige `expo-system-ui`, signalé seulement au `prebuild` | `expo-system-ui` installé |
 
 ### Équilibrage
 
@@ -491,14 +498,17 @@ Chacun expose trois niveaux via `Segmented`.
 | Sujet | État |
 |---|---|
 | **Catalogue** | Terminé. 100 jeux sur 100. |
-| **Icône et écran de lancement** | Faits. Générés par `node outils/icones.mjs`, aucune dépendance : l'encodeur PNG tient dans le script. |
-| **Tests** | `npm run verifier` : types, audit des 100 fichiers, perft des échecs, invariants du backgammon. Il n'y a en revanche **aucun test d'interface** — les 98 autres jeux sont vérifiés en y jouant. |
-| **Sons** | Le réglage existe et est persisté, aucun effet sonore n'est encore produit. Il faut des fichiers audio et un lecteur (`expo-audio`). |
-| **Captures pour les magasins** | Aucune n'est préparée. Obligatoires chez Apple comme chez Google. |
-| **Politique de confidentialité** | Une adresse web est exigée par les deux magasins, même sans collecte. À écrire et à héberger. |
-| **Licence** | `LICENSE` porte encore « Plateau » comme titulaire, pas le nom de l'utilisateur. |
-| **Traduction** | L'interface est en français uniquement. Aucune infrastructure i18n : les chaînes sont dans les composants. |
-| **Publication** | Configurée et validée (`expo-doctor` : 21 sur 21), mais **aucune compilation EAS n'a été lancée** : cela demande le compte Expo et les comptes développeur de l'utilisateur. Voir [PUBLICATION.md](PUBLICATION.md). |
+| **Icône et écran de lancement** | Faits, générés par `npm run assets:icones` — encodeur PNG compris, aucune dépendance. |
+| **Sons** | Faits. Six effets synthétisés par `npm run assets:sons`, branchés sur le même événement que les vibrations et pilotés par le réglage. Aucun fichier tiers, donc aucune question de licence. |
+| **Contrôles automatiques** | `npm run verifier` : types, audit des 100 fichiers, 74 contrôles de règles partagées, 147 d’échecs, 274 de backgammon. La chaîne **échoue** réellement sur anomalie — éprouvé sur défaut injecté. |
+| **Intégration continue** | `.github/workflows/verifier.yml` : les mêmes contrôles, plus `expo-doctor` et la construction des bundles. Aucun secret. |
+| **Tests d’interface** | Toujours aucun test automatisé d’interface dans le dépôt. Les 100 jeux sont validés par une sonde de navigateur décrite dans [VALIDATION_100_JEUX.md](VALIDATION_100_JEUX.md), rejouée à la main. |
+| **Parties complètes** | Aucune partie n’est jouée de bout en bout automatiquement. Les fins de partie ont été vérifiées à la main sur un échantillon. |
+| **Confidentialité** | Politique rédigée sur un relevé vérifié du code, page prête à héberger, résumé consultable dans l’application. **L’adresse web reste à créer.** |
+| **Licence** | Le titulaire est désormais un nom. L’orthographe exacte reste à confirmer par l’utilisateur. |
+| **Captures pour les magasins** | Aucune. À produire depuis un build réel, jamais depuis une maquette. |
+| **Traduction** | Français uniquement. Aucune infrastructure i18n : les chaînes sont dans les composants. |
+| **Publication** | Configuration validée (`expo-doctor` 21/21, bundles iOS et Android produits localement), mais **aucune compilation EAS lancée** : comptes Expo, Apple et Google requis. Voir [PUBLICATION.md](PUBLICATION.md). |
 
 ---
 

@@ -95,6 +95,28 @@ eas build --profile production --platform android
 EAS propose de créer le magasin de clés (*keystore*) et de le conserver. Accepte :
 si tu le perds, tu ne peux plus mettre l'application à jour.
 
+### ⚠ Le test fermé obligatoire — à lancer en premier
+
+Si ton compte Play Console est un **compte personnel créé après le
+13 novembre 2023**, Google n'ouvre pas la production tout de suite. Il faut
+d'abord :
+
+> un test fermé réunissant **au moins 12 testeurs**, inscrits **sans
+> interruption pendant au moins 14 jours**.
+
+Ce n'est qu'ensuite que tu peux demander l'accès à la production depuis le
+tableau de bord de la Play Console. Les comptes d'organisation ne sont pas
+concernés
+([documentation Google](https://support.google.com/googleplay/android-developer/answer/14151465)).
+
+**Conséquence pratique : ces quatorze jours sont le chemin critique.** Lance le
+test fermé dès que tu as un premier `.aab`, même si les captures d'écran et la
+fiche ne sont pas finies — tu les prépareras pendant que le délai court. Sinon
+tu attendras deux semaines de plus pour rien.
+
+Il te faut douze adresses Google distinctes. Des proches suffisent : ils
+doivent seulement accepter l'invitation et rester inscrits.
+
 ### Envoyer
 
 La toute première version doit être **téléversée à la main** dans la Play
@@ -174,12 +196,25 @@ tests de moteur. Elle doit passer entièrement.
 
 ## 8. Points à traiter avant une vraie publication
 
-- **Adresse de la politique de confidentialité.** Obligatoire chez Apple comme
-  chez Google. Le texte peut être court : l'application ne collecte rien, ne
-  transmet rien, et tout reste sur l'appareil.
-- **Captures d'écran.** Aucune n'est encore préparée.
-- **Nom sur les magasins.** « Plateau » est peut-être déjà pris ; vérifie-le
-  avant de dépendre de ce nom.
-- **Licence.** `LICENSE` porte encore « Plateau » comme titulaire du droit
-  d'auteur, pas ton nom.
-- **Sons.** Le réglage existe et est persisté, mais aucun son n'est joué.
+Ce qui a été fait depuis la première version de ce guide :
+
+- ✅ **Sons** — six effets synthétisés, branchés sur le même événement que les
+  vibrations, pilotés par le réglage. `npm run assets:sons` les régénère.
+- ✅ **Politique de confidentialité** — rédigée sur un relevé vérifié du code,
+  dans [CONFIDENTIALITE.md](CONFIDENTIALITE.md), avec une page prête à héberger
+  dans [store/confidentialite.html](store/confidentialite.html), et un résumé
+  consultable dans l'application (Réglages → Données).
+- ✅ **Licence** — le titulaire est maintenant un nom, plus le nom du produit.
+- ✅ **Textes des fiches** — description courte et longue, mots-clés,
+  catégories, déclarations : [store/README.md](store/README.md).
+
+Ce qui reste :
+
+| Point | Pourquoi ça bloque | Qui |
+|---|---|---|
+| **Héberger la politique** | Les deux magasins exigent une **adresse web** publique, pas un fichier | Toi |
+| **Nom et adresse de contact** | Obligatoires sur les deux fiches ; marqués `[À COMPLÉTER]` | Toi |
+| **Captures d'écran** | À produire depuis un build réel, jamais depuis une maquette | Toi, une fois un build installé |
+| **Icône 512 × 512 et bandeau 1024 × 500** | Exigés par Google Play | Redimensionnement de `assets/icon.png` + composition |
+| **Vérifier le nom « Plateau »** | Mot courant, peut-être déjà déposé | Toi |
+| **Le test fermé de 14 jours** | Voir la section 5 — c'est le chemin critique | Toi, dès le premier `.aab` |

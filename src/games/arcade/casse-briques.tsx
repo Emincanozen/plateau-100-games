@@ -4,7 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
-import { Row, Txt, GameOver } from '@/ui';
+import { BoutonControle, Row, Txt, GameOver, useClavier } from '@/ui';
 import { useRafLoop } from '../lib/hooks';
 import { clamp } from '../lib/rng';
 
@@ -21,7 +21,7 @@ export const meta: GameMeta = {
   scoreUnit: 'pts',
   tags: ['culte', 'réflexe', 'solo'],
   rules: [
-    'Fais glisser ton doigt pour déplacer la raquette sous la balle.',
+    'Déplace la raquette en glissant le doigt, aux boutons ou au clavier.',
     'Chaque brique touchée éclate et rapporte des points — les rangées du haut valent plus cher.',
     'Le mur est percé de trous : glisse la balle derrière pour qu’elle ricoche et fasse le ménage.',
     'Le point d’impact sur la raquette change l’angle de rebond. Tu as trois balles.',
@@ -277,6 +277,24 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
     return Gesture.Simultaneous(deplacer, lancer);
   }, [PADDLE_W, W, lancerBalle]);
 
+  // Le glissement ne suffit pas : dans un navigateur il n'y a rien à faire
+  // glisser au doigt, et un lecteur d'écran n'a aucune cible à annoncer.
+  const glisser = useCallback(
+    (pas: number) => {
+      paddleRef.current = clamp(paddleRef.current + pas, PADDLE_W / 2, W - PADDLE_W / 2);
+    },
+    [PADDLE_W, W],
+  );
+
+  useClavier({
+    ArrowLeft: () => glisser(-24),
+    ArrowRight: () => glisser(24),
+    KeyQ: () => glisser(-24),
+    KeyD: () => glisser(24),
+    Space: lancerBalle,
+    Enter: lancerBalle,
+  });
+
   useFrameStatus(
     <Row gap={space.md}>
       <Txt variant="label" tone="dim">
@@ -383,8 +401,14 @@ export default function CasseBriques({ submitScore, best, haptic }: GameScreenPr
         </View>
       </GestureDetector>
 
+      <Row gap={10}>
+        <BoutonControle glyphe="◀" label="Gauche" tint="#F0A03033" onPress={() => glisser(-24)} />
+        <BoutonControle glyphe="●" label="Lancer la balle" tint="#F0A03033" onPress={lancerBalle} />
+        <BoutonControle glyphe="▶" label="Droite" tint="#F0A03033" onPress={() => glisser(24)} />
+      </Row>
+
       <Txt variant="caption" tone="faint">
-        Glisse pour déplacer la raquette · touche pour lancer
+        Glisse la raquette, ou joue aux boutons et au clavier
       </Txt>
 
       <GameOver

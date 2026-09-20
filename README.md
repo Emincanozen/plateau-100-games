@@ -70,23 +70,31 @@ pour iOS.
 ```bash
 npm install -g eas-cli
 eas login
-eas build:configure
+eas init
+```
 
-eas build --platform android --profile preview   # APK installable directement
-eas build --platform ios --profile preview       # nécessite un compte Apple Developer
+Trois profils sont définis dans `eas.json` : `development`, `apercu` et
+`production`.
+
+```bash
+eas build --platform android --profile apercu   # APK installable directement
+eas build --platform ios --profile apercu       # build simulateur
 ```
 
 Pour les magasins :
 
 ```bash
 eas build --platform all --profile production
-eas submit --platform android
-eas submit --platform ios
+eas submit --platform android --profile production
+eas submit --platform ios --profile production
 ```
 
 L'identifiant d'application est `com.plateau.jeux` sur les deux plateformes
-(`app.json`). L'icône et l'écran de lancement sont encore ceux du modèle Expo :
-à remplacer avant publication.
+(`app.json`). L'icône, l'icône adaptative Android et l'écran de lancement sont
+générés par `node outils/icones.mjs`.
+
+La marche à suivre complète — comptes développeur, signature, fiches des
+magasins — est dans le [guide de publication](docs/PUBLICATION.md).
 
 ---
 
@@ -138,7 +146,12 @@ Le contrat complet est décrit dans [AGENTS.md](AGENTS.md#4-le-contrat-dun-jeu).
 | Fichier | Pour qui |
 |---|---|
 | **[AGENTS.md](AGENTS.md)** | **Point d'entrée unique pour un agent IA.** Se suffit à lui-même : contraintes du projet, carte du code, contrat d'un jeu, conventions, pièges connus. |
-| [docs/ANNEXE.md](docs/ANNEXE.md) | Listes exhaustives : catalogue, jeux restants, API détaillée, jetons de design, journal des correctifs. |
+| [MEMORY.md](MEMORY.md) | Reprise de projet : où en est le travail, ce qui a été décidé, ce qui reste. |
+| [docs/ANNEXE.md](docs/ANNEXE.md) | Listes exhaustives : catalogue des 100 jeux, API détaillée, jetons de design, journal des correctifs. |
+| [docs/VALIDATION_100_JEUX.md](docs/VALIDATION_100_JEUX.md) | Matrice de validation, jeu par jeu, avec le détail de ce qui a été réellement testé. |
+| [docs/PUBLICATION.md](docs/PUBLICATION.md) | Mise sur l'App Store et Google Play : ce qui est prêt, ce qui demande tes comptes. |
+| [docs/CONFIDENTIALITE.md](docs/CONFIDENTIALITE.md) | Politique de confidentialité, établie sur un relevé vérifié du code. |
+| [docs/store/](docs/store/) | Textes et éléments des fiches magasins. |
 | README.md | Ce fichier : présentation, installation, fabrication des binaires. |
 
 `CLAUDE.md` pointe simplement sur `AGENTS.md`, pour que les outils qui cherchent
@@ -149,12 +162,22 @@ l'un ou l'autre trouvent le même document.
 ## Vérifications
 
 ```bash
-npm run typecheck
+npm run verifier
 ```
 
-TypeScript est en mode strict et doit passer sans erreur. Il n'y a pas encore de
-tests automatisés : un jeu se valide en y jouant une partie complète, via
-`npm run web` ou sur un téléphone.
+Cette commande enchaîne quatre contrôles et **s'arrête au premier échec** :
+
+| Commande | Ce qu'elle contrôle |
+|---|---|
+| `npm run typecheck` | TypeScript strict sur tout le dépôt |
+| `npm run audit` | Le contrat d'un jeu et les sept pièges connus, sur les 100 fichiers |
+| `npm run test:regles` | Les règles déterministes : cartes, scores de dés, mots, registre |
+| `npm run test:moteurs` | Échecs (perft) et backgammon (invariants et scénarios) |
+
+Cela ne remplace pas de jouer. Un jeu n'est validé qu'après une partie complète
+— début, coups, fin, record, bouton recommencer — via `npm run web` ou sur un
+téléphone. L'état jeu par jeu est tenu dans
+[docs/VALIDATION_100_JEUX.md](docs/VALIDATION_100_JEUX.md).
 
 ---
 
@@ -162,7 +185,7 @@ tests automatisés : un jeu se valide en y jouant une partie complète, via
 
 Expo SDK 57 · React Native 0.86 · React 19.2 · expo-router 7 · TypeScript strict ·
 Reanimated 4 · react-native-gesture-handler · react-native-svg · AsyncStorage ·
-expo-haptics.
+expo-haptics · expo-audio · expo-splash-screen.
 
 ## Licence
 

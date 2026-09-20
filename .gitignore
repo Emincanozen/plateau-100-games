@@ -49,3 +49,7 @@ cles/
 *.p8
 *.p12
 *.mobileprovision
+
+# Sorties de compilation
+dist/
+dist-natif/

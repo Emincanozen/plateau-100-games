@@ -37,7 +37,8 @@ export function Button({
   const { settings } = useSettings();
   const tint = accent ?? c.accent;
 
-  const heights: Record<Size, number> = { sm: 36, md: 46, lg: 54 };
+  // 44 points au minimum : recommandation Apple pour une cible tactile.
+  const heights: Record<Size, number> = { sm: 44, md: 48, lg: 56 };
   const pads: Record<Size, number> = { sm: space.md, md: space.lg, lg: space.xl };
 
   const bg: Record<Kind, string> = {

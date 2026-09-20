@@ -6,6 +6,8 @@
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~57.0.24",
+    "expo-asset": "~57.0.18",
+    "expo-audio": "~57.0.5",
     "expo-constants": "~57.0.19",
     "expo-font": "~57.0.4",
     "expo-haptics": "~57.0.3",
@@ -13,6 +15,7 @@
     "expo-router": "~57.0.22",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
+    "expo-system-ui": "~57.0.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
@@ -37,9 +40,13 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "audit": "node outils/audit.mjs",
+    "test:regles": "tsx outils/test-regles.ts",
     "test:echecs": "tsx outils/test-echecs.ts",
     "test:backgammon": "tsx outils/test-backgammon.ts",
-    "verifier": "npm run typecheck && npm run audit && npm run test:echecs && npm run test:backgammon"
+    "test:moteurs": "npm run test:echecs && npm run test:backgammon",
+    "verifier": "npm run typecheck && npm run audit && npm run test:regles && npm run test:moteurs",
+    "assets:icones": "node outils/icones.mjs",
+    "assets:sons": "node outils/sons.mjs"
   },
   "private": true
 }

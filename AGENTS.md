@@ -37,14 +37,14 @@ composant, et sont couverts par des tests (§8).
 npm install
 npm start        # puis « i », « a », ou le QR code avec Expo Go
 npm run web      # itération rapide dans un navigateur
-npm run verifier # types + audit du catalogue + tests des deux moteurs
+npm run verifier # types + audit + règles partagées + deux moteurs
 ```
 
 > Sous PowerShell, utiliser `npx.cmd` et non `npx` : la politique d'exécution
 > bloque les scripts `.ps1`.
 
 **Stack** : Expo SDK 57 · React Native 0.86 · React 19.2 · expo-router 7 ·
-TypeScript strict · Reanimated 4 · react-native-svg · AsyncStorage.
+TypeScript strict · Reanimated 4 · react-native-svg · AsyncStorage · expo-audio.
 
 > Expo change vite. Avant d'écrire du code qui touche à une API Expo, consulter
 > <https://docs.expo.dev/versions/v57.0.0/> — la version exacte, pas la dernière.
@@ -174,6 +174,8 @@ Et de `src/games/lib/` :
 | `hooks.ts` | `useInterval` `useRafLoop` `useTimer` `formatClock` `useBoardSize` `useUndoable`. Les deux hooks de boucle se figent tout seuls quand le jeu est en pause. |
 | `cartes.ts` | Jeux de 52/32 cartes, valeurs blackjack, suites circulaires |
 | `mots.ts` | Mots avec indices, mots de cinq lettres, vocabulaire de validation (`MOTS_JEU`, `DICTIONNAIRE`) |
+| `echecs.ts` | Moteur d'échecs complet, sans React : règles, recherche, notation |
+| `backgammon.ts` | Moteur de backgammon, sans React : règles, suites légales, IA probabiliste |
 
 ---
 
@@ -185,7 +187,12 @@ Et de `src/games/lib/` :
   un jeu (les tuiles de 2048, les pièces de Briques) — et alors en constante
   nommée en haut du fichier.
 - **Accessibilité** : tout élément tactile porte `accessibilityRole` et
-  `accessibilityLabel` en français.
+  `accessibilityLabel` en français, et fait **au moins 44 points** de côté —
+  le minimum recommandé par Apple. Les cases d'un plateau sont la seule
+  exception : on ne met pas 144 tuiles de mahjong à 44 px.
+- **Un jeu ne se pilote jamais au geste seul.** Sans bouton étiqueté ni
+  clavier, il est injouable au navigateur et muet pour un lecteur d'écran.
+  `npm run audit` refuse ce cas.
 - **Trois niveaux de difficulté** dès que c'est pertinent, via `Segmented`, plus
   un mode **Duo** sur le même appareil pour les jeux à deux.
 - **Les IA de jeu doivent être honnêtes** : minimax complet quand l'espace de
@@ -257,8 +264,12 @@ npm run web           # puis ouvrir le jeu et y jouer réellement
 |---|---|
 | `npm run typecheck` | TypeScript strict sur tout le dépôt |
 | `npm run audit` | Le contrat d'un jeu et les sept pièges, sur les 100 fichiers |
-| `npm run test:echecs` | Le moteur d'échecs, par dénombrement de coups sur cinq positions de référence |
-| `npm run test:backgammon` | Le moteur de backgammon, par invariants sur 400 parties |
+| `npm run test:regles` | Les règles partagées : paquets, blackjack, scopa, vocabulaire, aléatoire |
+| `npm run test:moteurs` | Échecs (perft sur cinq positions) et backgammon (scénarios + 400 parties) |
+
+**Chaque maillon fait échouer la chaîne.** Les cinq contrôles ont été éprouvés
+sur un défaut injecté volontairement : aucun ne se contente d'afficher un
+message. Si tu ajoutes un contrôle, termine-le par `process.exit(1)`.
 
 `outils/audit.mjs` relit chaque fichier de jeu : meta complète, identifiant
 unique, catégorie cohérente avec le dossier, trois à cinq règles, pas de boucle
@@ -278,5 +289,8 @@ présent. La console du navigateur doit rester vide d'erreurs.
   des jetons de design, API détaillée, journal des décisions et des correctifs.
 - [docs/PUBLICATION.md](docs/PUBLICATION.md) — ce qui est prêt pour l'App Store
   et Google Play, et ce qui demande les comptes développeur de l'utilisateur.
+- [MEMORY.md](MEMORY.md) — reprise de projet : état, décisions, ce qui reste.
+- [docs/VALIDATION_100_JEUX.md](docs/VALIDATION_100_JEUX.md) — ce qui a été
+  réellement testé sur chacun des cent jeux, et ce qui ne l'a pas été.
 - [README.md](README.md) — présentation, installation, fabrication des binaires
   iOS et Android avec EAS Build.

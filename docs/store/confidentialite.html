@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Politique de confidentialité — Plateau</title>
+    <meta
+      name="description"
+      content="Plateau ne collecte aucune donnée personnelle et ne transmet rien sur Internet. Tout reste sur votre appareil."
+    />
+    <style>
+      :root {
+        --fond: #f4f4f7;
+        --surface: #ffffff;
+        --texte: #16161c;
+        --attenue: #61616f;
+        --trait: #dcdce4;
+        --accent: #5b8def;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fond: #0b0b0f;
+          --surface: #16161c;
+          --texte: #f2f2f6;
+          --attenue: #a2a2b4;
+          --trait: #2a2a35;
+          --accent: #7ba4f4;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 40px 16px 80px;
+        background: var(--fond);
+        color: var(--texte);
+        font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      main { max-width: 720px; margin: 0 auto; }
+      h1 { font-size: 30px; letter-spacing: -0.6px; margin: 0 0 4px; }
+      h2 { font-size: 20px; letter-spacing: -0.2px; margin: 40px 0 10px; }
+      .date { color: var(--attenue); font-size: 14px; margin: 0 0 32px; }
+      .resume {
+        background: var(--surface);
+        border: 1px solid var(--trait);
+        border-left: 3px solid var(--accent);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 15px; }
+      th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+      th { color: var(--attenue); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; }
+      code { background: var(--surface); border: 1px solid var(--trait); border-radius: 5px; padding: 1px 5px; font-size: 14px; }
+      .acompleter { background: #f0a03033; border-radius: 4px; padding: 1px 6px; font-weight: 600; }
+      footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--trait); color: var(--attenue); font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Politique de confidentialité</h1>
+      <p class="date">Application <strong>Plateau</strong> — dernière mise à jour : 20 septembre 2026</p>
+
+      <p class="resume">
+        Plateau fonctionne entièrement sur votre appareil. L’application
+        <strong>ne collecte aucune donnée personnelle</strong>,
+        <strong>ne transmet rien</strong> sur Internet, et ne contient ni publicité,
+        ni traceur, ni outil de mesure d’audience. Aucun compte n’est nécessaire.
+      </p>
+
+      <h2>Qui édite l’application</h2>
+      <table>
+        <tr><th>Responsable</th><td><span class="acompleter">À COMPLÉTER</span> — nom ou raison sociale</td></tr>
+        <tr><th>Contact</th><td><span class="acompleter">À COMPLÉTER</span> — adresse électronique</td></tr>
+      </table>
+
+      <h2>Données enregistrées sur votre appareil</h2>
+      <p>
+        L’application écrit deux entrées dans le stockage local, sous le préfixe
+        <code>plateau:v1:</code>.
+      </p>
+      <table>
+        <tr><th>Clé</th><th>Contenu</th></tr>
+        <tr>
+          <td><code>settings</code></td>
+          <td>Thème clair ou sombre, vibrations, sons, animations réduites, affichage des règles.</td>
+        </tr>
+        <tr>
+          <td><code>progress</code></td>
+          <td>Meilleurs scores, parties jouées, victoires et défaites, jeux favoris.</td>
+        </tr>
+      </table>
+      <p>
+        Ces données ne quittent jamais l’appareil et ne contiennent aucune information
+        permettant de vous identifier : ni nom, ni adresse, ni identifiant d’appareil,
+        ni adresse IP. Elles disparaissent à la désinstallation, et peuvent être effacées
+        à tout moment depuis <strong>Réglages → Remettre les statistiques à zéro</strong>.
+      </p>
+
+      <h2>Données transmises</h2>
+      <p>
+        <strong>Aucune.</strong> L’application ne comporte aucun code de communication
+        réseau. Le paquet de production livré sur les magasins a été vérifié : il ne
+        contient aucun appel réseau, aucune adresse de serveur, et aucune bibliothèque
+        de mesure d’audience, de publicité ou de rapport d’incident.
+      </p>
+
+      <h2>Permissions</h2>
+      <table>
+        <tr><th>Plateforme</th><th>Permission</th><th>Pourquoi</th></tr>
+        <tr><td>Android</td><td><code>VIBRATE</code></td><td>Retour haptique. Désactivable dans les réglages.</td></tr>
+        <tr><td>iOS</td><td>aucune</td><td>—</td></tr>
+      </table>
+      <p>
+        Ni localisation, ni contacts, ni appareil photo, ni microphone, ni notifications,
+        ni identifiant publicitaire.
+      </p>
+
+      <h2>Enfants</h2>
+      <p>
+        Aucune donnée n’étant collectée, l’application peut être utilisée par des enfants
+        sans traitement particulier. Elle ne comporte ni achat intégré, ni publicité, ni
+        lien sortant.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        Aucune donnée personnelle n’étant collectée ni transmise, il n’existe aucun fichier
+        vous concernant du côté de l’éditeur. Les droits d’accès, de rectification et
+        d’effacement portent sur les seules données de votre appareil, que vous contrôlez
+        entièrement depuis les réglages de l’application.
+      </p>
+
+      <h2>Modifications</h2>
+      <p>
+        Toute évolution sera publiée à cette adresse avec une nouvelle date. Si une version
+        future venait à transmettre des données — ce qui n’est pas prévu — cette politique
+        serait modifiée avant sa mise en ligne.
+      </p>
+
+      <footer>
+        Questions : <span class="acompleter">À COMPLÉTER</span> — adresse électronique.
+      </footer>
+    </main>
+  </body>
+</html>

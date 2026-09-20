@@ -1,0 +1,91 @@
+# Contrôles automatiques à chaque envoi.
+#
+# Aucun secret n'est utilisé ici : rien n'est publié, rien n'est signé, aucune
+# compilation EAS n'est déclenchée. Le workflow ne fait que rejouer ce que
+# `npm run verifier` fait en local, plus deux contrôles de configuration.
+name: Vérifier
+
+on:
+  push:
+    branches: [main, finalisation]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Un seul travail à la fois par branche : un envoi rapide annule le précédent.
+concurrency:
+  group: verifier-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    name: Types, catalogue, règles, moteurs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: TypeScript strict
+        run: npm run typecheck
+
+      - name: Audit du catalogue
+        run: npm run audit
+
+      - name: Règles partagées
+        run: npm run test:regles
+
+      - name: Moteur d'échecs
+        run: npm run test:echecs
+
+      - name: Moteur de backgammon
+        run: npm run test:backgammon
+
+  configuration:
+    name: Configuration Expo et bundle de production
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      # Attrape les champs retirés du schéma et les versions incompatibles —
+      # exactement ce qui faisait échouer une compilation EAS avant.
+      - name: expo-doctor
+        run: npx expo-doctor@latest
+
+      # Le bundle doit se construire pour les deux plateformes. Aucun compte
+      # n'est nécessaire : c'est Metro en local, pas EAS.
+      - name: Bundle iOS et Android
+        run: npx expo export --platform ios --platform android --output-dir dist-ci
+
+      - name: Vérifier qu'aucun appel réseau ne part de l'application
+        run: |
+          set -e
+          ATTEINTES=$(grep -roE "XMLHttpRequest|navigator\.sendBeacon" dist-ci/_expo/static/js || true)
+          if [ -n "$ATTEINTES" ]; then
+            echo "Du code réseau a été trouvé dans le bundle livré :"
+            echo "$ATTEINTES"
+            exit 1
+          fi
+          echo "Aucun appel réseau dans le bundle — conforme à la politique de confidentialité."

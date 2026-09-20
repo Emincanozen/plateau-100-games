@@ -4,7 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
-import { Row, Txt, GameOver } from '@/ui';
+import { BoutonControle, Row, Txt, GameOver, useClavier } from '@/ui';
 import { useRafLoop } from '../lib/hooks';
 import { clamp, randInt } from '../lib/rng';
 
@@ -21,7 +21,7 @@ export const meta: GameMeta = {
   scoreUnit: 'pts',
   tags: ['couleurs', 'solo', 'visée'],
   rules: [
-    'Fais glisser ton doigt pour orienter le canon, relâche pour tirer.',
+    'Oriente le canon en glissant le doigt, aux boutons ou au clavier, puis tire.',
     'Une bulle qui rejoint deux congénères de sa couleur ou plus fait éclater tout le groupe.',
     'Les bulles détachées du plafond tombent aussi — enchaîner rapporte gros.',
     'Une nouvelle rangée descend tous les sept tirs. Si les bulles atteignent le bas, c’est perdu.',
@@ -325,6 +325,26 @@ export default function Bulles({ submitScore, best, haptic }: GameScreenProps) {
     [W, CANON_Y, tirer],
   );
 
+  // Viser au geste seul rend le jeu injouable au clavier et muet pour un
+  // lecteur d'écran. On expose donc l'angle par pas de cinq degrés.
+  const pivoter = useCallback(
+    (radians: number) => {
+      angle.current = clamp(angle.current + radians, -Math.PI + 0.35, -0.35);
+      rendre((n) => n + 1); // le canon doit suivre à l'écran
+    },
+    [],
+  );
+  const PAS = Math.PI / 36; // cinq degrés
+
+  useClavier({
+    ArrowLeft: () => pivoter(-PAS),
+    ArrowRight: () => pivoter(PAS),
+    KeyQ: () => pivoter(-PAS),
+    KeyD: () => pivoter(PAS),
+    Space: tirer,
+    Enter: tirer,
+  });
+
   useFrameStatus(
     <Row gap={space.md}>
       <Txt variant="label" tone="dim">
@@ -428,8 +448,14 @@ export default function Bulles({ submitScore, best, haptic }: GameScreenProps) {
           }}
         />
         <Txt variant="caption" tone="faint">
-          · glisse pour viser, relâche pour tirer
+          · glisse pour viser
         </Txt>
+      </Row>
+
+      <Row gap={10}>
+        <BoutonControle glyphe="◀" label="Pivoter à gauche" tint="#8B7DFF33" onPress={() => pivoter(-PAS)} />
+        <BoutonControle glyphe="●" label="Tirer" tint="#8B7DFF33" onPress={tirer} />
+        <BoutonControle glyphe="▶" label="Pivoter à droite" tint="#8B7DFF33" onPress={() => pivoter(PAS)} />
       </Row>
 
       <GameOver

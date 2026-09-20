@@ -6,6 +6,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { useProgress } from '@/engine/progress';
 import { useSettings } from '@/engine/settings';
 import { fireHaptic, type HapticKind } from '@/engine/haptics';
+import { jouerSon, libererLesSons } from '@/engine/sons';
 import { GameFrameProvider, StatusSlot, useGameFrame } from '@/engine/frame';
 import { useRetour } from '@/engine/navigation';
 import { CATEGORY_BY_ID, type GameScreenProps } from '@/engine/types';
@@ -51,12 +52,18 @@ function GameHost({ id }: { id?: string }) {
     setPause(rulesOpen);
   }, [rulesOpen, setPause]);
 
+  // Un seul entonnoir : les cent jeux appellent `haptic`, et c'est ici que
+  // vibration et son partent ensemble. Aucun jeu ne connaît le module audio.
   const haptic = useCallback(
     (kind: HapticKind = 'light') => {
       if (settings.haptics) fireHaptic(kind);
+      if (settings.sound) jouerSon(kind);
     },
-    [settings.haptics],
+    [settings.haptics, settings.sound],
   );
+
+  // Les lecteurs audio ne se libèrent pas tout seuls.
+  useEffect(() => libererLesSons, []);
 
   const handleScore = useCallback(
     (score: number) => (entry ? submitScore(entry.meta.id, score, entry.meta.score) : false),

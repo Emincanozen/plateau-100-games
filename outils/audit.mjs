@@ -89,10 +89,26 @@ for (const { cat, chemin, nom } of fichiers) {
   if (!src.includes('useFrameRestart(')) ajouter(nom, 'useFrameRestart absent — le bouton ↻ ne ferait rien');
   if (!src.includes('useFrameStatus(')) ajouter(nom, 'useFrameStatus absent — pas de ligne d’état');
 
-  // --- accessibilité
+  // --- accessibilité : tout élément tactile doit porter une étiquette
   const pressables = (src.match(/<Pressable\b/g) || []).length;
   const labels = (src.match(/accessibilityLabel=/g) || []).length;
   if (pressables > 0 && labels === 0) ajouter(nom, `${pressables} Pressable sans accessibilityLabel`);
+
+  // --- jouabilité : un jeu piloté au geste seul est injouable au clavier,
+  // à la souris sur certains navigateurs, et muet pour un lecteur d'écran.
+  // Il lui faut une autre entrée : boutons étiquetés, croix, ou clavier.
+  const commandesEtiquetees =
+    labels > 0 ||
+    src.includes('CroixDirectionnelle') ||
+    src.includes('BoutonControle') ||
+    src.includes('<Button') ||
+    src.includes('<Segmented') ||
+    src.includes('<Carte') ||
+    src.includes('<De ');
+  const clavier = src.includes('useClavier(');
+  if (!commandesEtiquetees && !clavier) {
+    ajouter(nom, 'aucune commande étiquetée ni clavier : jouable au geste seulement');
+  }
 
   // --- enregistrement du résultat
   if (score && score !== 'none' && !src.includes('submitScore(')) {
@@ -129,4 +145,12 @@ console.log(`fichiers de jeu analysés : ${fichiers.length}`);
 console.log(`par catégorie : ${Object.entries(parCat).map(([k, v]) => `${k} ${v}`).join(' · ')}`);
 console.log(`identifiants uniques : ${ids.size}`);
 console.log('');
-console.log(probs.length === 0 ? 'AUCUN PROBLEME STATIQUE' : `${probs.length} PROBLEMES :\n` + probs.join('\n'));
+
+if (probs.length === 0) {
+  console.log('AUCUN PROBLEME STATIQUE');
+  process.exit(0);
+}
+
+// Sortir en échec, sinon « npm run verifier » passerait malgré les anomalies.
+console.error(`${probs.length} PROBLEMES :\n` + probs.join('\n'));
+process.exit(1);

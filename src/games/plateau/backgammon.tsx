@@ -418,8 +418,11 @@ export default function Backgammon({ submitResult, haptic }: GameScreenProps) {
           disabled={!sortiePossible}
           onPress={() => toucher(SORTIE)}
           style={{
-            paddingHorizontal: space.md,
-            paddingVertical: 6,
+            minHeight: 44,
+            minWidth: 88,
+            paddingHorizontal: space.lg,
+            alignItems: 'center',
+            justifyContent: 'center',
             borderRadius: radius.pill,
             backgroundColor: sortiePossible ? ACCENT : c.surfaceAlt,
             opacity: sortiePossible ? 1 : 0.5,

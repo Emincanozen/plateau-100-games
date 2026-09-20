@@ -4,7 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
-import { Row, Txt, GameOver } from '@/ui';
+import { CroixDirectionnelle, Row, Txt, GameOver, useClavier, type Direction } from '@/ui';
 import { useBoardSize } from '../lib/hooks';
 import { randInt } from '../lib/rng';
 
@@ -21,7 +21,7 @@ export const meta: GameMeta = {
   scoreUnit: 'pts',
   tags: ['puzzle', 'solo', 'addictif'],
   rules: [
-    'Balaie l’écran dans une direction : toutes les tuiles glissent de ce côté.',
+    'Balaie l’écran, touche les flèches ou joue au clavier : toutes les tuiles glissent de ce côté.',
     'Deux tuiles identiques qui se rencontrent fusionnent et leur valeur double.',
     'Chaque fusion ajoute la valeur obtenue à ton score.',
     'Une nouvelle tuile apparaît après chaque mouvement. La partie s’arrête quand plus aucun mouvement n’est possible.',
@@ -204,6 +204,27 @@ export default function Jeu2048({ submitScore, best, haptic }: GameScreenProps) 
     return Gesture.Race(make('right', 1), make('left', 2), make('up', 4), make('down', 8));
   }, [apply]);
 
+  // Le balayage ne suffit pas : sur le web il n'y a rien à balayer, et un
+  // lecteur d'écran n'a aucune cible. D'où le clavier et la croix, comme au
+  // Snake.
+  useClavier({
+    ArrowLeft: () => apply('left'),
+    ArrowRight: () => apply('right'),
+    ArrowUp: () => apply('up'),
+    ArrowDown: () => apply('down'),
+    KeyQ: () => apply('left'),
+    KeyD: () => apply('right'),
+    KeyZ: () => apply('up'),
+    KeyS: () => apply('down'),
+  });
+
+  const versDirection: Record<Direction, Dir> = {
+    gauche: 'left',
+    droite: 'right',
+    haut: 'up',
+    bas: 'down',
+  };
+
   useFrameStatus(
     <Row gap={space.lg}>
       <Txt variant="label" tone="dim">
@@ -263,8 +284,10 @@ export default function Jeu2048({ submitScore, best, haptic }: GameScreenProps) 
         </View>
       </GestureDetector>
 
+      <CroixDirectionnelle onDirection={(d) => apply(versDirection[d])} tint="#34B37E33" />
+
       <Txt variant="caption" tone="faint">
-        Balaie dans une direction pour jouer
+        Balaie la grille, touche les flèches, ou joue au clavier
       </Txt>
 
       <GameOver
