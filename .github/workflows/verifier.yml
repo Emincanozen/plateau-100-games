@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   verifier:
-    name: Types, catalogue, confidentialité, fiches, règles, publicité, moteurs
+    name: Types, catalogue, confidentialité, fiches, règles, barèmes, publicité, moteurs
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -56,6 +56,11 @@ jobs:
 
       - name: Règles partagées
         run: npm run test:regles
+
+      # Les barèmes propres aux jeux — c'est ce contrôle qui a trouvé la
+      # petite suite du zanzibar jamais reconnue.
+      - name: Barèmes des jeux
+        run: npm run test:regles-jeux
 
       # Fréquence, consentement, pannes : la logique publicitaire, sans SDK.
       - name: Logique publicitaire
