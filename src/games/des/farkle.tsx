@@ -5,6 +5,7 @@ import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
 import { Button, De, Row, Txt, GameOver } from '@/ui';
 import { randBetween } from '../lib/rng';
+import { evaluerLancer } from '../lib/regles';
 
 export const meta: GameMeta = {
   id: 'farkle',
@@ -28,38 +29,6 @@ export const meta: GameMeta = {
 const OBJECTIF = 4000;
 
 /** Points d'un ensemble de dés, et nombre de dés qui ne rapportent rien. */
-export function evaluerLancer(des: number[]): { points: number; utilises: number } {
-  const comptes = [0, 0, 0, 0, 0, 0, 0];
-  des.forEach((d) => (comptes[d] += 1));
-
-  let points = 0;
-  let utilises = 0;
-
-  // Suite complète et trois paires : les combinaisons de six dés d'abord.
-  if (des.length === 6) {
-    if (comptes.slice(1).every((n) => n === 1)) return { points: 1500, utilises: 6 };
-    if (comptes.filter((n) => n === 2).length === 3) return { points: 1500, utilises: 6 };
-  }
-
-  for (let face = 1; face <= 6; face++) {
-    const n = comptes[face];
-    if (n >= 3) {
-      // Un brelan vaut 100 × la face, sauf les as qui valent 1000.
-      const base = face === 1 ? 1000 : face * 100;
-      // Chaque dé au-delà du brelan double la valeur.
-      points += base * Math.pow(2, n - 3);
-      utilises += n;
-      comptes[face] = 0;
-    }
-  }
-
-  points += comptes[1] * 100;
-  utilises += comptes[1];
-  points += comptes[5] * 50;
-  utilises += comptes[5];
-
-  return { points, utilises };
-}
 
 const lancer = (nombre: number): number[] =>
   Array.from({ length: nombre }, () => randBetween(1, 6));

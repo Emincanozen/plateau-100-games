@@ -5,6 +5,7 @@ import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
 import { Button, Row, Txt, GameOver } from '@/ui';
 import { randBetween } from '../lib/rng';
+import { valeurFigure, type Des5 as Dice, type FigureYams as Figure } from '../lib/regles';
 
 export const meta: GameMeta = {
   id: 'yams',
@@ -26,10 +27,6 @@ export const meta: GameMeta = {
   ],
 };
 
-type Dice = number[];
-type Figure =
-  | 'as' | 'deux' | 'trois' | 'quatre' | 'cinq' | 'six'
-  | 'brelan' | 'carre' | 'full' | 'petiteSuite' | 'grandeSuite' | 'yams' | 'chance';
 
 const HAUT: Figure[] = ['as', 'deux', 'trois', 'quatre', 'cinq', 'six'];
 const BAS: Figure[] = ['brelan', 'carre', 'full', 'petiteSuite', 'grandeSuite', 'yams', 'chance'];
@@ -50,62 +47,8 @@ const LABELS: Record<Figure, string> = {
   chance: 'Chance',
 };
 
-const compte = (dice: Dice, face: number) => dice.filter((d) => d === face).length;
-const somme = (dice: Dice) => dice.reduce((a, b) => a + b, 0);
 
-function occurrences(dice: Dice): number[] {
-  const out = Array(7).fill(0);
-  dice.forEach((d) => (out[d] += 1));
-  return out;
-}
 
-/** Longueur de la plus longue suite de faces consecutives. */
-function plusLongueSuite(dice: Dice): number {
-  const presentes = new Set(dice);
-  let best = 0;
-  let courant = 0;
-  for (let face = 1; face <= 6; face++) {
-    if (presentes.has(face)) {
-      courant += 1;
-      best = Math.max(best, courant);
-    } else {
-      courant = 0;
-    }
-  }
-  return best;
-}
-
-export function valeurFigure(figure: Figure, dice: Dice): number {
-  const occ = occurrences(dice);
-  switch (figure) {
-    case 'as':
-      return compte(dice, 1) * 1;
-    case 'deux':
-      return compte(dice, 2) * 2;
-    case 'trois':
-      return compte(dice, 3) * 3;
-    case 'quatre':
-      return compte(dice, 4) * 4;
-    case 'cinq':
-      return compte(dice, 5) * 5;
-    case 'six':
-      return compte(dice, 6) * 6;
-    case 'brelan':
-      return occ.some((n) => n >= 3) ? somme(dice) : 0;
-    case 'carre':
-      return occ.some((n) => n >= 4) ? somme(dice) : 0;
-    case 'full':
-      return occ.some((n) => n === 3) && occ.some((n) => n === 2) ? 25 : 0;
-    case 'petiteSuite':
-      return plusLongueSuite(dice) >= 4 ? 30 : 0;
-    case 'grandeSuite':
-      return plusLongueSuite(dice) >= 5 ? 40 : 0;
-    case 'yams':
-      return occ.some((n) => n === 5) ? 50 : 0;
-    case 'chance':
-      return somme(dice);
-  }
-}
 
 const FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 

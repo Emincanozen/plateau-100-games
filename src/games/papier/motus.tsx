@@ -5,6 +5,7 @@ import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
 import { Row, Txt, GameOver } from '@/ui';
 import { MOTS_CINQ } from '../lib/mots';
+import { comparer, type EtatLettre as Etat } from '../lib/regles';
 import { pick } from '../lib/rng';
 
 export const meta: GameMeta = {
@@ -30,31 +31,8 @@ export const meta: GameMeta = {
 const LONGUEUR = 5;
 const ESSAIS_MAX = 6;
 
-type Etat = 'juste' | 'present' | 'absent';
 
 /** Compare une proposition au mot secret, sans compter deux fois une lettre. */
-export function comparer(proposition: string, secret: string): Etat[] {
-  const resultat: Etat[] = Array(LONGUEUR).fill('absent');
-  const restantes: (string | null)[] = secret.split('');
-
-  // Premier passage : les lettres bien placées.
-  for (let i = 0; i < LONGUEUR; i++) {
-    if (proposition[i] === secret[i]) {
-      resultat[i] = 'juste';
-      restantes[i] = null;
-    }
-  }
-  // Second passage : les lettres présentes ailleurs.
-  for (let i = 0; i < LONGUEUR; i++) {
-    if (resultat[i] === 'juste') continue;
-    const position = restantes.indexOf(proposition[i]);
-    if (position !== -1) {
-      resultat[i] = 'present';
-      restantes[position] = null;
-    }
-  }
-  return resultat;
-}
 
 const CLAVIER = ['AZERTYUIOP'.split(''), 'QSDFGHJKLM'.split(''), 'WXCVBN'.split('')];
 

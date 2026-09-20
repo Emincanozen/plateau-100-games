@@ -5,6 +5,7 @@ import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
 import { Button, De, Row, Txt, GameOver } from '@/ui';
 import { randBetween } from '../lib/rng';
+import { evaluerZanzibar, type Des3 as Des } from '../lib/regles';
 
 export const meta: GameMeta = {
   id: 'zanzibar',
@@ -25,25 +26,10 @@ export const meta: GameMeta = {
   ],
 };
 
-type Des = [number, number, number];
 
 const lancerTrois = (): Des => [randBetween(1, 6), randBetween(1, 6), randBetween(1, 6)];
 
 /** Valeur d'une main : plus le rang est haut, plus la main est forte. */
-export function evaluerZanzibar(des: Des): { rang: number; nom: string } {
-  const tri = [...des].sort((a, b) => b - a);
-  const [a, b, c] = tri;
-
-  if (a === 6 && b === 5 && c === 4) return { rang: 10000, nom: 'Zanzibar (4-5-6)' };
-  if (a === b && b === c) return { rang: 9000 + a, nom: `Brelan de ${a}` };
-  if (a === 1 && b === 2 && c === 3) return { rang: 8000, nom: 'Petite suite (1-2-3)' };
-
-  // Paires : la valeur de la paire prime, le dé isolé départage.
-  if (a === b) return { rang: 5000 + a * 10 + c, nom: `Paire de ${a}` };
-  if (b === c) return { rang: 5000 + b * 10 + a, nom: `Paire de ${b}` };
-
-  return { rang: a * 100 + b * 10 + c, nom: `${a}-${b}-${c}` };
-}
 
 const JETONS_MAX = 3;
 

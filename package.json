@@ -46,13 +46,14 @@
     "test:echecs": "tsx outils/test-echecs.ts",
     "test:backgammon": "tsx outils/test-backgammon.ts",
     "test:moteurs": "npm run test:echecs && npm run test:backgammon",
-    "verifier": "npm run typecheck && npm run audit && npm run audit:confidentialite && npm run test:fiches && npm run test:regles && npm run test:pub && npm run test:moteurs",
+    "verifier": "npm run typecheck && npm run audit && npm run audit:confidentialite && npm run test:fiches && npm run test:regles && npm run test:regles-jeux && npm run test:pub && npm run test:moteurs",
     "assets:icones": "node outils/icones.mjs",
     "assets:sons": "node outils/sons.mjs",
     "test:pub": "tsx outils/test-pub.ts",
     "test:fiches": "node outils/controle-fiches.mjs",
     "audit:confidentialite": "node outils/audit-confidentialite.mjs",
-    "assets:magasin": "node outils/visuels-magasin.mjs"
+    "assets:magasin": "node outils/visuels-magasin.mjs",
+    "test:regles-jeux": "tsx outils/test-regles-jeux.ts"
   },
   "private": true
 }

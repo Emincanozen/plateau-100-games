@@ -188,6 +188,7 @@ Et de `src/games/lib/` :
 | `hooks.ts` | `useInterval` `useRafLoop` `useTimer` `formatClock` `useBoardSize` `useUndoable`. Les deux hooks de boucle se figent tout seuls quand le jeu est en pause. |
 | `cartes.ts` | Jeux de 52/32 cartes, valeurs blackjack, suites circulaires |
 | `mots.ts` | Mots avec indices, mots de cinq lettres, vocabulaire de validation (`MOTS_JEU`, `DICTIONNAIRE`) |
+| `regles.ts` | Barèmes extraits de leurs jeux : yams, farkle, zanzibar, 421, Motus |
 | `echecs.ts` | Moteur d'échecs complet, sans React : règles, recherche, notation |
 | `backgammon.ts` | Moteur de backgammon, sans React : règles, suites légales, IA probabiliste |
 
@@ -279,7 +280,7 @@ ne contient pas `GoogleMobileAds`.
 ## 8. Vérifier son travail
 
 ```bash
-npm run verifier      # obligatoire — enchaîne les sept contrôles ci-dessous
+npm run verifier      # obligatoire — enchaîne les huit contrôles ci-dessous
 npm run web           # puis ouvrir le jeu et y jouer réellement
 ```
 
@@ -290,6 +291,7 @@ npm run web           # puis ouvrir le jeu et y jouer réellement
 | `npm run audit:confidentialite` | Aucun appel réseau hors `src/pub/`, dépendances recensées, permissions justifiées — y compris dans le manifeste Android fusionné |
 | `npm run test:fiches` | Les chiffres des fiches de magasin correspondent au code |
 | `npm run test:regles` | Les règles partagées : paquets, blackjack, scopa, vocabulaire, aléatoire |
+| `npm run test:regles-jeux` | Les barèmes propres aux jeux : yams, farkle, zanzibar, 421, Motus |
 | `npm run test:pub` | Fréquence, consentement, pannes : la logique publicitaire, avec un faux SDK |
 | `npm run test:moteurs` | Échecs (perft sur cinq positions) et backgammon (scénarios + 400 parties) |
 

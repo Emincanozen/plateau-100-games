@@ -5,6 +5,7 @@ import { useFrameRestart, useFrameStatus } from '@/engine/frame';
 import type { GameMeta, GameScreenProps } from '@/engine/types';
 import { Button, De, Row, Txt, GameOver } from '@/ui';
 import { randBetween } from '../lib/rng';
+import { evaluerMain, type Des3 as Des } from '../lib/regles';
 
 export const meta: GameMeta = {
   id: '421',
@@ -26,7 +27,6 @@ export const meta: GameMeta = {
   ],
 };
 
-type Des = [number, number, number];
 
 const lancerDes = (): Des => [randBetween(1, 6), randBetween(1, 6), randBetween(1, 6)];
 
@@ -34,23 +34,6 @@ const lancerDes = (): Des => [randBetween(1, 6), randBetween(1, 6), randBetween(
  * Valeur d'une main, du plus fort au plus faible. On renvoie aussi le nombre
  * de jetons que le perdant ramasse quand cette main l'emporte.
  */
-export function evaluerMain(des: Des): { rang: number; nom: string; jetons: number } {
-  const tri = [...des].sort((a, b) => b - a);
-  const [a, b, c] = tri;
-
-  if (a === 4 && b === 2 && c === 1) return { rang: 1000, nom: '421', jetons: 10 };
-
-  // Les as : deux 1 et une troisième valeur. Le 1-1-1 est le brelan d'as.
-  if (a === 1 && b === 1 && c === 1) return { rang: 900, nom: 'Brelan d’as', jetons: 7 };
-  if (b === 1 && c === 1) return { rang: 800 + a, nom: `As au ${a}`, jetons: a === 6 ? 6 : 2 };
-
-  if (a === b && b === c) return { rang: 700 + a, nom: `Brelan de ${a}`, jetons: a };
-
-  // Suites : trois valeurs consécutives.
-  if (a - 1 === b && b - 1 === c) return { rang: 600 + a, nom: `Suite au ${a}`, jetons: 2 };
-
-  return { rang: a * 100 + b * 10 + c, nom: `${a}-${b}-${c}`, jetons: 1 };
-}
 
 const JETONS_EN_JEU = 11;
 
