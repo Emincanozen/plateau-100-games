@@ -15,7 +15,7 @@ export default function Reglages() {
   const retour = useRetour();
   const { settings, set } = useSettings();
   const { totalPlays, gamesTried, favorites, resetEverything } = useProgress();
-  const { optionsConfidentialiteDisponibles, ouvrirOptionsConfidentialite, diffusionActive } =
+  const { optionsConfidentialiteDisponibles, ouvrirOptionsConfidentialite, diffusionActive, consentement } =
     useRegiePub();
   const [confirmReset, setConfirmReset] = useState(false);
   const [confidentialite, setConfidentialite] = useState(false);
@@ -135,9 +135,15 @@ export default function Reglages() {
                 dépend du choix que tu fais dans le formulaire de consentement.
               </Txt>
               <Txt variant="caption" tone="dim">
+                {/* Trois cas bien distincts. Dire « aucun consentement requis »
+                    quand l’état est simplement inconnu — hors ligne, module
+                    absent — serait une affirmation fausse sur un écran de
+                    confidentialité. */}
                 {optionsConfidentialiteDisponibles
                   ? 'Tu peux revenir sur ce choix à tout moment avec le bouton ci-dessus.'
-                  : 'Aucun consentement n’est requis dans ta région ; les annonces sont diffusées sans profilage publicitaire.'}
+                  : consentement.indetermine
+                    ? 'Le formulaire de consentement n’a pas pu être consulté sur cet appareil : par prudence, aucune publicité n’est diffusée.'
+                    : 'Aucun consentement n’est requis dans ta région ; les annonces sont diffusées sans profilage publicitaire.'}
               </Txt>
               <Txt variant="caption" tone="dim">
                 La seule permission demandée est la vibration, sur Android, pour le retour
