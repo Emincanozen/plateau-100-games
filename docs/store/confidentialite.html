@@ -6,7 +6,7 @@
     <title>Politique de confidentialité — Plateau</title>
     <meta
       name="description"
-      content="Plateau ne collecte aucune donnée personnelle et ne transmet rien sur Internet. Tout reste sur votre appareil."
+      content="Plateau ne collecte aucune donnée personnelle. Les publicités affichées dans l'application sont fournies par Google AdMob, qui traite certaines données techniques."
     />
     <style>
       :root {
@@ -50,7 +50,8 @@
       th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--trait); vertical-align: top; }
       th { color: var(--attenue); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; }
       code { background: var(--surface); border: 1px solid var(--trait); border-radius: 5px; padding: 1px 5px; font-size: 14px; }
-      .acompleter { background: #f0a03033; border-radius: 4px; padding: 1px 6px; font-weight: 600; }
+      .aremplir { background: #f0a03033; border-radius: 4px; padding: 1px 6px; font-weight: 600; font-family: monospace; }
+      a { color: var(--accent); }
       footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--trait); color: var(--attenue); font-size: 14px; }
     </style>
   </head>
@@ -60,22 +61,32 @@
       <p class="date">Application <strong>Plateau</strong> — dernière mise à jour : 20 septembre 2026</p>
 
       <p class="resume">
-        Plateau fonctionne entièrement sur votre appareil. L’application
-        <strong>ne collecte aucune donnée personnelle</strong>,
-        <strong>ne transmet rien</strong> sur Internet, et ne contient ni publicité,
-        ni traceur, ni outil de mesure d’audience. Aucun compte n’est nécessaire.
+        Les cent jeux de Plateau fonctionnent hors ligne, et votre progression
+        reste sur votre appareil : l’éditeur ne la reçoit jamais.
+        L’application est gratuite et financée par la publicité. Les annonces
+        sont fournies par <strong>Google AdMob</strong>, dont le module traite
+        certaines données techniques pour choisir et mesurer les publicités.
+        Là où la réglementation l’impose, un écran de consentement vous laisse
+        décider, et ce choix reste modifiable à tout moment dans les réglages
+        de l’application.
       </p>
 
       <h2>Qui édite l’application</h2>
       <table>
-        <tr><th>Responsable</th><td><span class="acompleter">À COMPLÉTER</span> — nom ou raison sociale</td></tr>
-        <tr><th>Contact</th><td><span class="acompleter">À COMPLÉTER</span> — adresse électronique</td></tr>
+        <tr><th>Responsable du traitement</th><td><span class="aremplir">{{EDITEUR}}</span></td></tr>
+        <tr><th>Contact</th><td><span class="aremplir">{{CONTACT}}</span></td></tr>
       </table>
+      <p>
+        Pour la partie publicitaire, <strong>Google Ireland Limited</strong>
+        (Gordon House, Barrow Street, Dublin 4, Irlande) agit comme
+        responsable de traitement indépendant ou conjoint selon les
+        finalités ; ses conditions et sa politique sont liées plus bas.
+      </p>
 
       <h2>Données enregistrées sur votre appareil</h2>
       <p>
         L’application écrit deux entrées dans le stockage local, sous le préfixe
-        <code>plateau:v1:</code>.
+        <code>plateau:v1:</code>. Elles ne quittent jamais l’appareil.
       </p>
       <table>
         <tr><th>Clé</th><th>Contenu</th></tr>
@@ -89,55 +100,176 @@
         </tr>
       </table>
       <p>
-        Ces données ne quittent jamais l’appareil et ne contiennent aucune information
-        permettant de vous identifier : ni nom, ni adresse, ni identifiant d’appareil,
-        ni adresse IP. Elles disparaissent à la désinstallation, et peuvent être effacées
-        à tout moment depuis <strong>Réglages → Remettre les statistiques à zéro</strong>.
+        Ces données ne contiennent aucune information permettant de vous identifier :
+        ni nom, ni adresse, ni identifiant d’appareil. Elles disparaissent à la
+        désinstallation, et peuvent être effacées à tout moment depuis
+        <strong>Réglages → Réinitialiser scores et favoris</strong>.
+      </p>
+      <p>
+        Le module publicitaire de Google conserve, lui, ses propres données sur
+        l’appareil — notamment votre choix de consentement, afin de ne pas vous
+        le redemander à chaque ouverture.
       </p>
 
-      <h2>Données transmises</h2>
+      <h2>Publicité</h2>
       <p>
-        <strong>Aucune.</strong> L’application ne comporte aucun code de communication
-        réseau. Le paquet de production livré sur les magasins a été vérifié : il ne
-        contient aucun appel réseau, aucune adresse de serveur, et aucune bibliothèque
-        de mesure d’audience, de publicité ou de rapport d’incident.
+        L’application affiche trois formats : un bandeau en bas du catalogue,
+        une annonce plein écran occasionnelle en quittant un jeu, et des
+        annonces facultatives que vous choisissez de regarder en échange d’une
+        aide. <strong>Aucune publicité n’apparaît pendant une partie</strong>,
+        et aucune n’est nécessaire pour accéder aux cent jeux.
+      </p>
+      <table>
+        <tr><th>Partenaire</th><th>Rôle</th><th>Informations</th></tr>
+        <tr>
+          <td>Google AdMob<br />(Google Ireland Limited)</td>
+          <td>Sélection, diffusion, mesure et facturation des annonces</td>
+          <td>
+            <a href="https://policies.google.com/privacy">Politique de confidentialité</a> ·
+            <a href="https://business.safety.google/adsprocessorterms/">Conditions relatives au traitement</a> ·
+            <a href="https://support.google.com/admob/answer/9012903">Données collectées par AdMob</a>
+          </td>
+        </tr>
+      </table>
+      <p>
+        Selon votre choix de consentement et votre région, le module de Google
+        peut traiter : un <strong>identifiant publicitaire</strong> de
+        l’appareil, votre <strong>adresse IP</strong> (dont il déduit une
+        localisation approximative), des <strong>informations techniques</strong>
+        sur l’appareil et le système, et des <strong>événements d’affichage</strong>
+        (annonce vue, cliquée, fermée). Ces traitements sont ceux de Google :
+        l’éditeur de Plateau ne reçoit aucune de ces données, seulement des
+        statistiques agrégées de revenus.
+      </p>
+      <p>
+        L’application ne pratique aucune autre forme de mesure d’audience :
+        pas d’outil d’analyse, pas de rapport d’incident automatique, pas de
+        réseau social intégré.
+      </p>
+
+      <h2>Finalités et bases légales</h2>
+      <table>
+        <tr><th>Finalité</th><th>Base légale</th></tr>
+        <tr>
+          <td>Faire fonctionner les jeux et conserver votre progression</td>
+          <td>Exécution du service — les données ne quittent pas l’appareil</td>
+        </tr>
+        <tr>
+          <td>Afficher des publicités non personnalisées</td>
+          <td>Consentement lorsqu’il est requis pour la lecture ou l’écriture d’informations sur l’appareil (directive ePrivacy), intérêt légitime pour le reste</td>
+        </tr>
+        <tr>
+          <td>Afficher des publicités personnalisées</td>
+          <td>Votre consentement, recueilli via le formulaire Google UMP</td>
+        </tr>
+        <tr>
+          <td>Mesurer la performance des annonces</td>
+          <td>Votre consentement, ou intérêt légitime selon la finalité déclarée dans le formulaire</td>
+        </tr>
+      </table>
+      <p>
+        <strong>Les publicités non personnalisées ne sont pas automatiquement
+        dispensées de consentement</strong> : elles supposent malgré tout, dans
+        la plupart des cas, un accès à des informations stockées sur
+        l’appareil. C’est pourquoi le formulaire est présenté partout où la
+        configuration Google le prévoit, et pas seulement pour le profilage.
+      </p>
+
+      <h2>Votre consentement</h2>
+      <p>
+        Le recueil passe par la plateforme <em>User Messaging Platform</em> de
+        Google, conforme au cadre <em>Transparency &amp; Consent Framework</em>
+        (TCF v2) de l’IAB Europe. Le formulaire s’affiche au premier lancement
+        dans les régions concernées — Espace économique européen, Royaume-Uni,
+        Suisse — et selon la configuration, dans les États américains dotés
+        d’une loi sur la vie privée.
+      </p>
+      <p>
+        <strong>Revenir sur votre choix :</strong>
+        <em>Réglages → Choix de confidentialité publicitaire</em>. Ce bouton
+        rouvre exactement le même formulaire, et un refus y est appliqué
+        immédiatement.
+      </p>
+      <p>
+        Si vous refusez, ou si le formulaire ne peut pas s’afficher — appareil
+        hors ligne, par exemple —, l’application <strong>n’affiche aucune
+        publicité</strong>. Elle ne bascule pas sur un mode dégradé sans votre
+        accord. Les cent jeux restent entièrement accessibles.
+      </p>
+      <p>
+        Sur iOS, si la publicité personnalisée est activée, le système peut
+        afficher la demande <em>App Tracking Transparency</em>. La refuser est
+        sans conséquence sur le fonctionnement des jeux.
+      </p>
+
+      <h2>Transferts hors de l’Union européenne</h2>
+      <p>
+        Google peut transférer des données vers des serveurs situés hors de
+        l’Espace économique européen, notamment aux États-Unis. Ces transferts
+        s’appuient sur les clauses contractuelles types de la Commission
+        européenne et, pour les entités certifiées, sur le
+        <em>EU-U.S. Data Privacy Framework</em>. Le détail figure dans les
+        <a href="https://business.safety.google/adsprocessorterms/">conditions
+        relatives au traitement des données publicitaires</a> de Google.
+        L’éditeur de Plateau n’opère lui-même aucun transfert : il n’exploite
+        aucun serveur.
+      </p>
+
+      <h2>Durée de conservation</h2>
+      <p>
+        Les données de l’application vivent sur l’appareil jusqu’à leur
+        effacement par vos soins ou à la désinstallation. Les durées de
+        conservation appliquées par Google figurent dans sa propre politique.
       </p>
 
       <h2>Permissions</h2>
       <table>
         <tr><th>Plateforme</th><th>Permission</th><th>Pourquoi</th></tr>
         <tr><td>Android</td><td><code>VIBRATE</code></td><td>Retour haptique. Désactivable dans les réglages.</td></tr>
-        <tr><td>iOS</td><td>aucune</td><td>—</td></tr>
+        <tr><td>Android</td><td><code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code></td><td>Charger les publicités. Aucune autre communication réseau.</td></tr>
+        <tr><td>Android</td><td><code>com.google.android.gms.permission.AD_ID</code></td><td>Identifiant publicitaire, utilisé par le module Google selon votre consentement.</td></tr>
+        <tr><td>iOS</td><td>Demande <em>App Tracking Transparency</em></td><td>Uniquement si la publicité personnalisée est proposée. Refusable.</td></tr>
       </table>
       <p>
-        Ni localisation, ni contacts, ni appareil photo, ni microphone, ni notifications,
-        ni identifiant publicitaire.
+        Ni localisation précise, ni contacts, ni appareil photo, ni microphone,
+        ni notifications.
       </p>
 
       <h2>Enfants</h2>
       <p>
-        Aucune donnée n’étant collectée, l’application peut être utilisée par des enfants
-        sans traitement particulier. Elle ne comporte ni achat intégré, ni publicité, ni
-        lien sortant.
+        Plateau s’adresse à un public général. L’application ne comporte ni
+        achat intégré, ni lien sortant, ni interaction entre utilisateurs, et
+        les annonces sont limitées au classement de contenu « tout public »
+        (G). Elle n’est pas destinée aux enfants de moins de 13 ans et n’est
+        pas inscrite au programme « Conçu pour les familles » de Google Play.
       </p>
 
       <h2>Vos droits</h2>
       <p>
-        Aucune donnée personnelle n’étant collectée ni transmise, il n’existe aucun fichier
-        vous concernant du côté de l’éditeur. Les droits d’accès, de rectification et
-        d’effacement portent sur les seules données de votre appareil, que vous contrôlez
-        entièrement depuis les réglages de l’application.
+        Vous disposez d’un droit d’accès, de rectification, d’effacement,
+        d’opposition et de portabilité. L’éditeur ne détenant aucun fichier
+        vous concernant, ces droits s’exercent :
+      </p>
+      <ul>
+        <li>pour les données de l’application : depuis les réglages, qui les effacent définitivement ;</li>
+        <li>pour les données publicitaires : auprès de Google, via sa politique de confidentialité, et en retirant votre consentement dans les réglages de l’application ;</li>
+        <li>pour toute question : à l’adresse de contact ci-dessus.</li>
+      </ul>
+      <p>
+        Vous pouvez également introduire une réclamation auprès de l’autorité
+        de contrôle de votre pays — en France, la
+        <a href="https://www.cnil.fr/">CNIL</a>.
       </p>
 
       <h2>Modifications</h2>
       <p>
-        Toute évolution sera publiée à cette adresse avec une nouvelle date. Si une version
-        future venait à transmettre des données — ce qui n’est pas prévu — cette politique
-        serait modifiée avant sa mise en ligne.
+        Toute évolution sera publiée à cette adresse avec une nouvelle date. Un
+        changement affectant les données traitées sera mis en ligne avant la
+        version de l’application concernée.
       </p>
 
       <footer>
-        Questions : <span class="acompleter">À COMPLÉTER</span> — adresse électronique.
+        Questions : <span class="aremplir">{{CONTACT}}</span>.
       </footer>
     </main>
   </body>

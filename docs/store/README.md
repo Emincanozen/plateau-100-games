@@ -7,6 +7,13 @@ tout ce qui manque encore.
 > classifications et les déclarations proposées sont des réponses argumentées
 > à remplir dans leurs questionnaires officiels, pas des décisions acquises.
 
+> **Les chiffres de cette page sont vérifiés à chaque `npm run verifier`**, par
+> `outils/controle-fiches.mjs`. Ce contrôle existe parce que la version
+> précédente promettait « chaque jeu propose trois niveaux de difficulté »
+> alors que vingt-sept jeux sur cent en proposent. Une fiche inexacte fait
+> rejeter l'application ; désormais, elle fait échouer la chaîne de
+> vérification d'abord.
+
 | Fichier | Contenu |
 |---|---|
 | `README.md` | Ce document : textes, catégories, déclarations, ce qui manque |
@@ -33,18 +40,18 @@ Identifiant d'application : `com.plateau.jeux` sur les deux plateformes.
 **Google Play — 80 caractères maximum**
 
 ```
-100 jeux en une application. Hors ligne, sans compte, sans publicité.
+100 jeux en une seule application. Jouables hors ligne, sans compte.
 ```
 
-*(69 caractères.)*
+*(68 caractères.)*
 
 **App Store — sous-titre, 30 caractères maximum**
 
 ```
-100 jeux, zéro connexion
+100 jeux, jouables hors ligne
 ```
 
-*(24 caractères.)*
+*(29 caractères.)*
 
 ---
 
@@ -54,10 +61,10 @@ Identifiant d'application : `com.plateau.jeux` sur les deux plateformes.
 environ 1900).
 
 ```
-Cent jeux réunis dans une seule application, et rien d'autre.
+Cent jeux réunis dans une seule application.
 
-Pas de compte à créer, pas de connexion à attendre, pas de publicité qui
-s'intercale entre deux parties. Vous ouvrez, vous jouez.
+Pas de compte à créer, pas de connexion à attendre pour jouer. Vous ouvrez,
+vous jouez — y compris en avion ou au sous-sol.
 
 CE QU'IL Y A DEDANS
 
@@ -78,25 +85,31 @@ DE VRAIS ADVERSAIRES
 Les ordinateurs ne trichent pas et ne jouent pas au hasard. Le moteur d'échecs
 applique les règles complètes — roque, prise en passant, promotion, pat — et
 réfléchit vraiment. Le backgammon pèse chaque coup sur les vingt-et-un lancers
-possibles de l'adversaire. Chaque jeu propose trois niveaux de difficulté.
+possibles de l'adversaire. Vingt-sept jeux proposent trois niveaux de
+difficulté ; les autres se règlent par la taille de la grille, le nombre de
+pions ou le nombre de couleurs.
 
 À DEUX SUR LE MÊME TÉLÉPHONE
 
-Vingt-deux jeux se jouent à deux, en se passant l'appareil. Rien à installer
-chez l'autre, aucune connexion.
+Vingt-deux jeux se jouent à deux en se passant l'appareil, et trois — le jeu
+de l'oie, les petits chevaux, serpents et échelles — se jouent jusqu'à quatre.
+Rien à installer chez l'autre, aucune connexion.
 
-RESPECTUEUSE DE VOTRE VIE PRIVÉE
+VOS DONNÉES
 
-Aucune donnée collectée. Aucune donnée transmise. Aucune publicité, aucun
-traceur, aucune mesure d'audience. Vos scores et vos favoris restent sur votre
-appareil, et disparaissent si vous désinstallez.
+Vos scores, vos favoris et vos réglages restent sur votre appareil et ne sont
+envoyés nulle part. L'application est gratuite et financée par la publicité :
+les annonces sont fournies par Google AdMob, qui peut de son côté utiliser un
+identifiant publicitaire. Là où la loi l'exige, un écran de consentement vous
+laisse choisir, et ce choix reste modifiable dans les réglages.
 
 ET AUSSI
 
 • Thème clair et sombre, qui suit celui du système
 • Les règles de chaque jeu, affichées au premier lancement
 • Vos records et vos statistiques, conservés d'une session à l'autre
-• Fonctionne entièrement hors ligne, en avion comme au sous-sol
+• Les cent jeux fonctionnent hors ligne ; seules les publicités ont besoin
+  d'une connexion, et leur absence ne bloque jamais une partie
 ```
 
 ---
@@ -128,44 +141,73 @@ titre et la description, où les termes ci-dessus figurent déjà.
 ## 6. Classification par âge — proposition à confirmer
 
 L'application ne contient ni violence, ni contenu sensible, ni achat intégré,
-ni publicité, ni lien sortant, ni interaction entre utilisateurs.
+ni lien sortant, ni interaction entre utilisateurs. **Elle contient de la
+publicité**, ce qui se déclare séparément de la classification.
 
 | Système | Proposition | Sur quoi elle repose |
 |---|---|---|
 | Apple | **4+** | Aucun contenu réservé aux adultes |
 | Google Play (IARC) | **PEGI 3 / Tout public** | Aucune catégorie de contenu déclenchée |
+| Google Play — « Contient des annonces » | **Oui** | Obligatoire, et vérifié par Google |
 
-**Nuance à trancher toi-même dans le questionnaire.** Le blackjack, le vidéo
-poker et le craps mettent en scène des jetons. Il n'y a **ni argent réel, ni
-achat, ni gain convertible** — ce sont des jetons de partie remis à zéro à
-chaque fois. Les questionnaires demandent néanmoins si l'application
-« simule des jeux d'argent ». Une réponse affirmative fait monter la
-classification (souvent 12+ chez Apple, PEGI 12 chez IARC). Réponds selon la
-formulation exacte du questionnaire au moment où tu le remplis : les deux
-magasins ont fait évoluer cette question ces dernières années.
+**Deux points à trancher toi-même dans les questionnaires.**
+
+1. **Les jetons de casino.** Le blackjack, le vidéo poker et le craps mettent
+   en scène des jetons. Il n'y a **ni argent réel, ni achat, ni gain
+   convertible** — ce sont des jetons de partie remis à zéro à chaque fois.
+   Les questionnaires demandent néanmoins si l'application « simule des jeux
+   d'argent ». Une réponse affirmative fait monter la classification (souvent
+   12+ chez Apple, PEGI 12 chez IARC).
+
+2. **Le public cible.** Si tu déclares dans la Play Console un public cible
+   incluant les moins de 13 ans, l'application entre dans le programme
+   « Conçu pour les familles » : la publicité personnalisée devient interdite,
+   et seules les régies certifiées peuvent diffuser. Il faudrait alors passer
+   `PUBLIC_ENFANT` à `true` dans `src/pub/config.ts`. La configuration
+   actuelle vise un **public général**, avec un classement de contenu
+   publicitaire limité à « G » (tout public).
 
 ---
 
 ## 7. Déclarations de confidentialité
 
 Le raisonnement complet et les preuves sont dans
-[../CONFIDENTIALITE.md](../CONFIDENTIALITE.md).
+[../CONFIDENTIALITE.md](../CONFIDENTIALITE.md), et l'architecture publicitaire
+dans [../MONETISATION.md](../MONETISATION.md).
+
+> **Ces réponses ont changé avec l'arrivée de la publicité.** La version
+> précédente déclarait « aucune donnée collectée », ce qui n'est plus exact :
+> Plateau ne collecte toujours rien, mais le SDK publicitaire de Google, lui,
+> traite des données. Les magasins demandent de déclarer **aussi** ce que font
+> les bibliothèques tierces intégrées.
 
 ### Google Play — « Sécurité des données »
 
-| Question | Réponse |
-|---|---|
-| Collecte de données | **Non** |
-| Partage de données | **Non** |
-| Chiffrement en transit | Sans objet |
-| Suppression des données sur demande | Sans objet : tout est local et effaçable dans l'application |
+| Question | Réponse | Justification |
+|---|---|---|
+| L'application collecte-t-elle des données ? | **Oui** | Uniquement via le SDK Google AdMob |
+| Données partagées avec des tiers ? | **Oui** | Avec Google, pour la diffusion publicitaire |
+| Type : identifiants d'appareil / publicitaires | **Collecté et partagé** | Finalité : publicité ; non obligatoire ; retirable via le formulaire de consentement |
+| Type : informations sur l'application et ses performances | **Collecté** | Diagnostics du SDK publicitaire |
+| Type : localisation approximative | **Vérifier dans AdMob** | Le SDK peut en déduire une depuis l'adresse IP |
+| Données chiffrées en transit | **Oui** | HTTPS, imposé par le SDK Google |
+| Suppression des données sur demande | **Via Google** | Lien vers la politique de Google dans la page de confidentialité |
+| Progression et scores du joueur | **Non collecté** | Reste sur l'appareil, jamais transmis |
+
+> Google publie un guide de correspondance entre les données traitées par
+> AdMob et les cases de ce formulaire. **Relis-le au moment de remplir la
+> fiche** : ces catégories évoluent. Le tableau ci-dessus est une proposition
+> argumentée, pas une déclaration validée.
 
 ### Apple — « Confidentialité des données »
 
 | Question | Réponse |
 |---|---|
-| Données collectées | **Aucune** (« Data Not Collected ») |
-| Suivi | **Non** |
+| Données collectées par l'éditeur | **Aucune** |
+| Données collectées par des tiers | **Oui** — identifiant de l'appareil, données d'usage, diagnostics, via Google AdMob |
+| Utilisation : publicité tierce | **Oui** |
+| Suivi (*Tracking*) | **Oui si la publicité personnalisée est activée** — l'application déclare `NSUserTrackingUsageDescription` et le formulaire UMP de Google peut afficher la demande ATT |
+| Données liées à l'identité de l'utilisateur | **Non** |
 | Chiffrement non exempté | `false`, déjà déclaré dans `app.json` |
 
 ---
@@ -195,7 +237,9 @@ Régénérables par `npm run assets:icones`.
 
 **Les captures doivent montrer l'application réelle.** Ne pas fabriquer de
 maquette montrant une interface qui n'existe pas : les deux magasins refusent
-la fiche, et Apple le vérifie à la revue.
+la fiche, et Apple le vérifie à la revue. **Ne pas y faire figurer de
+publicité de test** : un bandeau « Test Ad » sur une capture de magasin est un
+motif de refus.
 
 Suggestion de séquence, une capture par idée :
 
@@ -213,8 +257,9 @@ Suggestion de séquence, une capture par idée :
 | Élément | Pourquoi il manque | Qui peut le fournir |
 |---|---|---|
 | Nom du responsable de publication | Identité légale | **Toi** |
-| Adresse électronique de contact | Obligatoire sur les deux fiches | **Toi** |
+| Adresse électronique de contact | Obligatoire sur les deux fiches et dans la politique | **Toi** |
 | Adresse web de la politique de confidentialité | Il faut héberger `confidentialite.html` | **Toi** |
+| Compte AdMob et identifiants de production | Sans eux, aucune publicité en production | **Toi** — voir [../MONETISATION.md](../MONETISATION.md) |
 | Compte Apple Developer | 99 $ par an | **Toi** |
 | Compte Google Play Console | 25 $ une fois | **Toi** |
 | Captures d'écran | Production sur appareil ou simulateur | À faire une fois un build installé |

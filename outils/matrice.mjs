@@ -14,6 +14,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { aModeDuo, aTroisNiveaux } from './lib/catalogue.mjs';
 
 const racine = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dossiers = ['plateau', 'cartes', 'logique', 'arcade', 'des', 'papier'];
@@ -43,8 +44,11 @@ for (const cat of dossiers) {
     const nombre = (nom) => src.match(new RegExp(`\\n  ${nom}: (\\d+)`))?.[1];
 
     const regles = src.match(/\n  rules: \[([\s\S]*?)\n  \]/)?.[1] ?? '';
-    const niveaux = /value: 'facile'/.test(src) || /value: 'normal'/.test(src);
-    const duo = /'duo'/.test(src);
+    // Définition partagée avec controle-fiches.mjs : deux outils comptaient
+    // autrefois les niveaux différemment, et l'un des chiffres partait dans
+    // une fiche de magasin.
+    const niveaux = aTroisNiveaux(src);
+    const duo = aModeDuo(src);
     const moteur = src.includes("from '../lib/echecs'")
       ? '`lib/echecs.ts`'
       : src.includes("from '../lib/backgammon'")
@@ -97,15 +101,16 @@ lignes.push('| Colonne | Méthode | Portée |');
 lignes.push('|---|---|---|');
 lignes.push('| **Chargement** | Navigation vers `/game/<id>`, en-tête présent, écran non vide | Automatisée, navigateur |');
 lignes.push('| **Gel** | La feuille de règles ouverte, aucune pixel ni compteur ne bouge pendant 900 ms | Automatisée, navigateur |');
-lignes.push('| **Réaction** | Jusqu’à vingt commandes touchées, puis le clavier, puis l’attente d’une boucle ; on compare étiquettes, texte, couleurs **et positions** | Automatisée, navigateur |');
+lignes.push('| **Réaction** | Jusqu’à quarante-cinq commandes touchées, les commandes explicites d’abord, puis le clavier, puis l’attente d’une boucle ; on compare étiquettes, texte, couleurs, bordures **et positions** | Automatisée, navigateur |');
 lignes.push('| **Relance** | Le bouton ↻ est actionné, le jeu doit se reconstruire avec ses commandes | Automatisée, navigateur |');
 lignes.push('| **Console** | Toute erreur console, `window.onerror` et rejet de promesse est capturée | Automatisée, navigateur |');
 lignes.push('| **Règles** | Nombre de phrases de règles, conformité au contrat (3 à 5) | Automatisée, statique |');
 lignes.push('| **Moteur** | Bibliothèque partagée dont le jeu dépend, et qui a ses propres tests | Statique |');
+lignes.push('| **Publicité** | Aucun fichier de jeu ne contient de bannière, d’interstitiel ni d’import du SDK ; l’écran de jeu verrouille la régie tant qu’il est monté | Automatisée, `npm run test:pub` |');
 lignes.push('');
 lignes.push('**Ce que la matrice ne prouve pas.** Une partie complète jouée jusqu’à la');
 lignes.push('victoire, l’exactitude des règles propres à chaque jeu, le rendu sur un');
-lignes.push('vrai téléphone. Ces points sont listés dans');
+lignes.push('vrai téléphone, le comportement réel du SDK publicitaire. Ces points sont listés dans');
 lignes.push('[RAPPORT_FINAL_VALIDATION.md](RAPPORT_FINAL_VALIDATION.md), section « Risques restants ».');
 lignes.push('');
 

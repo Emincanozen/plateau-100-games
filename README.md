@@ -4,8 +4,11 @@ Une application de jeux pour **iOS et Android** : une centaine de jeux de
 société, de cartes, de logique, d'arcade, de dés et de papier-crayon, réunis dans
 un seul catalogue, à partir d'un seul code source.
 
-Tout fonctionne **hors ligne** : aucun compte, aucun serveur, aucune donnée
-envoyée. Les scores, records et favoris restent sur l'appareil.
+Les cent jeux fonctionnent **hors ligne** : aucun compte, aucun serveur. Les
+scores, records et favoris restent sur l'appareil et ne sont envoyés nulle
+part. L'application est gratuite et financée par la publicité — Google AdMob,
+confiné à `src/pub/`, et sans lequel tous les jeux tournent quand même. Voir
+[docs/MONETISATION.md](docs/MONETISATION.md).
 
 > **État : 100 jeux sur 100.** Le catalogue est complet. Le détail est dans
 > l’[annexe](docs/ANNEXE.md#a--catalogue-des-jeux-livrés), la mise sur les magasins
@@ -49,9 +52,14 @@ Puis, dans le terminal d'Expo :
 
 - `i` lance le simulateur iOS (nécessite un Mac)
 - `a` lance l'émulateur Android
-- ou scanne le QR code avec l'application **Expo Go** sur ton téléphone
 
-Pour itérer vite dans un navigateur :
+> **Expo Go ne fonctionne plus sur ce projet.** L'intégration publicitaire a
+> introduit un module natif qui n'y existe pas. Pour tout ce qui touche à la
+> publicité, il faut une compilation de développement :
+> `eas build --profile development --platform android`.
+
+Pour itérer vite dans un navigateur — c'est le chemin normal, et il couvre les
+cent jeux :
 
 ```bash
 npm run web
@@ -165,14 +173,21 @@ l'un ou l'autre trouvent le même document.
 npm run verifier
 ```
 
-Cette commande enchaîne quatre contrôles et **s'arrête au premier échec** :
+Cette commande enchaîne sept contrôles et **s'arrête au premier échec** :
 
 | Commande | Ce qu'elle contrôle |
 |---|---|
 | `npm run typecheck` | TypeScript strict sur tout le dépôt |
 | `npm run audit` | Le contrat d'un jeu et les sept pièges connus, sur les 100 fichiers |
+| `npm run audit:confidentialite` | Aucun appel réseau hors `src/pub/`, dépendances recensées, permissions justifiées |
+| `npm run test:fiches` | Les chiffres des fiches de magasin correspondent au code |
 | `npm run test:regles` | Les règles déterministes : cartes, scores de dés, mots, registre |
+| `npm run test:pub` | Fréquence, consentement et pannes publicitaires, avec un faux SDK |
 | `npm run test:moteurs` | Échecs (perft) et backgammon (invariants et scénarios) |
+
+Environ **540 assertions** au total. Le chiffre bouge d'une exécution à
+l'autre : les tests de moteur comptent des assertions par coup sur des parties
+tirées au hasard.
 
 Cela ne remplace pas de jouer. Un jeu n'est validé qu'après une partie complète
 — début, coups, fin, record, bouton recommencer — via `npm run web` ou sur un

@@ -20,6 +20,7 @@
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
+    "react-native-google-mobile-ads": "^17.0.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
@@ -28,6 +29,7 @@
     "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
+    "@types/node": "^26.6.2",
     "@types/react": "~19.2.2",
     "babel-preset-expo": "^57.0.12",
     "tsx": "^4.23.13",
@@ -35,8 +37,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "audit": "node outils/audit.mjs",
@@ -44,9 +46,12 @@
     "test:echecs": "tsx outils/test-echecs.ts",
     "test:backgammon": "tsx outils/test-backgammon.ts",
     "test:moteurs": "npm run test:echecs && npm run test:backgammon",
-    "verifier": "npm run typecheck && npm run audit && npm run test:regles && npm run test:moteurs",
+    "verifier": "npm run typecheck && npm run audit && npm run audit:confidentialite && npm run test:fiches && npm run test:regles && npm run test:pub && npm run test:moteurs",
     "assets:icones": "node outils/icones.mjs",
-    "assets:sons": "node outils/sons.mjs"
+    "assets:sons": "node outils/sons.mjs",
+    "test:pub": "tsx outils/test-pub.ts",
+    "test:fiches": "node outils/controle-fiches.mjs",
+    "audit:confidentialite": "node outils/audit-confidentialite.mjs"
   },
   "private": true
 }

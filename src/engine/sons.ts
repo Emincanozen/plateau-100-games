@@ -61,26 +61,36 @@ export function jouerSon(kind: HapticKind = 'light') {
   if (!lecteur) return;
   try {
     lecteur.seekTo(0);
-    // Sur le web, `play()` rend une promesse que le navigateur rejette si une
-    // nouvelle lecture démarre avant la fin de la précédente — cas courant
-    // quand deux coups s'enchaînent vite. Le try/catch ne l'attrape pas :
-    // il faut la traiter explicitement, sinon la console se remplit de
-    // rejets non gérés.
-    const lecture: unknown = lecteur.play();
-    if (lecture && typeof (lecture as Promise<void>).catch === 'function') {
-      void (lecture as Promise<void>).catch(() => {
-        /* lecture interrompue par la suivante : sans conséquence */
-      });
-    }
+    // `play()` ne rend rien — sa signature est `play(): void`. Une tentative
+    // précédente enveloppait sa valeur de retour dans un `.catch` : c'était
+    // du code mort, et elle n'a jamais rien corrigé. Les rejets venaient de
+    // `libererLesSons`, pas d'ici. Voir le commentaire ci-dessous.
+    lecteur.play();
   } catch {
     /* lecture impossible : le jeu continue sans */
   }
 }
 
-/** Libère les ressources audio. Appelé à la fermeture d'un écran de jeu. */
+/**
+ * Libère les six lecteurs.
+ *
+ * **À n'appeler qu'à l'extinction de l'application, jamais en quittant un
+ * écran de jeu.** C'était le cas, et cela produisait un rejet de promesse
+ * non géré à presque chaque partie : détruire un lecteur dont la lecture est
+ * en cours coupe l'élément audio sous-jacent, et le navigateur rejette la
+ * promesse interne de `HTMLAudioElement.play()` — que l'application ne peut
+ * pas attraper, puisque `expo-audio` ne la lui rend pas. Les messages
+ * observés : « AbortError: The play() request was interrupted by a call to
+ * pause() » et « NotSupportedError: The element has no supported sources ».
+ *
+ * Les six lecteurs pèsent quelques dizaines de kilo-octets : les garder en
+ * vie pour toute la durée de l'application est à la fois plus simple et plus
+ * juste, et c'est d'ailleurs la raison d'être du cache.
+ */
 export function libererLesSons() {
   for (const lecteur of lecteurs.values()) {
     try {
+      lecteur.pause();
       lecteur.remove();
     } catch {
       /* déjà libéré */

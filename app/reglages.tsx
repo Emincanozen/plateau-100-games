@@ -6,6 +6,7 @@ import { useSettings } from '@/engine/settings';
 import { useProgress } from '@/engine/progress';
 import { useRetour } from '@/engine/navigation';
 import { GAME_COUNT } from '@/games/registry';
+import { useRegiePub } from '@/pub/regie';
 import { Button, Card, Divider, Row, Segmented, Txt } from '@/ui';
 
 export default function Reglages() {
@@ -14,6 +15,8 @@ export default function Reglages() {
   const retour = useRetour();
   const { settings, set } = useSettings();
   const { totalPlays, gamesTried, favorites, resetEverything } = useProgress();
+  const { optionsConfidentialiteDisponibles, ouvrirOptionsConfidentialite, diffusionActive } =
+    useRegiePub();
   const [confirmReset, setConfirmReset] = useState(false);
   const [confidentialite, setConfidentialite] = useState(false);
 
@@ -96,8 +99,19 @@ export default function Reglages() {
             DONNÉES
           </Txt>
           <Txt variant="label" tone="dim">
-            Tout est stocké sur ton téléphone : aucun compte, aucun serveur, aucune donnée envoyée.
+            Les cent jeux tournent hors ligne, et ta progression reste sur ce téléphone.
+            Seul l’affichage des publicités passe par Internet.
           </Txt>
+
+          {optionsConfidentialiteDisponibles ? (
+            <Button
+              label="Choix de confidentialité publicitaire"
+              kind="ghost"
+              full
+              onPress={() => void ouvrirOptionsConfidentialite()}
+            />
+          ) : null}
+
           <Button
             label={confidentialite ? 'Masquer le détail' : 'Politique de confidentialité'}
             kind="ghost"
@@ -108,23 +122,36 @@ export default function Reglages() {
             <View style={{ gap: space.sm }}>
               <Divider />
               <Txt variant="caption" tone="dim">
-                Plateau ne collecte aucune donnée personnelle et ne transmet rien sur
-                Internet. L’application ne contient ni publicité, ni traceur, ni mesure
-                d’audience, ni rapport d’incident automatique.
+                Deux choses seulement sont enregistrées par Plateau, dans le stockage
+                local de l’appareil : tes réglages, et ta progression — records, parties
+                jouées, victoires et favoris. Rien de tout cela ne permet de t’identifier,
+                et rien ne quitte le téléphone.
               </Txt>
               <Txt variant="caption" tone="dim">
-                Deux choses seulement sont enregistrées, dans le stockage local de
-                l’appareil : tes réglages, et ta progression — records, parties jouées,
-                victoires et favoris. Rien de tout cela ne permet de t’identifier, et
-                rien ne quitte le téléphone.
+                L’application affiche des publicités fournies par Google AdMob. Le module
+                publicitaire de Google peut, lui, lire un identifiant publicitaire et des
+                informations techniques sur l’appareil pour choisir et mesurer les
+                annonces. Ce traitement est celui de Google, pas celui de Plateau, et il
+                dépend du choix que tu fais dans le formulaire de consentement.
+              </Txt>
+              <Txt variant="caption" tone="dim">
+                {optionsConfidentialiteDisponibles
+                  ? 'Tu peux revenir sur ce choix à tout moment avec le bouton ci-dessus.'
+                  : 'Aucun consentement n’est requis dans ta région ; les annonces sont diffusées sans profilage publicitaire.'}
               </Txt>
               <Txt variant="caption" tone="dim">
                 La seule permission demandée est la vibration, sur Android, pour le retour
                 haptique. Ni localisation, ni contacts, ni appareil photo, ni micro, ni
-                notifications, ni identifiant publicitaire.
+                notifications.
               </Txt>
               <Txt variant="caption" tone="faint">
-                Le bouton ci-dessous efface définitivement tout ce qui est enregistré.
+                {diffusionActive
+                  ? 'Publicités actives sur cet appareil.'
+                  : 'Aucune publicité n’est diffusée sur cet appareil actuellement.'}
+              </Txt>
+              <Txt variant="caption" tone="faint">
+                Le bouton ci-dessous efface définitivement tout ce qui est enregistré par
+                l’application.
               </Txt>
             </View>
           ) : null}

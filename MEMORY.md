@@ -14,15 +14,19 @@ Une application mobile **iOS et Android** contenant **100 jeux** : plateau,
 cartes, logique, arcade, dés, papier-crayon. Un seul code source React Native,
 distribué sur les deux plateformes.
 
-Quatre décisions ont été prises avec l'utilisateur et **ne se rediscutent pas
+Cinq décisions ont été prises avec l'utilisateur et **ne se rediscutent pas
 sans lui** :
 
-1. **Solo et multi local uniquement.** Aucun serveur, aucun compte, aucun
-   réseau. Jamais de `fetch`.
-2. **Tout hors ligne.** Scores et réglages dans AsyncStorage, sur l'appareil.
-3. **Catalogue équilibré.** 20 plateau, 20 cartes, 20 logique, 20 arcade,
+1. **Solo et multi local uniquement.** Aucun serveur, aucun compte. Le code
+   de l'application ne communique jamais.
+2. **Les jeux fonctionnent hors ligne.** Scores et réglages dans
+   AsyncStorage, sur l'appareil.
+3. **La publicité est la seule exception réseau**, ajoutée en septembre 2026
+   à la demande de l'utilisateur. Google AdMob, confiné à `src/pub/`. Les
+   cent jeux l'ignorent, et une annonce indisponible ne bloque rien.
+4. **Catalogue équilibré.** 20 plateau, 20 cartes, 20 logique, 20 arcade,
    10 dés, 10 papier.
-4. **Design moderne épuré**, thème clair et sombre automatique, **interface en
+5. **Design moderne épuré**, thème clair et sombre automatique, **interface en
    français** — y compris les noms de variables et les commentaires.
 
 ---
@@ -32,13 +36,19 @@ sans lui** :
 | | État |
 |---|---|
 | Catalogue | **100 / 100.** Terminé. |
-| Contrôles automatiques | `npm run verifier` : types, audit des 100 fichiers, règles partagées, deux moteurs. **Passe.** |
-| Validation en navigateur | Les 100 jeux : chargement, gel des règles, réaction à une commande, relance, console. **100 / 100.** |
-| Configuration de compilation | `npx expo-doctor` : **21 contrôles sur 21**. Bundles iOS et Android produits localement. |
+| Contrôles automatiques | `npm run verifier` : sept maillons, environ 540 assertions. **Passe.** |
+| Validation en navigateur | Les 100 jeux : chargement, gel des règles, réaction à une commande, relance, console. **100 / 100**, campagne menée avant l'ajout de la publicité. |
+| Publicité — code | **Écrit et éprouvé hors appareil** : 78 contrôles, faux SDK, horloge pilotée. |
+| Publicité — annonce réelle | **Jamais affichée.** Demande une compilation native et un compte AdMob. |
+| Configuration de compilation | `npx expo-doctor` : **21 / 21**. Bundles iOS (5,1 Mo) et Android (5,3 Mo) produits localement. |
+| Projet natif Android | **Produit** par `expo prebuild`, manifeste relu permission par permission. |
+| Projet natif iOS | **NOT RUN** — impossible sous Windows, demande macOS ou Linux. |
 | Compilation EAS | **Jamais lancée.** Demande le compte Expo de l'utilisateur. |
 | Publication | **Non faite.** Demande les comptes développeur Apple et Google. |
 
-Statut global : **développement terminé, compilation et publication à faire.**
+Statut global : **code complet et éprouvé hors appareil ; rien n'a encore
+tourné sur un téléphone.** Le développement ne sera pas déclaré terminé tant
+que la publicité n'aura pas été vue fonctionner sur un appareil réel.
 
 ---
 
@@ -46,17 +56,22 @@ Statut global : **développement terminé, compilation et publication à faire.*
 
 ```bash
 npm install
-npm run web          # itération rapide dans un navigateur
-npm start            # puis « a », ou le QR code avec Expo Go
+npm run web          # itération rapide dans un navigateur — le chemin normal
 npm run verifier     # obligatoire avant toute livraison
 ```
 
+> **Expo Go ne fonctionne plus** depuis l'ajout du module publicitaire natif.
+> Pour éprouver la publicité : `eas build --profile development`.
+
 | Commande | Ce qu'elle fait |
 |---|---|
-| `npm run verifier` | Enchaîne les quatre contrôles, **s'arrête au premier échec** |
+| `npm run verifier` | Enchaîne les sept contrôles, **s'arrête au premier échec** |
 | `npm run typecheck` | TypeScript strict |
 | `npm run audit` | Contrat d'un jeu et sept pièges, sur les 100 fichiers |
+| `npm run audit:confidentialite` | Réseau, dépendances, permissions, stockage |
+| `npm run test:fiches` | Les chiffres des fiches correspondent au code |
 | `npm run test:regles` | Cartes, mots, aléatoire |
+| `npm run test:pub` | Fréquence, consentement, pannes publicitaires |
 | `npm run test:moteurs` | Échecs (perft) et backgammon (scénarios + invariants) |
 | `npm run assets:icones` | Régénère les icônes |
 | `npm run assets:sons` | Régénère les effets sonores |
@@ -109,6 +124,9 @@ résumé, chacun a déjà cassé le projet une fois :
 6. Une carte à jouer a toujours un fond clair.
 7. **Ne jamais déclarer un composant dans un composant** — React remonte tout
    le sous-arbre et des touchers se perdent.
+8. **Metro résout les `require` statiquement, même dans un `try`.** Un module
+   natif ne se cache pas derrière un garde-fou `Platform.OS` : il faut des
+   fichiers `.native.ts`, sinon le paquet web refuse de se construire.
 
 Deux autres réflexes, appris en validant :
 
@@ -141,10 +159,13 @@ avant d'accuser le code.
 
 ## 7. Ce qui reste à faire
 
-### Côté code — rien de bloquant
+### Côté code
 
 | Sujet | État |
 |---|---|
+| **Publicité sur appareil réel** | **NOT RUN.** Le plus gros angle mort : ni annonce ni formulaire de consentement n'a été vu fonctionner. |
+| **Sons après blocage des permissions audio** | **NOT RUN.** `RECORD_AUDIO` et six autres permissions sont retirées du manifeste ; à réécouter sur un téléphone. |
+| Publicités récompensées | Infrastructure prête et testée, branchée dans **aucun** jeu — décision argumentée dans [docs/MONETISATION.md](docs/MONETISATION.md) §6. |
 | Traduction | Français uniquement, aucune infrastructure i18n. Les chaînes sont dans les composants. |
 | Tests d'interface automatisés | Aucun. La sonde de navigateur n'est pas dans le dépôt. |
 | Parties complètes automatisées | Aucune. Les fins de partie sont vérifiées à la main, jeu par jeu. |
@@ -153,6 +174,7 @@ avant d'accuser le code.
 
 | Étape | Pourquoi elle est bloquée |
 |---|---|
+| **Compte AdMob et identifiants** | Sans eux, la production n'affiche aucune publicité. Procédure dans [docs/MONETISATION.md](docs/MONETISATION.md) §7 |
 | `eas login` puis `eas init` | Compte Expo |
 | `eas build` | Compte Expo, puis certificats Apple et Google |
 | Fiches des magasins | Nom du responsable, adresse de contact, captures d'écran |
@@ -174,4 +196,6 @@ Tout est détaillé dans [docs/PUBLICATION.md](docs/PUBLICATION.md) et
 | [docs/RAPPORT_FINAL_VALIDATION.md](docs/RAPPORT_FINAL_VALIDATION.md) | Bilan de la campagne de finalisation |
 | [docs/PUBLICATION.md](docs/PUBLICATION.md) | Mettre l'application sur les magasins |
 | [docs/store/](docs/store/) | Textes et éléments des fiches |
-| [docs/CONFIDENTIALITE.md](docs/CONFIDENTIALITE.md) | Politique de confidentialité et déclarations aux magasins |
+| [docs/CONFIDENTIALITE.md](docs/CONFIDENTIALITE.md) | Audit de confidentialité et déclarations aux magasins |
+| [docs/MONETISATION.md](docs/MONETISATION.md) | Architecture publicitaire, consentement, identifiants AdMob, coûts et risques |
+| [docs/PROTOCOLE_APPAREIL.md](docs/PROTOCOLE_APPAREIL.md) | Le protocole d'essai sur téléphone — **tout est à NOT RUN** |

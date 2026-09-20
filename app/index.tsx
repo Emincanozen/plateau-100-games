@@ -6,7 +6,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { useProgress } from '@/engine/progress';
 import { CATEGORIES, CATEGORY_BY_ID, type CategoryId, type GameEntry } from '@/engine/types';
 import { GAMES, GAME_COUNT, countByCategory, searchGames } from '@/games/registry';
-import { Badge, BottomInset, Card, IconButton, Row, Txt } from '@/ui';
+import { Badge, Banniere, BottomInset, Card, IconButton, Row, Txt } from '@/ui';
 
 type Filter = CategoryId | 'tous' | 'favoris';
 
@@ -263,6 +263,11 @@ export default function Accueil() {
           );
         }}
       />
+
+      {/* Bandeau ancré en bas du catalogue. Il est hors de la liste, donc il
+          ne défile pas sous une carte de jeu, et la marge le tient à distance
+          des fiches : aucun appui destiné à un jeu ne peut l'atteindre. */}
+      <Banniere marge={space.sm} />
     </View>
   );
 }

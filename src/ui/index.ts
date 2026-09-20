@@ -7,3 +7,4 @@ export { GameOver, type Outcome } from './GameOver';
 export { Carte, EmplacementVide, RATIO_CARTE } from './Carte';
 export { BoutonControle, CroixDirectionnelle, useClavier, type Direction } from './Controles';
 export { De } from './De';
+export { Banniere } from './Banniere';

@@ -1,139 +1,162 @@
-# Politique de confidentialité — Plateau
+# Audit de confidentialité — Plateau
 
-**Dernière mise à jour : 20 septembre 2026.**
+Ce document est le relevé de ce que l'application traite réellement, et la
+justification des réponses aux questionnaires d'Apple et de Google. La page
+publique destinée aux joueurs est
+[store/confidentialite.html](store/confidentialite.html).
 
-> **À compléter avant publication.** Deux éléments manquent, et eux seuls :
-> le **nom du responsable** et une **adresse de contact**. Ils sont marqués
-> `[À COMPLÉTER]` ci-dessous. Apple et Google exigent tous deux que cette
-> politique soit accessible à une **adresse web publique** : le fichier
-> `docs/store/confidentialite.html` en est la version prête à héberger.
+**Dernière révision : 20 septembre 2026**, après l'intégration publicitaire.
 
----
-
-## En un paragraphe
-
-Plateau est une application de jeux qui fonctionne entièrement sur votre
-appareil. Elle **ne collecte aucune donnée personnelle**, **ne transmet rien**
-sur Internet, et **ne contient ni publicité, ni traceur, ni outil de mesure
-d'audience**. Elle n'a besoin d'aucun compte.
+> **Ce que la version précédente affirmait, et qui est devenu faux.** Elle
+> concluait « aucune donnée collectée, aucune donnée transmise », sur la foi
+> d'une recherche de `XMLHttpRequest` et `navigator.sendBeacon` dans le
+> paquet livré. Ce contrôle était doublement insuffisant : il ne cherchait ni
+> `fetch`, ni les WebSockets, ni les SDK natifs, qui ne laissent aucune trace
+> de ce genre dans le JavaScript. Et il est devenu caduc le jour où un module
+> publicitaire est entré dans l'application.
 
 ---
 
-## 1. Qui édite l'application
+## 1. La distinction qui structure tout
 
-- **Responsable** : [À COMPLÉTER — nom ou raison sociale]
-- **Contact** : [À COMPLÉTER — adresse électronique]
-
----
-
-## 2. Quelles données sont traitées
-
-### 2.1 Données enregistrées sur votre appareil
-
-L'application écrit deux entrées dans le stockage local de l'appareil
-(`AsyncStorage`), sous le préfixe `plateau:v1:` :
-
-| Clé | Contenu |
-|---|---|
-| `plateau:v1:settings` | Vos réglages : thème clair ou sombre, vibrations, sons, animations réduites, affichage automatique des règles. |
-| `plateau:v1:progress` | Votre progression : meilleurs scores, parties jouées, victoires et défaites, jeux mis en favori. |
-
-Ces données :
-
-- **ne quittent jamais l'appareil** ;
-- ne contiennent **aucune information permettant de vous identifier** — ni nom,
-  ni adresse, ni identifiant d'appareil, ni adresse IP ;
-- sont supprimées quand vous désinstallez l'application ;
-- peuvent être effacées à tout moment depuis **Réglages → Remettre les
-  statistiques à zéro**, sans désinstaller.
-
-### 2.2 Données transmises
-
-**Aucune.** L'application ne comporte aucun code de communication réseau.
-
-Ce point a été vérifié sur le paquet de production réellement livré : il ne
-contient aucun appel `XMLHttpRequest`, aucun `navigator.sendBeacon`, aucune
-adresse de serveur, et aucune bibliothèque de mesure d'audience, de publicité
-ou de rapport d'incident.
-
-### 2.3 Composants tiers
-
-L'application s'appuie sur des bibliothèques libres : React Native, Expo, et
-quelques modules d'interface. Aucune ne communique avec un serveur dans la
-configuration retenue. En particulier, l'application **n'embarque pas** :
-
-- de mesure d'audience ou d'analytique,
-- de régie publicitaire,
-- de rapport d'incident automatique,
-- de mise à jour à distance du code.
-
----
-
-## 3. Permissions demandées
-
-| Plateforme | Permission | Pourquoi |
+| | Plateau | Google AdMob |
 |---|---|---|
-| Android | `VIBRATE` | Retour haptique lors d'un coup joué. Désactivable dans les réglages. |
-| iOS | aucune | — |
+| Collecte des données | **Non** | Oui |
+| Transmet des données | **Non** | Oui |
+| Conserve des données sur l'appareil | Réglages et progression | Choix de consentement, jetons techniques |
+| Reçoit quelque chose de l'utilisateur | Rien | Voir §4 |
+| Ce que l'éditeur voit | Rien | Des revenus agrégés, jamais des données personnelles |
 
-L'application ne demande ni la localisation, ni les contacts, ni l'appareil
-photo, ni le microphone, ni les notifications, ni l'identifiant publicitaire.
-
----
-
-## 4. Enfants
-
-L'application ne collectant aucune donnée, elle peut être utilisée par des
-enfants sans traitement particulier. Elle ne comporte ni achat intégré, ni
-publicité, ni lien sortant vers Internet.
+Les deux magasins demandent de déclarer **aussi** ce que font les
+bibliothèques intégrées. Répondre « aucune donnée » parce que notre propre
+code n'en collecte pas serait une déclaration fausse.
 
 ---
 
-## 5. Vos droits
+## 2. Méthode, et pourquoi elle a changé
 
-Puisque aucune donnée personnelle n'est collectée ni transmise, il n'existe
-aucun fichier vous concernant du côté de l'éditeur. Les droits d'accès, de
-rectification, d'effacement et de portabilité prévus par le RGPD portent donc
-sur les seules données de votre appareil, que vous contrôlez entièrement :
+L'audit est désormais un programme : `outils/audit-confidentialite.mjs`,
+exécuté par `npm run verifier` et par la CI. Il vérifie quatre choses.
 
-- **Consulter** : Réglages → Statistiques.
-- **Effacer** : Réglages → Remettre les statistiques à zéro, ou désinstaller
-  l'application.
+**1. Le code de Plateau ne communique pas.** Les 133 fichiers de `src/`
+(hors `src/pub/`) et de `app/` sont relus à la recherche de `fetch(`,
+`XMLHttpRequest`, `WebSocket`, `sendBeacon`, `EventSource`,
+`navigator.geolocation` et de toute adresse `http(s)://` hors commentaire.
+**Zéro occurrence.** Un `fetch` glissé dans un jeu fait échouer la chaîne —
+vérifié en en injectant un.
 
-Pour toute question : [À COMPLÉTER — adresse électronique].
+**2. Les dépendances capables de communiquer sont recensées.** Les
+24 dépendances d'exécution sont inscrites une par une avec ce qu'elles ont le
+droit de faire. Une bibliothèque ajoutée sans être inscrite fait échouer le
+contrôle. **Une seule communique : `react-native-google-mobile-ads`.**
 
----
+**3. Les permissions correspondent.** Chaque permission déclarée doit être
+justifiée par une dépendance connue, et une liste de permissions sensibles
+est interdite d'office.
 
-## 6. Modifications
+**4. Ce qui est écrit sur l'appareil est ce qui est documenté.** Le préfixe
+de stockage et les clés utilisées sont comparés à ce qu'annonce la politique.
 
-Toute évolution de cette politique sera publiée à la même adresse, avec une
-nouvelle date de mise à jour. Si une version future de l'application venait à
-transmettre des données — ce qui n'est pas prévu — cette politique serait
-modifiée **avant** la mise en ligne de cette version.
+### Un défaut trouvé par cette méthode
 
----
+`app.json` ne déclarait que quatre permissions. Le manifeste Android
+**fusionné**, produit par `npx expo prebuild`, en contenait onze — dont
+`RECORD_AUDIO`, apportée par `expo-audio`, alors que la politique affirmait
+« ni microphone ». Aucune lecture de `app.json` ne pouvait le voir.
 
-## Réponses aux questionnaires des magasins
+Sept permissions sont maintenant retirées par `android.blockedPermissions`, et
+l'audit lit le manifeste fusionné quand il existe. Il reste exactement :
 
-Ces réponses découlent des constats ci-dessus. Elles restent à **confirmer par
-vous** dans les formulaires officiels : ni Apple ni Google ne les ont validées
-à ce stade.
-
-### Google Play — « Sécurité des données »
-
-| Question | Réponse |
+| Permission | Pourquoi |
 |---|---|
-| L'application collecte-t-elle des données ? | **Non** |
-| L'application partage-t-elle des données ? | **Non** |
-| Les données sont-elles chiffrées en transit ? | Sans objet — aucune transmission |
-| L'utilisateur peut-il demander la suppression de ses données ? | Sans objet — tout est local et effaçable dans l'application |
-| Engagement « Play Families » | Non applicable sauf si la fiche vise explicitement les enfants |
+| `VIBRATE` | Retour haptique, désactivable |
+| `INTERNET` | Chargement des publicités |
+| `ACCESS_NETWORK_STATE` | Le SDK publicitaire vérifie la connectivité |
+| `com.google.android.gms.permission.AD_ID` | Identifiant publicitaire, obligatoire à déclarer depuis Android 13 |
 
-### Apple — « Confidentialité des données »
+Retirées : `RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `READ_EXTERNAL_STORAGE`,
+`WRITE_EXTERNAL_STORAGE`, `SYSTEM_ALERT_WINDOW`, `FOREGROUND_SERVICE`,
+`FOREGROUND_SERVICE_MEDIA_PLAYBACK`.
 
-| Question | Réponse |
+> **À confirmer sur appareil.** Bloquer les permissions audio de `expo-audio`
+> est le bon choix du point de vue de la vie privée, mais aucune compilation
+> native n'a encore tourné : *les six sons doivent être réécoutés sur un
+> téléphone réel*. Ce point figure au protocole d'essai avec le statut
+> NOT RUN.
+
+---
+
+## 3. Ce que Plateau enregistre
+
+Deux clés dans AsyncStorage, sous le préfixe `plateau:v1:`.
+
+| Clé | Contenu | Identifiant personnel ? |
+|---|---|---|
+| `settings` | Thème, vibrations, sons, animations réduites, affichage des règles | Non |
+| `progress` | Records, parties jouées, victoires, défaites, favoris, jeux récents | Non |
+
+Rien n'en sort. Ni nom, ni adresse, ni identifiant d'appareil, ni horodatage
+transmis. Effaçable depuis *Réglages → Réinitialiser scores et favoris*, et
+détruit à la désinstallation.
+
+---
+
+## 4. Ce que traite le SDK publicitaire
+
+Ce tableau décrit ce que la documentation de Google indique pour le SDK
+Mobile Ads. **Il n'a pas été mesuré sur un appareil** : aucune compilation
+native n'a encore tourné, donc aucune capture réseau n'existe. C'est une
+lecture de documentation, pas une observation.
+
+| Donnée | Quand | Finalité |
+|---|---|---|
+| Identifiant publicitaire (AAID / IDFA) | Si le consentement le permet | Ciblage, plafonnement de fréquence, mesure |
+| Adresse IP | À chaque requête | Acheminement, localisation approximative, conformité régionale |
+| Modèle d'appareil, système, langue, taille d'écran | À chaque requête | Format et compatibilité de l'annonce |
+| Événements d'affichage | À l'affichage | Facturation et mesure |
+| Choix de consentement (chaîne TCF) | Après le formulaire | Base légale transmise aux annonceurs |
+| Signaux antifraude | À chaque requête | Détection de clics frauduleux |
+
+Ce que Plateau ne transmet **jamais**, quel que soit le consentement : les
+scores, les jeux joués, la progression, les réglages. Ces données ne quittent
+pas l'appareil, et le code publicitaire n'y a pas accès — il vit dans
+`src/pub/` et ne lit jamais `src/engine/progress`.
+
+### Sans consentement
+
+| Situation | Conséquence |
 |---|---|
-| Données collectées | **Aucune** (« Data Not Collected ») |
-| Suivi publicitaire | **Non** |
-| Identifiant publicitaire | Non utilisé |
-| `ITSAppUsesNonExemptEncryption` | `false`, déjà déclaré dans `app.json` |
+| Formulaire refusé | Aucune requête publicitaire |
+| Formulaire inaccessible (hors ligne) | Aucune requête publicitaire |
+| Accepté sans profilage | Requêtes en mode non personnalisé (`requestNonPersonalizedAdsOnly`), SDK initialisé avec `publisherPrivacyPersonalizationState: 'disabled'` |
+| Hors zone de recueil | Annonces diffusées selon la configuration AdMob |
+
+Ces quatre cas sont couverts par `npm run test:pub`.
+
+---
+
+## 5. Réponses aux questionnaires
+
+Le détail case par case est dans
+[store/README.md](store/README.md#7-déclarations-de-confidentialité). En
+résumé :
+
+| Magasin | Ancienne réponse | Réponse correcte aujourd'hui |
+|---|---|---|
+| Google Play — collecte | Non | **Oui**, via AdMob |
+| Google Play — partage | Non | **Oui**, avec Google |
+| Google Play — contient des annonces | Non | **Oui** |
+| Apple — données collectées | Aucune | **Par des tiers** : identifiant, usage, diagnostics |
+| Apple — suivi | Non | **Oui** si la personnalisation est activée |
+
+---
+
+## 6. Ce qui reste à faire, et par qui
+
+| Point | Statut | Qui |
+|---|---|---|
+| Identité de l'éditeur et adresse de contact dans la politique | `{{EDITEUR}}` et `{{CONTACT}}` — **non remplis, volontairement** | Toi. Rien ne sera inventé |
+| Héberger la politique en HTTPS public | À faire | Toi |
+| Créer les messages de consentement dans la console AdMob | À faire — sans eux, aucune annonce en Europe | Toi |
+| Capture réseau sur appareil réel pour confirmer §4 | **NOT RUN** | À faire pendant le test fermé |
+| Vérifier que les sons fonctionnent après le blocage des permissions audio | **NOT RUN** | À faire sur la première compilation native |

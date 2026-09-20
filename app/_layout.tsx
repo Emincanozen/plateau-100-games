@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/engine/settings';
 import { ProgressProvider } from '@/engine/progress';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
+import { RegiePubProvider } from '@/pub/regie';
 
 function Navigator() {
   const { c, name } = useTheme();
@@ -34,7 +35,11 @@ export default function RootLayout() {
         <SettingsProvider>
           <ProgressProvider>
             <ThemeProvider>
-              <Navigator />
+              {/* La régie enveloppe la navigation : la bannière du catalogue
+                  et l'interstitiel de sortie de jeu en dépendent tous deux. */}
+              <RegiePubProvider>
+                <Navigator />
+              </RegiePubProvider>
             </ThemeProvider>
           </ProgressProvider>
         </SettingsProvider>

@@ -6,11 +6,12 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { useProgress } from '@/engine/progress';
 import { useSettings } from '@/engine/settings';
 import { fireHaptic, type HapticKind } from '@/engine/haptics';
-import { jouerSon, libererLesSons } from '@/engine/sons';
+import { jouerSon } from '@/engine/sons';
 import { GameFrameProvider, StatusSlot, useGameFrame } from '@/engine/frame';
 import { useRetour } from '@/engine/navigation';
 import { CATEGORY_BY_ID, type GameScreenProps } from '@/engine/types';
 import { getGame } from '@/games/registry';
+import { useRegiePub } from '@/pub/regie';
 import { Button, IconButton, Row, Sheet, Txt } from '@/ui';
 
 export default function GameRoute() {
@@ -30,6 +31,8 @@ function GameHost({ id }: { id?: string }) {
   const { settings } = useSettings();
   const { statFor, markPlayed, submitScore, submitResult, isFavorite, toggleFavorite } = useProgress();
   const { restart, runId, bumpRun, setPause } = useGameFrame();
+  const { entrerEnPartie, quitterLaPartie, signalerPartieTerminee, montrerInterstitiel } =
+    useRegiePub();
 
   const entry = getGame(id);
   const stat = entry ? statFor(entry.meta.id) : undefined;
@@ -62,20 +65,52 @@ function GameHost({ id }: { id?: string }) {
     [settings.haptics, settings.sound],
   );
 
-  // Les lecteurs audio ne se libèrent pas tout seuls.
-  useEffect(() => libererLesSons, []);
+  // Les six lecteurs audio ne sont **pas** libérés en quittant cet écran.
+  // Ils l'étaient, et c'était un défaut : détruire un lecteur en cours de
+  // lecture produisait un rejet de promesse non géré à presque chaque
+  // partie. Ils vivent maintenant aussi longtemps que l'application — voir
+  // `libererLesSons` dans src/engine/sons.ts.
+
+  // Tant que cet écran est monté, aucune publicité plein écran ne peut
+  // partir. C'est la garantie « jamais pendant une partie », et elle tient
+  // même si un jeu déclenche une fin de partie au millième de seconde près.
+  useEffect(() => {
+    entrerEnPartie();
+    return quitterLaPartie;
+  }, [entrerEnPartie, quitterLaPartie]);
 
   const handleScore = useCallback(
-    (score: number) => (entry ? submitScore(entry.meta.id, score, entry.meta.score) : false),
-    [entry, submitScore],
+    (score: number) => {
+      if (!entry) return false;
+      signalerPartieTerminee();
+      return submitScore(entry.meta.id, score, entry.meta.score);
+    },
+    [entry, submitScore, signalerPartieTerminee],
   );
 
   const handleResult = useCallback(
     (outcome: 'win' | 'loss' | 'draw') => {
-      if (entry) submitResult(entry.meta.id, outcome);
+      if (!entry) return;
+      signalerPartieTerminee();
+      submitResult(entry.meta.id, outcome);
     },
-    [entry, submitResult],
+    [entry, submitResult, signalerPartieTerminee],
   );
+
+  /**
+   * Sortie du jeu : c'est le seul moment où un interstitiel peut apparaître.
+   * La partie est finie, le joueur a décidé de partir, et la régie décide
+   * ensuite si la fréquence le permet — le plus souvent, non.
+   */
+  const quitterLeJeu = useCallback(async () => {
+    quitterLaPartie();
+    try {
+      await montrerInterstitiel();
+    } catch {
+      // Un problème de publicité ne retient jamais le joueur sur cet écran.
+    }
+    retour();
+  }, [quitterLaPartie, montrerInterstitiel, retour]);
 
   if (!entry) {
     return (
@@ -119,7 +154,7 @@ function GameHost({ id }: { id?: string }) {
           gap: space.sm,
         }}
       >
-        <IconButton glyph="‹" label="Retour" onPress={retour} />
+        <IconButton glyph="‹" label="Retour" onPress={() => void quitterLeJeu()} />
 
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Row gap={6}>

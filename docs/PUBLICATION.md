@@ -114,8 +114,19 @@ test fermé dès que tu as un premier `.aab`, même si les captures d'écran et 
 fiche ne sont pas finies — tu les prépareras pendant que le délai court. Sinon
 tu attendras deux semaines de plus pour rien.
 
-Il te faut douze adresses Google distinctes. Des proches suffisent : ils
-doivent seulement accepter l'invitation et rester inscrits.
+Il te faut douze adresses Google distinctes. Des proches suffisent — mais
+**accepter l'invitation ne suffit plus**. La demande d'accès à la production
+comporte un questionnaire sur la façon dont le test s'est déroulé, et des
+retours d'éditeurs signalent depuis 2026 des refus pour « engagement de test
+insuffisant » quand les testeurs n'ouvrent jamais l'application. Ce point-là
+ne figure pas noir sur blanc dans la page d'aide de Google : traite-le comme
+une précaution, pas comme une règle citée. Demande donc à tes douze testeurs
+d'ouvrir vraiment Plateau tous les deux ou trois jours et d'y jouer quelques
+minutes.
+
+Profite de ces deux semaines pour vérifier ce que seul un appareil réel peut
+montrer : que les publicités se chargent, que le formulaire de consentement
+s'affiche, et que le refuser n'empêche aucun des cent jeux de tourner.
 
 ### Envoyer
 
@@ -137,10 +148,20 @@ est déjà ignoré par git — n'y déroge pas.
 - Bandeau 1024 × 500
 - Au moins deux captures d'écran par format d'appareil
 - Description courte (80 caractères) et longue (4000)
-- Politique de confidentialité : **une adresse web est obligatoire**, même sans
-  collecte de données
-- Questionnaire « Sécurité des données » : répondre **aucune donnée collectée,
-  aucune donnée partagée**. C'est exact : l'application n'a pas de réseau.
+- Politique de confidentialité : **une adresse web est obligatoire**
+- Questionnaire « Sécurité des données » : **répondre « oui » à la collecte et
+  au partage**. Ce n'est plus « aucune donnée » depuis l'intégration
+  publicitaire : Plateau ne collecte toujours rien, mais le SDK AdMob, si. Le
+  tableau détaillé, case par case, est dans
+  [store/README.md](store/README.md#7-déclarations-de-confidentialité).
+- Déclaration **« Cette application contient des annonces »** : obligatoire, et
+  Google le vérifie automatiquement. L'oublier fait retirer la fiche.
+- **Public cible et contenu** : déclarer un public général. Inclure les moins
+  de 13 ans ferait entrer l'application dans le programme « Conçu pour les
+  familles », qui interdit la publicité personnalisée — il faudrait alors
+  passer `PUBLIC_ENFANT` à `true` dans `src/pub/config.ts`.
+- **Applications financées par la publicité** : la fiche doit dire que
+  l'application est gratuite avec publicités, sans achats intégrés.
 - Classification du contenu : questionnaire PEGI, sans difficulté ici
 
 ---
@@ -172,7 +193,16 @@ Il faut d'abord créer la fiche dans App Store Connect avec l'identifiant
   contrôlera donc l'affichage sur iPad)
 - Description, mots-clés, catégorie (Jeux → Casse-tête ou Jeux de société)
 - Politique de confidentialité : une adresse web, là aussi obligatoire
-- « Confidentialité des données » : **aucune donnée collectée**
+- « Confidentialité des données » : **données collectées par des tiers**
+  (identifiant de l'appareil, données d'usage, diagnostics), via Google AdMob.
+  La réponse « aucune donnée collectée » n'est plus vraie. Détail case par
+  case dans [store/README.md](store/README.md#7-déclarations-de-confidentialité).
+- **Suivi (*Tracking*)** : répondre « oui » si tu actives la publicité
+  personnalisée. L'application déclare `NSUserTrackingUsageDescription`, et le
+  formulaire UMP de Google peut afficher la demande ATT — à condition de
+  l'avoir activée dans la console AdMob (*Confidentialité et messages → ATT*).
+  Sans cette activation, iOS ne montre jamais la demande, l'IDFA reste
+  inaccessible, et les annonces iOS sont non personnalisées.
 - Classification par âge : 4+
 
 ---
@@ -189,8 +219,9 @@ Avant chaque envoi :
 npm run verifier
 ```
 
-Cette commande enchaîne le contrôle de types, l'audit du catalogue et les deux
-tests de moteur. Elle doit passer entièrement.
+Cette commande enchaîne le contrôle de types, l'audit du catalogue, l'audit de
+confidentialité, le contrôle des fiches, les règles partagées, la logique
+publicitaire et les deux moteurs. Elle doit passer entièrement.
 
 ---
 
@@ -212,8 +243,9 @@ Ce qui reste :
 
 | Point | Pourquoi ça bloque | Qui |
 |---|---|---|
+| **Créer un compte AdMob et relever les identifiants** | Sans eux, la production n'affiche **aucune** publicité — c'est le comportement voulu, mais il ne rapporte rien | Toi — procédure dans [MONETISATION.md](MONETISATION.md) |
 | **Héberger la politique** | Les deux magasins exigent une **adresse web** publique, pas un fichier | Toi |
-| **Nom et adresse de contact** | Obligatoires sur les deux fiches ; marqués `[À COMPLÉTER]` | Toi |
+| **Nom et adresse de contact** | Obligatoires sur les deux fiches ; marqués `{{EDITEUR}}` et `{{CONTACT}}` dans la page | Toi |
 | **Captures d'écran** | À produire depuis un build réel, jamais depuis une maquette | Toi, une fois un build installé |
 | **Icône 512 × 512 et bandeau 1024 × 500** | Exigés par Google Play | Redimensionnement de `assets/icon.png` + composition |
 | **Vérifier le nom « Plateau »** | Mot courant, peut-être déjà déposé | Toi |

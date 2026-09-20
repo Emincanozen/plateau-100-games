@@ -3,7 +3,7 @@
     "name": "Plateau",
     "slug": "plateau",
     "scheme": "plateau",
-    "description": "Cent jeux de plateau, de cartes, de logique, d'arcade, de dés et de papier-crayon. Solo ou à deux sur le même appareil, sans compte et sans connexion.",
+    "description": "Cent jeux de plateau, de cartes, de logique, d'arcade, de dés et de papier-crayon. Solo ou à deux sur le même appareil, sans compte et hors ligne. Financé par la publicité.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,7 +25,19 @@
       "package": "com.plateau.jeux",
       "versionCode": 1,
       "permissions": [
-        "android.permission.VIBRATE"
+        "android.permission.VIBRATE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "com.google.android.gms.permission.AD_ID"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
       ],
       "adaptiveIcon": {
         "backgroundColor": "#101018",
@@ -56,8 +68,30 @@
         }
       ],
       "expo-audio",
-      "expo-asset"
+      "expo-asset",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "skAdNetworkItems": ["cstr6suwn9.skadnetwork"],
+          "userTrackingUsageDescription": "Cette autorisation permet de vous proposer des publicités adaptées à vos centres d'intérêt. Vous pouvez la refuser : l'application et ses cent jeux fonctionnent exactement pareil."
+        }
+      ]
     ],
+    "extra": {
+      "admob": {
+        "_lisezMoi": "Identifiants de PRODUCTION. Tant qu'ils sont vides, l'application n'affiche aucune publicité dans une compilation de production, et utilise les blocs de test de Google en développement. Procédure dans docs/MONETISATION.md. Ces valeurs sont publiques : elles figurent en clair dans le paquet livré, ce ne sont pas des secrets.",
+        "androidAppId": "",
+        "iosAppId": "",
+        "androidBanniere": "",
+        "iosBanniere": "",
+        "androidInterstitiel": "",
+        "iosInterstitiel": "",
+        "androidRecompense": "",
+        "iosRecompense": ""
+      }
+    },
     "experiments": {
       "typedRoutes": true
     }

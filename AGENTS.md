@@ -19,15 +19,18 @@ question sans le lui demander :**
 
 | Décision | Conséquence |
 |---|---|
-| Solo et multi **local** uniquement | Aucun serveur, aucun compte, aucun réseau. Jamais de `fetch`. |
-| Tout est **hors ligne** | Les scores vivent dans AsyncStorage, sur l'appareil. |
+| Solo et multi **local** uniquement | Aucun serveur, aucun compte. Le code de l'application ne communique jamais : pas de `fetch`, pas de `XMLHttpRequest`, pas de WebSocket. `npm run audit:confidentialite` le vérifie. |
+| **Publicité** — la seule exception réseau | Google AdMob, confiné à `src/pub/` et `src/ui/Banniere.native.tsx`. Aucun des cent jeux ne la connaît. Voir [docs/MONETISATION.md](docs/MONETISATION.md). |
+| Les **jeux** restent hors ligne | Les scores vivent dans AsyncStorage, sur l'appareil. Une publicité indisponible ne bloque jamais une partie. |
 | Catalogue **équilibré** | ~20 plateau, ~20 cartes, ~20 logique, ~20 arcade, ~10 dés, ~10 papier. |
 | Design **moderne épuré**, clair + sombre | Aucune couleur en dur hors des jetons de thème. |
 | Interface **en français** | Y compris les noms de variables et les commentaires du code métier. |
 
 **État actuel : 100 jeux sur 100.** Le catalogue est complet. Les moteurs
 d'échecs et de backgammon vivent dans `src/games/lib/`, séparés de leur
-composant, et sont couverts par des tests (§8).
+composant, et sont couverts par des tests (§8). La monétisation publicitaire
+est branchée et éprouvée hors appareil ; aucune annonce réelle n'a encore été
+affichée — voir [docs/MONETISATION.md](docs/MONETISATION.md).
 
 ---
 
@@ -35,16 +38,21 @@ composant, et sont couverts par des tests (§8).
 
 ```bash
 npm install
-npm start        # puis « i », « a », ou le QR code avec Expo Go
-npm run web      # itération rapide dans un navigateur
-npm run verifier # types + audit + règles partagées + deux moteurs
+npm run web      # itération rapide dans un navigateur — le chemin normal
+npm run verifier # la chaîne complète, obligatoire avant toute livraison
 ```
+
+> **Expo Go ne fonctionne plus sur ce projet.** Le module publicitaire natif
+> n'y existe pas. Deux chemins restent : `npm run web`, qui couvre les cent
+> jeux, ou une compilation de développement
+> (`eas build --profile development`) pour tout ce qui touche à la publicité.
 
 > Sous PowerShell, utiliser `npx.cmd` et non `npx` : la politique d'exécution
 > bloque les scripts `.ps1`.
 
 **Stack** : Expo SDK 57 · React Native 0.86 · React 19.2 · expo-router 7 ·
-TypeScript strict · Reanimated 4 · react-native-svg · AsyncStorage · expo-audio.
+TypeScript strict · Reanimated 4 · react-native-svg · AsyncStorage · expo-audio ·
+react-native-google-mobile-ads 17.
 
 > Expo change vite. Avant d'écrire du code qui touche à une API Expo, consulter
 > <https://docs.expo.dev/versions/v57.0.0/> — la version exacte, pas la dernière.
@@ -71,6 +79,12 @@ src/
     frame.tsx             Lien jeu ↔ en-tête (ligne d'état, bouton recommencer)
     storage.ts            Enveloppe AsyncStorage
     navigation.ts         useRetour() — retour au catalogue
+  pub/                    Publicité — voir §10. Les jeux ne la touchent jamais.
+    types.ts              Vocabulaire maison : AdaptateurPub, InfoConsentement
+    config.ts             Identifiants, fréquence, classement de contenu
+    machine.ts            Quand une annonce a le droit de partir (sans React)
+    adaptateur.ts         Web : ne fait rien · adaptateur.native.ts : le SDK
+    regie.tsx             Fournisseur React, useRegiePub, useRecompense
   games/
     registry.ts           Registre central : un import + une ligne par jeu
     lib/                  rng, hooks de boucle, moteur de cartes, listes de mots
@@ -204,7 +218,7 @@ Et de `src/games/lib/` :
 
 ## 7. Pièges connus — lis-les avant de déboguer
 
-Ces sept erreurs ont déjà été commises et corrigées dans ce dépôt. Elles sont
+Ces huit erreurs ont déjà été commises et corrigées dans ce dépôt. Elles sont
 faciles à réintroduire.
 
 **1. `submitScore` doit garder une identité stable.**
@@ -251,12 +265,21 @@ niveau du module, soit — s'il a besoin de l'état du jeu — il devient une si
 fonction appelée `{rendreFleche(i)}`, sans passer par JSX. `npm run audit`
 signale ce cas.
 
+**8. Metro résout les `require` statiquement, même à l'intérieur d'un `try`.**
+Un module natif ne se cache pas derrière un garde-fou `Platform.OS === 'web'` :
+le code n'est jamais exécuté, mais le fichier est quand même tiré dans le
+paquet, et la construction web échoue avec *« Importing native-only module
+codegenNativeComponent on web »*. La seule parade est l'extension de
+plateforme : `adaptateur.native.ts` et `Banniere.native.tsx` pour le natif,
+`adaptateur.ts` et `Banniere.tsx` pour le web. La CI vérifie que le paquet web
+ne contient pas `GoogleMobileAds`.
+
 ---
 
 ## 8. Vérifier son travail
 
 ```bash
-npm run verifier      # obligatoire — enchaîne les quatre contrôles ci-dessous
+npm run verifier      # obligatoire — enchaîne les sept contrôles ci-dessous
 npm run web           # puis ouvrir le jeu et y jouer réellement
 ```
 
@@ -264,12 +287,20 @@ npm run web           # puis ouvrir le jeu et y jouer réellement
 |---|---|
 | `npm run typecheck` | TypeScript strict sur tout le dépôt |
 | `npm run audit` | Le contrat d'un jeu et les sept pièges, sur les 100 fichiers |
+| `npm run audit:confidentialite` | Aucun appel réseau hors `src/pub/`, dépendances recensées, permissions justifiées — y compris dans le manifeste Android fusionné |
+| `npm run test:fiches` | Les chiffres des fiches de magasin correspondent au code |
 | `npm run test:regles` | Les règles partagées : paquets, blackjack, scopa, vocabulaire, aléatoire |
+| `npm run test:pub` | Fréquence, consentement, pannes : la logique publicitaire, avec un faux SDK |
 | `npm run test:moteurs` | Échecs (perft sur cinq positions) et backgammon (scénarios + 400 parties) |
 
-**Chaque maillon fait échouer la chaîne.** Les cinq contrôles ont été éprouvés
-sur un défaut injecté volontairement : aucun ne se contente d'afficher un
-message. Si tu ajoutes un contrôle, termine-le par `process.exit(1)`.
+**Chaque maillon fait échouer la chaîne.** Tous ont été éprouvés sur un défaut
+injecté volontairement : aucun ne se contente d'afficher un message. Si tu
+ajoutes un contrôle, termine-le par `process.exit(1)`.
+
+**Le nombre total de contrôles varie d'une exécution à l'autre** (environ 540).
+Les tests d'échecs et de backgammon comptent des assertions par coup sur des
+parties tirées au hasard : le total bouge, pas la couverture. Ne pas citer un
+chiffre figé dans un rapport.
 
 `outils/audit.mjs` relit chaque fichier de jeu : meta complète, identifiant
 unique, catégorie cohérente avec le dossier, trois à cinq règles, pas de boucle
@@ -283,10 +314,37 @@ présent. La console du navigateur doit rester vide d'erreurs.
 
 ---
 
-## 9. Pour aller plus loin
+## 9. La publicité, en six règles
 
+Le détail est dans [docs/MONETISATION.md](docs/MONETISATION.md). Ce qu'il faut
+tenir sans jamais y déroger :
+
+1. **Aucun fichier de `src/games/` ne connaît la publicité.** Ni import, ni
+   appel, ni composant. `npm run test:pub` le vérifie sur les cent fichiers.
+2. **Jamais pendant une partie.** L'écran de jeu verrouille la régie tant
+   qu'il est monté. Un interstitiel ne part qu'à la sortie.
+3. **Une annonce indisponible ne bloque rien.** Pas de réseau, refus de
+   consentement, module absent : la machine renvoie une raison, ne jette
+   jamais, et l'appelant poursuit son chemin normal.
+4. **Un consentement inconnu vaut un refus.** On ne suppose jamais un accord.
+5. **Jamais de vrai identifiant en développement, jamais de bloc de test en
+   production.** `src/pub/config.ts` s'en charge ; cliquer sur ses propres
+   annonces fait fermer un compte AdMob.
+6. **La séparation web / natif passe par l'extension de fichier.** Metro
+   résout les `require` statiquement, même dans un `try` : sans
+   `adaptateur.native.ts` et `Banniere.native.tsx`, le paquet web refuse de
+   se construire. Ne pas « simplifier » en fusionnant ces fichiers.
+
+---
+
+## 10. Pour aller plus loin
+
+- [docs/MONETISATION.md](docs/MONETISATION.md) — architecture publicitaire,
+  consentement, identifiants, coûts et risques.
 - [docs/ANNEXE.md](docs/ANNEXE.md) — catalogue complet des cent jeux, référence
   des jetons de design, API détaillée, journal des décisions et des correctifs.
+- [docs/PROTOCOLE_APPAREIL.md](docs/PROTOCOLE_APPAREIL.md) — l'essai sur
+  téléphone, entièrement à NOT RUN : c'est le principal angle mort du projet.
 - [docs/PUBLICATION.md](docs/PUBLICATION.md) — ce qui est prêt pour l'App Store
   et Google Play, et ce qui demande les comptes développeur de l'utilisateur.
 - [MEMORY.md](MEMORY.md) — reprise de projet : état, décisions, ce qui reste.

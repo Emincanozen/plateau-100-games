@@ -1,13 +1,16 @@
 # Contrôles automatiques à chaque envoi.
 #
 # Aucun secret n'est utilisé ici : rien n'est publié, rien n'est signé, aucune
-# compilation EAS n'est déclenchée. Le workflow ne fait que rejouer ce que
-# `npm run verifier` fait en local, plus deux contrôles de configuration.
+# compilation EAS n'est déclenchée. Le workflow rejoue ce que
+# `npm run verifier` fait en local, plus trois contrôles de configuration.
+#
+# Les identifiants AdMob ne sont pas des secrets — ils figurent en clair dans
+# tout paquet livré — et n'ont donc rien à faire dans les secrets du dépôt.
 name: Vérifier
 
 on:
   push:
-    branches: [main, finalisation]
+    branches: [main, finalisation, monetisation]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -19,7 +22,7 @@ concurrency:
 
 jobs:
   verifier:
-    name: Types, catalogue, règles, moteurs
+    name: Types, catalogue, confidentialité, fiches, règles, publicité, moteurs
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -42,8 +45,21 @@ jobs:
       - name: Audit du catalogue
         run: npm run audit
 
+      # Le code de l'application ne communique pas, les dépendances qui le
+      # peuvent sont recensées, les permissions sont justifiées.
+      - name: Audit de confidentialité
+        run: npm run audit:confidentialite
+
+      # Les chiffres des fiches de magasin correspondent au code.
+      - name: Fiches des magasins
+        run: npm run test:fiches
+
       - name: Règles partagées
         run: npm run test:regles
+
+      # Fréquence, consentement, pannes : la logique publicitaire, sans SDK.
+      - name: Logique publicitaire
+        run: npm run test:pub
 
       - name: Moteur d'échecs
         run: npm run test:echecs
@@ -79,13 +95,39 @@ jobs:
       - name: Bundle iOS et Android
         run: npx expo export --platform ios --platform android --output-dir dist-ci
 
-      - name: Vérifier qu'aucun appel réseau ne part de l'application
+      # Le paquet web ne doit pas embarquer le module natif de Google. C'est
+      # arrivé : Metro résout les `require` statiquement, même dans un `try`,
+      # et la construction échouait. La séparation `.native.ts` le règle — ce
+      # contrôle vérifie qu'elle n'est pas défaite par inadvertance.
+      - name: Le paquet web se construit sans le SDK publicitaire
+        run: npx expo export --platform web --output-dir dist-web
+
+      - name: Aucun code publicitaire dans le paquet web
         run: |
           set -e
-          ATTEINTES=$(grep -roE "XMLHttpRequest|navigator\.sendBeacon" dist-ci/_expo/static/js || true)
+          ATTEINTES=$(grep -rl "GoogleMobileAds" dist-web || true)
           if [ -n "$ATTEINTES" ]; then
-            echo "Du code réseau a été trouvé dans le bundle livré :"
+            echo "Le SDK publicitaire est entré dans le paquet web :"
             echo "$ATTEINTES"
             exit 1
           fi
-          echo "Aucun appel réseau dans le bundle — conforme à la politique de confidentialité."
+          echo "Paquet web propre — la séparation par plateforme tient."
+
+      # Génère les projets natifs. Sur Linux, contrairement à Windows, les
+      # deux plateformes passent : c'est le seul endroit où le projet iOS est
+      # produit automatiquement.
+      - name: Projets natifs (prebuild)
+        run: npx expo prebuild --clean --no-install --platform all
+
+      # Relance l'audit : il lit maintenant le manifeste Android **fusionné**,
+      # pas seulement app.json. C'est ainsi qu'on a découvert que expo-audio
+      # ajoutait RECORD_AUDIO alors que la politique annonçait « ni micro ».
+      - name: Audit de confidentialité sur le manifeste fusionné
+        run: npm run audit:confidentialite
+
+      - name: Le projet iOS a bien été produit
+        run: |
+          set -e
+          test -f ios/Podfile
+          grep -q "GADApplicationIdentifier" ios/*/Info.plist
+          echo "Info.plist contient l'identifiant AdMob."

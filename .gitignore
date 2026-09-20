@@ -53,3 +53,7 @@ cles/
 # Sorties de compilation
 dist/
 dist-natif/
+dist-verif/
+dist-ios/
+dist-web/
+dist-ci/
