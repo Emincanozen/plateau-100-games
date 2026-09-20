@@ -86,14 +86,96 @@ appareil.
 
 ## 5. Android — Google Play
 
-### Compiler
+### Compiler — sans EAS
+
+**Le compte Expo n'est pas nécessaire pour produire un paquet Android.** Le
+JDK 17 et le SDK Android suffisent, et ils sont déjà installés sur cette
+machine :
+
+```bash
+npm run android:apk
+```
+
+```bash
+npm run android:aab
+```
+
+Le premier produit `android/app/build/outputs/apk/release/app-release.apk`,
+installable directement. Le second produit
+`android/app/build/outputs/bundle/release/app-release.aab`, le format attendu
+par Google Play.
+
+Compter un quart d'heure la première fois, une minute ensuite.
+
+### ⚠ Créer la clé de signature — à faire une seule fois, par toi
+
+**Je ne crée pas cette clé et je n'y touche pas.** C'est la seule pièce du
+projet qui ne se remplace pas : la perdre interdit définitivement de publier
+une mise à jour, la divulguer permet à n'importe qui de publier à ta place.
+
+Sans elle, la compilation continue avec le certificat de débogage. Le paquet
+reste installable pour les essais, Gradle l'écrit en clair dans son journal
+(`[Plateau] signature de DEBOGAGE`), et Google Play le refuse.
+
+**1. Produire la clé**, hors du dépôt. Par exemple dans `D:\cles\` :
+
+```bash
+keytool -genkeypair -v -keystore D:\cles\plateau-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+```
+
+`keytool` demandera deux mots de passe et ton identité. Le fichier `.jks`
+produit est **le** secret.
+
+**2. Déclarer la clé à Gradle**, dans `C:\Users\EMINCAN\.gradle\gradle.properties`
+— fichier personnel, hors du dépôt, jamais versionné :
+
+```properties
+PLATEAU_KEYSTORE_FILE=D:\\cles\\plateau-upload.jks
+PLATEAU_KEYSTORE_PASSWORD=…
+PLATEAU_KEY_ALIAS=upload
+PLATEAU_KEY_PASSWORD=…
+```
+
+> Les doubles barres obliques inverses sont obligatoires dans un fichier
+> `.properties`.
+
+Le greffon [`plugins/signature-android.js`](../plugins/signature-android.js)
+lit ces quatre propriétés. Elles sont absentes du dépôt, et
+`npm run audit:confidentialite` échoue si une clé ou un mot de passe s'y
+glisse.
+
+**3. Sauvegarder la clé** ailleurs que sur ce disque : gestionnaire de mots
+de passe, disque chiffré, coffre. Une seule copie n'est pas une sauvegarde.
+
+**4. Compiler pour de bon** :
+
+```bash
+PLATEAU_PRODUCTION=1 npm run android:aab
+```
+
+`PLATEAU_PRODUCTION=1` déclenche le garde-fou de `app.config.js`, qui
+**refuse de compiler** tant que les identifiants AdMob de démonstration sont
+en place ou que le mode test est actif.
+
+**5. Contrôler le paquet avant de le téléverser** :
+
+```bash
+npm run paquet:verifier android/app/build/outputs/bundle/release/app-release.aab -- --production
+```
+
+Le contrôle lit le fichier lui-même — mode publicitaire, identifiants,
+permissions, signature — et sort en échec sur tout ce qui interdirait la
+publication.
+
+### Compiler avec EAS — l'autre chemin
 
 ```bash
 eas build --profile production --platform android
 ```
 
-EAS propose de créer le magasin de clés (*keystore*) et de le conserver. Accepte :
-si tu le perds, tu ne peux plus mettre l'application à jour.
+EAS propose de créer le magasin de clés et de le conserver pour toi. Les deux
+chemins sont valables ; ne mélange pas les clés, sinon Google Play refusera
+la mise à jour.
 
 ### ⚠ Le test fermé obligatoire — à lancer en premier
 

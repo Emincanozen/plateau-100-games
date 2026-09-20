@@ -316,7 +316,7 @@ présent. La console du navigateur doit rester vide d'erreurs.
 
 ---
 
-## 9. La publicité, en six règles
+## 9. La publicité et la signature, en sept règles
 
 Le détail est dans [docs/MONETISATION.md](docs/MONETISATION.md). Ce qu'il faut
 tenir sans jamais y déroger :
@@ -330,12 +330,19 @@ tenir sans jamais y déroger :
    jamais, et l'appelant poursuit son chemin normal.
 4. **Un consentement inconnu vaut un refus.** On ne suppose jamais un accord.
 5. **Jamais de vrai identifiant en développement, jamais de bloc de test en
-   production.** `src/pub/config.ts` s'en charge ; cliquer sur ses propres
-   annonces fait fermer un compte AdMob.
+   production.** Trois verrous : `app.config.js` refuse de compiler,
+   `npm run test:pub` vérifie qu'il refuse, et
+   `npm run paquet:verifier <fichier> -- --production` relit le paquet
+   produit. Cliquer sur ses propres annonces fait fermer un compte AdMob.
 6. **La séparation web / natif passe par l'extension de fichier.** Metro
    résout les `require` statiquement, même dans un `try` : sans
    `adaptateur.native.ts` et `Banniere.native.tsx`, le paquet web refuse de
    se construire. Ne pas « simplifier » en fusionnant ces fichiers.
+7. **La clé de signature n'entre jamais dans le dépôt.** Le greffon
+   `plugins/signature-android.js` la lit dans `~/.gradle/gradle.properties`,
+   hors du dépôt. Sans elle, Gradle signe en débogage **et le dit**.
+   `npm run audit:confidentialite` échoue si une clé ou un mot de passe est
+   suivi par git.
 
 ---
 

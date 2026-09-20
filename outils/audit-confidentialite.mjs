@@ -20,6 +20,7 @@
  * Une dépendance nouvelle, une permission nouvelle ou un `fetch` glissé dans
  * un jeu font échouer la chaîne, et obligent à mettre la politique à jour.
  */
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -284,6 +285,45 @@ for (const cle of clesUtilisees) {
   }
 }
 constats.push(`stockage local : ${[...clesUtilisees].sort().join(', ')} sous « ${prefixe} »`);
+
+// --- 4 bis. Aucun secret de signature dans le dépôt -----------------------
+
+/**
+ * La clé de signature est la seule chose du projet qu'on ne peut pas
+ * remplacer : la perdre interdit définitivement de publier une mise à jour,
+ * la divulguer permet à n'importe qui de publier à votre place. Elle n'a
+ * donc rien à faire dans un dépôt, fût-il privé — l'historique git ne
+ * s'oublie pas.
+ *
+ * Le contrôle porte sur ce que git **suit**, pas sur ce qui traîne sur le
+ * disque : un fichier ignoré est sans danger.
+ */
+const EXTENSIONS_DE_CLES = /\.(jks|keystore|p12|p8|mobileprovision)$/i;
+try {
+  const suivis = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n');
+  const cles = suivis.filter((f) => EXTENSIONS_DE_CLES.test(f.trim()));
+  for (const c of cles) {
+    ajouter(
+      `${c} : une clé de signature est suivie par git. La retirer de l'index, ` +
+        'la révoquer, et en produire une nouvelle.',
+    );
+  }
+  // Un mot de passe de signature ne doit pas non plus traîner dans un fichier.
+  const MOTS = /(PLATEAU_KEYSTORE_PASSWORD|PLATEAU_KEY_PASSWORD)\s*=\s*\S/;
+  for (const f of suivis) {
+    const nom = f.trim();
+    if (!nom || !fs.existsSync(nom) || fs.statSync(nom).isDirectory()) continue;
+    if (!/\.(json|js|mjs|ts|tsx|yml|yaml|properties|md|gradle)$/i.test(nom)) continue;
+    const texte = fs.readFileSync(nom, 'utf8');
+    // Les lignes de documentation montrent la forme sans valeur réelle.
+    if (MOTS.test(texte) && !/PLATEAU_KEYSTORE_PASSWORD=…/.test(texte)) {
+      ajouter(`${nom} : un mot de passe de signature semble écrit en clair.`);
+    }
+  }
+  constats.push(`${suivis.length - 1} fichiers suivis par git, aucune clé de signature`);
+} catch {
+  constats.push('git indisponible — contrôle des clés de signature non exécuté');
+}
 
 // --- 5. La publicité est confinée -----------------------------------------
 

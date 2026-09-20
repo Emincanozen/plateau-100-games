@@ -207,6 +207,25 @@ Les identifiants d'application inscrits dans `app.json` sont eux aussi ceux
 de la documentation Google (`ca-app-pub-3940256099942544~…`). Ils doivent
 être remplacés.
 
+### Trois verrous contre un bloc de test publié
+
+Le risque est réel et coûteux : un paquet publié avec les blocs de
+démonstration ne rapporte rien, fausse les statistiques d'AdMob, et ne se
+corrige qu'au prix d'une nouvelle revue de plusieurs jours.
+
+| Verrou | Quand | Ce qu'il fait |
+|---|---|---|
+| **`app.config.js`** | à la configuration, avant toute compilation | `PLATEAU_PRODUCTION=1` **refuse de compiler** si le mode test est actif, si le greffon porte encore un identifiant de démonstration, ou si aucun bloc réel n'est renseigné |
+| **`npm run test:pub`** | à chaque `npm run verifier` | appelle réellement `app.config.js` et vérifie qu'il refuse ; vérifie aussi que le profil EAS `production` ne pose pas le drapeau |
+| **`npm run paquet:verifier … -- --production`** | sur le fichier produit | relit l'APK ou l'AAB : mode publicitaire, identifiants, permissions, signature. Sort en échec sur tout ce qui interdirait la publication |
+
+Le troisième est le seul qui juge le fichier réellement téléversé. Les deux
+premiers peuvent être contournés par une variable oubliée ; celui-là non.
+
+```bash
+npm run paquet:verifier android/app/build/outputs/bundle/release/app-release.aab -- --production
+```
+
 ### En production, jamais de bloc de test
 
 La règle symétrique est codée : si l'identifiant réel manque, `UNITES` vaut

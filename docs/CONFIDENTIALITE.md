@@ -81,17 +81,34 @@ L'audit lit désormais le manifeste **du paquet livré** quand il existe, et
 retombe sur celui de prebuild sinon — en le disant. Relevé sur l'APK du
 20 septembre 2026, par `aapt dump permissions` :
 
-| Permission | Origine | Pourquoi |
+Provenance relevée dans le rapport de fusion de Gradle
+(`android/app/build/outputs/logs/manifest-merger-release-report.txt`), pas
+déduite :
+
+| Permission | Déclarée par | Pourquoi |
 |---|---|---|
-| `VIBRATE` | Plateau | Retour haptique, désactivable |
-| `INTERNET` | Plateau | Chargement des publicités |
-| `ACCESS_NETWORK_STATE` | Plateau | Le SDK vérifie la connectivité |
-| `com.google.android.gms.permission.AD_ID` | Plateau | Identifiant publicitaire, à déclarer depuis Android 13 |
-| `WAKE_LOCK` | **Google Mobile Ads** | Écran actif pendant une publicité vidéo |
-| `ACCESS_ADSERVICES_AD_ID` | **Google Mobile Ads** | Bac à sable de confidentialité Android 13+ |
-| `ACCESS_ADSERVICES_ATTRIBUTION` | **Google Mobile Ads** | Attribution sans identifiant inter-applications |
-| `ACCESS_ADSERVICES_TOPICS` | **Google Mobile Ads** | Centres d'intérêt calculés par le système |
-| `…DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | AndroidX | Interne, invisible pour l'utilisateur |
+| `INTERNET` | `app.json` + `react-native-google-mobile-ads` | Chargement des publicités |
+| `ACCESS_NETWORK_STATE` | `app.json` + `react-native-google-mobile-ads` | Le SDK vérifie la connectivité |
+| `VIBRATE` | `app.json` + `expo-haptics` | Retour haptique, désactivable |
+| `com.google.android.gms.permission.AD_ID` | `app.json` + `play-services-ads-api 25.4.0` | Identifiant publicitaire, à déclarer depuis Android 13 |
+| `WAKE_LOCK` | **`react-native-google-mobile-ads`** et **`media3-exoplayer`** (dépendance d'`expo-audio`) | Écran actif pendant une publicité vidéo ; lecture audio |
+| `ACCESS_ADSERVICES_AD_ID` | **`play-services-ads-api 25.4.0`** | Bac à sable de confidentialité Android 13+ |
+| `ACCESS_ADSERVICES_ATTRIBUTION` | **`play-services-ads-api 25.4.0`** | Attribution sans identifiant inter-applications |
+| `ACCESS_ADSERVICES_TOPICS` | **`play-services-ads-api 25.4.0`** | Centres d'intérêt calculés par le système |
+| `com.plateau.jeux.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | **`androidx.core 1.18.0`** | Interne, invisible pour l'utilisateur |
+
+`WAKE_LOCK` mérite une précision : elle ne vient pas seulement de la
+publicité. `media3-exoplayer`, que `expo-audio` embarque pour jouer les six
+effets sonores, la déclare aussi. Elle resterait donc dans le paquet même
+sans AdMob.
+
+> **Deux permissions apparaissent dans l'AAB et pas dans l'APK** :
+> `BIND_JOB_SERVICE` et `DUMP`. Ce ne sont pas des droits réclamés par
+> l'application mais des attributs `android:permission` posés sur des
+> services déclarés par les bibliothèques Google — c'est-à-dire des
+> **restrictions** d'accès à ces services. Vérifié par comparaison :
+> `aapt dump permissions` sur l'APK issu du même manifeste ne les liste pas.
+> `outils/controle-paquet.mjs` les écarte explicitement, avec ce motif.
 
 Aucune des quatre héritées n'est bloquée : les `ACCESS_ADSERVICES_*` sont
 précisément le mécanisme par lequel Android remplace le suivi

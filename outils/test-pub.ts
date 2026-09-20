@@ -652,6 +652,75 @@ titre('Configuration — identifiants');
     'app.config.js traduit la variable d’environnement en drapeau de configuration',
   );
 
+  // --- Le garde-fou de production, exécuté pour de vrai -------------------
+  //
+  // On appelle app.config.js comme Expo le ferait, avec la configuration du
+  // dépôt, et on vérifie qu'il refuse. Lire le fichier ne prouverait rien :
+  // c'est le comportement qui compte.
+  {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const construireConfig = require('../app.config.js') as (
+      a: { config: unknown },
+    ) => unknown;
+    const avant = { ...process.env };
+
+    const essayer = (env: Record<string, string | undefined>) => {
+      Object.assign(process.env, env);
+      try {
+        construireConfig({ config: JSON.parse(JSON.stringify(appJson.expo)) });
+        return null;
+      } catch (e) {
+        return e instanceof Error ? e.message : String(e);
+      } finally {
+        process.env = { ...avant };
+      }
+    };
+
+    egal(
+      essayer({ PLATEAU_PRODUCTION: undefined, PLATEAU_PUB_TEST: '1' }),
+      null,
+      'une compilation d’essai en mode test est acceptée',
+    );
+
+    const refus = essayer({ PLATEAU_PRODUCTION: '1', PLATEAU_PUB_TEST: '1' });
+    verifier(refus !== null, 'production + mode test : la compilation est REFUSÉE');
+    verifier(
+      refus !== null && /PLATEAU_PUB_TEST=1 est posé/.test(refus),
+      'et le refus dit précisément pourquoi',
+    );
+
+    const refusIdentifiants = essayer({ PLATEAU_PRODUCTION: '1', PLATEAU_PUB_TEST: undefined });
+    verifier(
+      refusIdentifiants !== null,
+      'production avec les identifiants de démonstration : REFUSÉE aussi',
+    );
+    verifier(
+      refusIdentifiants !== null && /démonstration/.test(refusIdentifiants),
+      'le refus nomme les identifiants de démonstration',
+    );
+  }
+
+  // --- La clé de signature ne doit apparaître nulle part -------------------
+  {
+    const greffon = fs.readFileSync('plugins/signature-android.js', 'utf8');
+    verifier(
+      /PLATEAU_KEYSTORE_FILE/.test(greffon),
+      'le greffon de signature lit la clé depuis les propriétés Gradle',
+    );
+    verifier(
+      !/storePassword\s+'/.test(greffon) && !/keyPassword\s+'/.test(greffon),
+      'le greffon ne contient aucun mot de passe littéral',
+    );
+    verifier(
+      (appJson.expo.plugins as unknown[]).includes('./plugins/signature-android'),
+      'le greffon de signature est déclaré dans app.json',
+    );
+    const ignore = fs.readFileSync('.gitignore', 'utf8');
+    for (const motif of ['*.jks', '*.keystore', '*.p12', '*.p8']) {
+      verifier(ignore.includes(motif), `.gitignore écarte « ${motif} »`);
+    }
+  }
+
   const permissions: string[] = appJson.expo.android.permissions;
   verifier(
     permissions.includes('android.permission.INTERNET'),

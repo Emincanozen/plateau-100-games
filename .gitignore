@@ -58,3 +58,12 @@ dist-ios/
 dist-web/
 dist-ci/
 build-apk.log
+
+# Clés de signature — jamais dans le dépôt, sous aucun prétexte.
+*.jks
+*.keystore
+*.p12
+*.p8
+*.mobileprovision
+cles/
+build-aab.log

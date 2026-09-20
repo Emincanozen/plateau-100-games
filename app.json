@@ -74,10 +74,13 @@
         {
           "androidAppId": "ca-app-pub-3940256099942544~3347511713",
           "iosAppId": "ca-app-pub-3940256099942544~1458002511",
-          "skAdNetworkItems": ["cstr6suwn9.skadnetwork"],
+          "skAdNetworkItems": [
+            "cstr6suwn9.skadnetwork"
+          ],
           "userTrackingUsageDescription": "Cette autorisation permet de vous proposer des publicités adaptées à vos centres d'intérêt. Vous pouvez la refuser : l'application et ses cent jeux fonctionnent exactement pareil."
         }
-      ]
+      ],
+      "./plugins/signature-android"
     ],
     "extra": {
       "admob": {

@@ -53,7 +53,10 @@
     "test:fiches": "node outils/controle-fiches.mjs",
     "audit:confidentialite": "node outils/audit-confidentialite.mjs",
     "assets:magasin": "node outils/visuels-magasin.mjs",
-    "test:regles-jeux": "tsx outils/test-regles-jeux.ts"
+    "test:regles-jeux": "tsx outils/test-regles-jeux.ts",
+    "paquet:verifier": "node outils/controle-paquet.mjs",
+    "android:apk": "cd android && gradlew assembleRelease",
+    "android:aab": "cd android && gradlew bundleRelease"
   },
   "private": true
 }
