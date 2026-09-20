@@ -23,11 +23,21 @@ for (const d of dossiers) {
   }
 }
 
-const registre = fs.readFileSync(path.join(racine, 'src/games/registry.ts'), 'utf8');
+/**
+ * Fins de ligne normalisées à la lecture. Plusieurs contrôles d'ici
+ * s'appuient sur des motifs contenant un saut de ligne suivi de deux
+ * espaces — « rules », « score », les updateurs de setState. Sur un poste
+ * où git réécrit les sources en CRLF, ils ne trouveraient plus rien et
+ * passeraient en silence : la pire panne possible pour un outil de
+ * contrôle, puisqu'elle ressemble à un succès.
+ */
+const lire = (chemin) => fs.readFileSync(chemin, 'utf8').replace(/\r\n/g, '\n');
+
+const registre = lire(path.join(racine, 'src/games/registry.ts'));
 const ids = new Map();
 
 for (const { cat, chemin, nom } of fichiers) {
-  const src = fs.readFileSync(chemin, 'utf8');
+  const src = lire(chemin);
 
   // --- contrat : meta exportée et composant par défaut
   if (!src.includes('export const meta: GameMeta = {')) ajouter(nom, 'pas de meta exportée');

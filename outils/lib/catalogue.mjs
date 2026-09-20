@@ -11,6 +11,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+/** Fins de ligne normalisées à la lecture — voir outils/audit.mjs. */
+const lireSource = (chemin) => fs.readFileSync(chemin, 'utf8').split('\r\n').join('\n');
+
 export const DOSSIERS = ['plateau', 'cartes', 'logique', 'arcade', 'des', 'papier'];
 
 /**
@@ -43,7 +46,8 @@ export function lireCatalogue(racine = '.') {
     const chemin = path.join(racine, 'src/games', dossier);
     for (const fichier of fs.readdirSync(chemin)) {
       if (!fichier.endsWith('.tsx')) continue;
-      const source = fs.readFileSync(path.join(chemin, fichier), 'utf8');
+      // Normalisé : voir le commentaire en tête de outils/audit.mjs.
+      const source = lireSource(path.join(chemin, fichier));
       jeux.push({
         id: (source.match(/id:\s*'([^']+)'/) ?? [])[1] ?? fichier,
         fichier,

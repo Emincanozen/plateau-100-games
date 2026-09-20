@@ -28,6 +28,14 @@ const LIBELLE = {
   papier: 'Papier-crayon',
 };
 
+/**
+ * Fins de ligne normalisées à la lecture. Plusieurs motifs de ce fichier
+ * contiennent un saut de ligne suivi de deux espaces ; sur un poste où git
+ * réécrit les sources en CRLF, ils ne trouveraient plus rien — et le
+ * document serait généré avec des colonnes vides, sans une seule alerte.
+ */
+const lireSource = (chemin) => fs.readFileSync(chemin, 'utf8').replace(/\r\n/g, '\n');
+
 const fichierSonde = process.argv[2];
 const sonde = new Map(
   fichierSonde && fs.existsSync(fichierSonde)
@@ -39,7 +47,7 @@ const jeux = [];
 for (const cat of dossiers) {
   const dir = path.join(racine, 'src/games', cat);
   for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.tsx'))) {
-    const src = fs.readFileSync(path.join(dir, f), 'utf8');
+    const src = lireSource(path.join(dir, f));
     const champ = (nom) => src.match(new RegExp(`\\n  ${nom}: '([^']*)'`))?.[1];
     const nombre = (nom) => src.match(new RegExp(`\\n  ${nom}: (\\d+)`))?.[1];
 

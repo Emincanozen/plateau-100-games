@@ -11,7 +11,7 @@ Dernière exécution : 2026-09-20.
 |---|---|---|
 | **Chargement** | Navigation vers `/game/<id>`, en-tête présent, écran non vide | Automatisée, navigateur |
 | **Gel** | La feuille de règles ouverte, aucune pixel ni compteur ne bouge pendant 900 ms | Automatisée, navigateur |
-| **Réaction** | Jusqu’à vingt commandes touchées, puis le clavier, puis l’attente d’une boucle ; on compare étiquettes, texte, couleurs **et positions** | Automatisée, navigateur |
+| **Réaction** | Jusqu’à quarante-cinq commandes touchées, les commandes explicites d’abord, puis le clavier, puis l’attente d’une boucle ; on compare étiquettes, texte, couleurs, bordures **et positions** | Automatisée, navigateur |
 | **Relance** | Le bouton ↻ est actionné, le jeu doit se reconstruire avec ses commandes | Automatisée, navigateur |
 | **Console** | Toute erreur console, `window.onerror` et rejet de promesse est capturée | Automatisée, navigateur |
 | **Règles** | Nombre de phrases de règles, conformité au contrat (3 à 5) | Automatisée, statique |

@@ -41,8 +41,18 @@ const reel = {
 
 // ------------------------------------------- les fiches des magasins -------
 
-const fiche = fs.readFileSync('docs/store/README.md', 'utf8');
-const politique = fs.readFileSync('docs/store/confidentialite.html', 'utf8');
+/**
+ * Les fins de ligne sont normalisées à la lecture.
+ *
+ * Sans cela, ce contrôle dépendait de la configuration git de la machine :
+ * `core.autocrlf` réécrit les fichiers en CRLF au passage d'une branche à
+ * l'autre, et l'extraction des blocs encadrés ne trouvait plus rien. Un
+ * contrôle qui change de verdict selon le poste de travail ne vaut rien.
+ */
+const lire = (chemin) => fs.readFileSync(chemin, 'utf8').replace(/\r\n/g, '\n');
+
+const fiche = lire('docs/store/README.md');
+const politique = lire('docs/store/confidentialite.html');
 
 /**
  * Les textes réellement livrés aux magasins, c'est-à-dire les blocs encadrés
@@ -53,7 +63,17 @@ const politique = fs.readFileSync('docs/store/confidentialite.html', 'utf8');
  * un mot dans une explication ferait échouer le contrôle pour de mauvaises
  * raisons, et on finirait par le désactiver.
  */
-const textesLivres = [...fiche.matchAll(/```\n([\s\S]*?)```/g)].map((m) => m[1]).join('\n');
+const blocs = [...fiche.matchAll(/```\n([\s\S]*?)```/g)].map((m) => m[1]);
+const textesLivres = blocs.join('\n');
+
+// Garde-fou : ne rien extraire doit être une erreur, pas un succès muet.
+// C'est exactement comme ça que ce contrôle a failli passer pour rien.
+if (blocs.length < 3) {
+  ajouter(
+    'docs/store/README.md',
+    `seulement ${blocs.length} bloc(s) de texte livré extrait(s) — la fiche ou l’extraction est cassée`,
+  );
+}
 
 /** Le résumé en tête de la politique, et la description de la page. */
 const resumePolitique = [
