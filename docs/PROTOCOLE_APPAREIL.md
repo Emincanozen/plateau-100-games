@@ -10,28 +10,55 @@ l'application, et les conséquences des permissions bloquées.
 
 ---
 
-## Ce qu'il faut avant de commencer
+## L'APK est prêt — il est déjà sur ce disque
+
+Compilé localement le 20 septembre 2026 avec Gradle, le JDK 17 et le SDK
+Android de la machine. **Aucun compte Expo n'a été nécessaire.**
+
+```
+D:\claude\Plateau-essai-1.0.0.apk
+```
+
+| | |
+|---|---|
+| Taille | 108 Mo — APK universel, les quatre architectures dans un seul fichier |
+| Paquet | `com.plateau.jeux`, version 1.0.0, `versionCode` 1 |
+| Android minimal | 7.0 (API 24) · cible API 36 |
+| Signature | **certificat de débogage** (`CN=Android Debug`), vérifiée par `apksigner` |
+| Publicités | **blocs de test de Google** — vérifié : `forcerTest":true` dans le manifeste embarqué |
+
+> **Cet APK s'installe, mais ne se publie pas.** Google Play exige une clé de
+> signature de production, que seul un compte développeur peut créer. Pour la
+> boutique, il faudra un `.aab` signé par EAS — voir §« Ce qui reste bloqué ».
+
+### L'installer
+
+1. Copier le fichier sur le téléphone (câble USB, Drive, ou envoi à soi-même).
+2. L'ouvrir depuis le gestionnaire de fichiers du téléphone.
+3. Android demandera d'autoriser l'installation depuis cette source :
+   *Paramètres → Autoriser cette application*. C'est normal pour un APK qui
+   ne vient pas du Play Store.
+4. Si un écran « Play Protect » s'interpose : *Plus de détails → Installer
+   quand même*. Il ne connaît pas cette signature, c'est tout.
+
+Par câble, depuis cet ordinateur :
+
+```bash
+adb install -r D:\claude\Plateau-essai-1.0.0.apk
+```
+
+> **Les annonces afficheront « Test Ad ».** C'est voulu, et c'est vérifiable
+> dans l'application : *Réglages → Politique de confidentialité* affiche
+> « Blocs d'annonces de test ». Cliquer sur une vraie annonce dans sa propre
+> application fait fermer un compte AdMob — d'où ce garde-fou.
+
+### Ce qui reste bloqué
 
 | Élément | Pourquoi | Statut |
 |---|---|---|
-| Compte Expo (`eas login`) | Sans lui, aucune compilation | **BLOCKED** — identifiants de l'utilisateur |
-| Compilation de développement Android | Expo Go ne contient pas le module publicitaire | BLOCKED |
-| Compte AdMob | Sans identifiants, la production n'affiche rien ; les blocs de test suffisent pour ce protocole | BLOCKED |
-| Un téléphone Android | — | — |
-| Un iPhone, ou un Mac avec simulateur | Aucun projet iOS n'a pu être produit sous Windows | BLOCKED |
-
-```bash
-eas login
-eas init
-eas build --profile development --platform android
-```
-
-Installer le fichier obtenu, puis `npx expo start --dev-client`.
-
-> **Pendant tout ce protocole, les identifiants de test de Google sont actifs**
-> (`__DEV__` est vrai). Les annonces affichent « Test Ad ». C'est voulu :
-> cliquer sur une vraie annonce dans sa propre application fait fermer un
-> compte AdMob.
+| `.aab` de production signé | Demande `eas login` et une clé de signature | **BLOCKED** |
+| Build iOS / TestFlight | Demande un compte Apple Developer et `eas login` | **BLOCKED** |
+| Annonces **réelles** | Demande un compte AdMob et ses identifiants | **BLOCKED** |
 
 ---
 

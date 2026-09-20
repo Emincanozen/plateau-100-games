@@ -51,7 +51,8 @@
     "assets:sons": "node outils/sons.mjs",
     "test:pub": "tsx outils/test-pub.ts",
     "test:fiches": "node outils/controle-fiches.mjs",
-    "audit:confidentialite": "node outils/audit-confidentialite.mjs"
+    "audit:confidentialite": "node outils/audit-confidentialite.mjs",
+    "assets:magasin": "node outils/visuels-magasin.mjs"
   },
   "private": true
 }

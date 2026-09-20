@@ -37,16 +37,36 @@ interface ExtraAdmob {
   iosInterstitiel?: string;
   androidRecompense?: string;
   iosRecompense?: string;
+  /** Posé par app.config.js pour les compilations d'essai. */
+  forcerTest?: boolean;
 }
 
 const extra = ((Constants.expoConfig?.extra ?? {}) as { admob?: ExtraAdmob }).admob ?? {};
+
+/**
+ * Force les blocs de test dans une compilation **de prévisualisation**.
+ *
+ * Sans ce drapeau, l'APK d'essai était inutilisable pour éprouver la
+ * publicité : un paquet compilé en mode release a `__DEV__` à faux, donc
+ * `EN_PRODUCTION` à vrai, donc — faute d'identifiants réels — **aucune
+ * annonce du tout**. Rigoureusement correct, et rigoureusement inutile pour
+ * vérifier qu'une bannière s'affiche sur un téléphone.
+ *
+ * La valeur vient de `app.config.js`, pas de `process.env` : voir
+ * l'explication du cache de Metro dans ce fichier-là.
+ */
+const FORCER_BLOCS_TEST = extra.forcerTest === true;
 
 /**
  * Vrai uniquement dans une compilation de production installée.
  * `__DEV__` couvre Metro ; `appOwnership` vaut `'expo'` dans Expo Go, où le
  * module natif n'existe de toute façon pas.
  */
-export const EN_PRODUCTION = !__DEV__ && Constants.appOwnership !== 'expo';
+export const EN_PRODUCTION =
+  !__DEV__ && Constants.appOwnership !== 'expo' && !FORCER_BLOCS_TEST;
+
+/** Les annonces affichées portent-elles la mention « Test Ad » ? */
+export const EN_MODE_TEST = !EN_PRODUCTION;
 
 const ios = Platform.OS === 'ios';
 

@@ -228,11 +228,26 @@
         <tr><td>Android</td><td><code>VIBRATE</code></td><td>Retour haptique. Désactivable dans les réglages.</td></tr>
         <tr><td>Android</td><td><code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code></td><td>Charger les publicités. Aucune autre communication réseau.</td></tr>
         <tr><td>Android</td><td><code>com.google.android.gms.permission.AD_ID</code></td><td>Identifiant publicitaire, utilisé par le module Google selon votre consentement.</td></tr>
+        <tr><td>Android</td><td><code>WAKE_LOCK</code></td><td>Ajoutée par le module Google : garde l’écran actif pendant une publicité vidéo.</td></tr>
+        <tr>
+          <td>Android</td>
+          <td><code>ACCESS_ADSERVICES_AD_ID</code>, <code>ACCESS_ADSERVICES_ATTRIBUTION</code>, <code>ACCESS_ADSERVICES_TOPICS</code></td>
+          <td>Ajoutées par le module Google : « bac à sable de confidentialité » d’Android, qui remplace le suivi inter-applications par des mesures calculées par le système.</td>
+        </tr>
         <tr><td>iOS</td><td>Demande <em>App Tracking Transparency</em></td><td>Uniquement si la publicité personnalisée est proposée. Refusable.</td></tr>
       </table>
       <p>
+        Les quatre dernières ne sont pas demandées par Plateau : elles sont
+        <strong>ajoutées automatiquement</strong> par la bibliothèque
+        publicitaire de Google au moment de la compilation. Elles figurent
+        ici parce qu’elles sont bien présentes dans l’application installée —
+        vérifié sur le paquet livré, pas seulement dans la configuration.
+      </p>
+      <p>
         Ni localisation précise, ni contacts, ni appareil photo, ni microphone,
-        ni notifications.
+        ni notifications. Sept permissions ajoutées par d’autres bibliothèques,
+        dont l’accès au microphone, ont été <strong>explicitement retirées</strong>
+        du paquet.
       </p>
 
       <h2>Enfants</h2>

@@ -148,6 +148,32 @@ const PERMISSIONS_ATTENDUES = {
   'com.google.android.gms.permission.AD_ID': 'react-native-google-mobile-ads',
 };
 
+/**
+ * Permissions qu'aucun fichier du dépôt ne déclare : elles arrivent par la
+ * **fusion des manifestes** des bibliothèques, au moment de la compilation.
+ *
+ * Elles ont été découvertes dans l'APK produit, pas dans les sources. Lire
+ * `app.json` n'y donnait accès d'aucune façon, et lire le manifeste écrit
+ * par `expo prebuild` non plus : il ne contient que ce que le module
+ * applicatif déclare. Seul le manifeste **fusionné** les montre.
+ *
+ * Aucune n'est bloquée : les trois `ACCESS_ADSERVICES_*` sont le bac à
+ * sable de confidentialité d'Android, et les retirer dégraderait la mesure
+ * publicitaire que le SDK est censé faire dans les règles.
+ */
+const PERMISSIONS_DES_BIBLIOTHEQUES = {
+  'android.permission.WAKE_LOCK':
+    'Google Mobile Ads — maintient l’écran actif pendant une vidéo publicitaire',
+  'android.permission.ACCESS_ADSERVICES_AD_ID':
+    'Google Mobile Ads — bac à sable de confidentialité Android 13+',
+  'android.permission.ACCESS_ADSERVICES_ATTRIBUTION':
+    'Google Mobile Ads — attribution sans identifiant inter-applications',
+  'android.permission.ACCESS_ADSERVICES_TOPICS':
+    'Google Mobile Ads — centres d’intérêt calculés par le système',
+  'com.plateau.jeux.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION':
+    'AndroidX — permission interne, non visible par l’utilisateur',
+};
+
 const declarees = appJson.expo.android?.permissions ?? [];
 for (const p of declarees) {
   if (!(p in PERMISSIONS_ATTENDUES)) {
@@ -181,8 +207,18 @@ constats.push(`${declarees.length} permissions Android, toutes justifiées`);
  * de confidentialité affirmait « ni microphone ». Lire seulement `app.json`
  * ne suffit donc pas : il faut lire ce qui sort de la fusion.
  */
-const MANIFESTE = 'android/app/src/main/AndroidManifest.xml';
-if (fs.existsSync(MANIFESTE)) {
+const MANIFESTES = [
+  // Le meilleur : celui que Gradle assemble pour le paquet. Il n'existe
+  // qu'après une compilation.
+  'android/app/build/intermediates/merged_manifest/release/expoReleaseOverrideMaxSdkConflicts/AndroidManifest.xml',
+  'android/app/build/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml',
+  // À défaut, celui de prebuild : il ne montre que le module applicatif,
+  // mais il attrape déjà ce que les greffons Expo ajoutent.
+  'android/app/src/main/AndroidManifest.xml',
+];
+
+const MANIFESTE = MANIFESTES.find((m) => fs.existsSync(m));
+if (MANIFESTE) {
   const manifeste = fs.readFileSync(MANIFESTE, 'utf8');
   const lignes = [...manifeste.matchAll(/<uses-permission[^>]*android:name="([^"]+)"([^>]*)>/g)];
   const effectives = lignes
@@ -190,19 +226,29 @@ if (fs.existsSync(MANIFESTE)) {
     .map(([, nom]) => nom);
 
   for (const p of effectives) {
-    if (!(p in PERMISSIONS_ATTENDUES)) {
-      ajouter(
-        `${MANIFESTE} : la fusion ajoute « ${p} », non déclarée dans app.json — ` +
-          'la bloquer avec android.blockedPermissions, ou la documenter',
-      );
-    }
+    if (p in PERMISSIONS_ATTENDUES || p in PERMISSIONS_DES_BIBLIOTHEQUES) continue;
+    ajouter(
+      `${MANIFESTE} : la fusion ajoute « ${p} », inconnue au bataillon — ` +
+        'la bloquer avec android.blockedPermissions, ou la documenter ici et ' +
+        'dans la politique de confidentialité',
+    );
   }
+
+  const fusionne = MANIFESTE.includes('build/intermediates');
+  const heritees = effectives.filter((p) => p in PERMISSIONS_DES_BIBLIOTHEQUES).length;
   constats.push(
-    `manifeste fusionné : ${effectives.length} permissions effectives, ` +
+    `manifeste ${fusionne ? 'du paquet livré' : 'de prebuild (pas encore compilé)'} : ` +
+      `${effectives.length} permissions, dont ${heritees} héritées des bibliothèques, ` +
       `${lignes.length - effectives.length} retirées par blockedPermissions`,
   );
+  if (!fusionne) {
+    constats.push(
+      'compiler l’APK pour voir les permissions ajoutées par la fusion des ' +
+        'manifestes — c’est là que RECORD_AUDIO et les ACCESS_ADSERVICES_* ont été trouvées',
+    );
+  }
 } else {
-  constats.push(`${MANIFESTE} absent — lancer « npx expo prebuild » pour ce contrôle`);
+  constats.push('aucun manifeste Android — lancer « npx expo prebuild » pour ce contrôle');
 }
 
 // iOS : aucune clé de permission ne doit apparaître sans raison.

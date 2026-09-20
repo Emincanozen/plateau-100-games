@@ -608,6 +608,50 @@ titre('Configuration — identifiants');
     'un identifiant d’application iOS est renseigné',
   );
 
+  // Le drapeau qui force les blocs de test ne doit exister que pour les
+  // compilations d'essai. Le laisser filer en production ne rapporterait
+  // rien et fausserait toutes les statistiques d'AdMob.
+  const eas = JSON.parse(fs.readFileSync('eas.json', 'utf8'));
+  const envDe = (profil: string): Record<string, string> =>
+    (eas.build?.[profil]?.env ?? {}) as Record<string, string>;
+  egal(
+    envDe('apercu').PLATEAU_PUB_TEST,
+    '1',
+    'le profil « apercu » force les blocs d’annonces de test',
+  );
+  egal(
+    envDe('development').PLATEAU_PUB_TEST,
+    '1',
+    'le profil « development » aussi',
+  );
+  verifier(
+    envDe('production').PLATEAU_PUB_TEST === undefined,
+    'le profil « production » ne force **jamais** les blocs de test',
+  );
+  // Le drapeau est lu depuis app.config.js, pas depuis process.env : Metro
+  // met les transformées en cache et la valeur d'une variable d'environnement
+  // ne fait pas partie de la clé de cache. Mesuré : deux paquets construits
+  // avec et sans sortaient identiques, empreinte comprise.
+  verifier(
+    /extra.forcerTest === true/.test(config),
+    'src/pub/config.ts lit le drapeau depuis la configuration, pas de process.env',
+  );
+  // Les commentaires sont retirés avant de chercher : celui qui explique
+  // pourquoi on n'utilise PAS process.env contenait le motif recherché, et
+  // faisait échouer le contrôle. Le code compte, pas la prose.
+  const sansCommentaires = config
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '');
+  verifier(
+    !/process\.env/.test(sansCommentaires),
+    'src/pub/config.ts ne dépend d’aucune variable d’environnement',
+  );
+  const appConfig = fs.readFileSync('app.config.js', 'utf8');
+  verifier(
+    /PLATEAU_PUB_TEST/.test(appConfig) && /forcerTest/.test(appConfig),
+    'app.config.js traduit la variable d’environnement en drapeau de configuration',
+  );
+
   const permissions: string[] = appJson.expo.android.permissions;
   verifier(
     permissions.includes('android.permission.INTERNET'),

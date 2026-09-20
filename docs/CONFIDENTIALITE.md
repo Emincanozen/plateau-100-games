@@ -64,19 +64,42 @@ de stockage et les clés utilisées sont comparés à ce qu'annonce la politique
 `RECORD_AUDIO`, apportée par `expo-audio`, alors que la politique affirmait
 « ni microphone ». Aucune lecture de `app.json` ne pouvait le voir.
 
-Sept permissions sont maintenant retirées par `android.blockedPermissions`, et
-l'audit lit le manifeste fusionné quand il existe. Il reste exactement :
-
-| Permission | Pourquoi |
-|---|---|
-| `VIBRATE` | Retour haptique, désactivable |
-| `INTERNET` | Chargement des publicités |
-| `ACCESS_NETWORK_STATE` | Le SDK publicitaire vérifie la connectivité |
-| `com.google.android.gms.permission.AD_ID` | Identifiant publicitaire, obligatoire à déclarer depuis Android 13 |
-
-Retirées : `RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `READ_EXTERNAL_STORAGE`,
+Sept permissions sont maintenant retirées par `android.blockedPermissions` :
+`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `READ_EXTERNAL_STORAGE`,
 `WRITE_EXTERNAL_STORAGE`, `SYSTEM_ALERT_WINDOW`, `FOREGROUND_SERVICE`,
 `FOREGROUND_SERVICE_MEDIA_PLAYBACK`.
+
+### Un second défaut du même genre, trouvé dans l'APK
+
+Lire le manifeste de `expo prebuild` ne suffisait pas non plus. Ce fichier ne
+contient que ce que **le module applicatif** déclare ; les bibliothèques
+ajoutent les leurs plus tard, à la fusion des manifestes. L'APK compilé en
+contient donc quatre de plus, qu'aucune lecture des sources ne pouvait
+montrer.
+
+L'audit lit désormais le manifeste **du paquet livré** quand il existe, et
+retombe sur celui de prebuild sinon — en le disant. Relevé sur l'APK du
+20 septembre 2026, par `aapt dump permissions` :
+
+| Permission | Origine | Pourquoi |
+|---|---|---|
+| `VIBRATE` | Plateau | Retour haptique, désactivable |
+| `INTERNET` | Plateau | Chargement des publicités |
+| `ACCESS_NETWORK_STATE` | Plateau | Le SDK vérifie la connectivité |
+| `com.google.android.gms.permission.AD_ID` | Plateau | Identifiant publicitaire, à déclarer depuis Android 13 |
+| `WAKE_LOCK` | **Google Mobile Ads** | Écran actif pendant une publicité vidéo |
+| `ACCESS_ADSERVICES_AD_ID` | **Google Mobile Ads** | Bac à sable de confidentialité Android 13+ |
+| `ACCESS_ADSERVICES_ATTRIBUTION` | **Google Mobile Ads** | Attribution sans identifiant inter-applications |
+| `ACCESS_ADSERVICES_TOPICS` | **Google Mobile Ads** | Centres d'intérêt calculés par le système |
+| `…DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | AndroidX | Interne, invisible pour l'utilisateur |
+
+Aucune des quatre héritées n'est bloquée : les `ACCESS_ADSERVICES_*` sont
+précisément le mécanisme par lequel Android remplace le suivi
+inter-applications par des mesures calculées côté système. Les retirer
+dégraderait la conformité au lieu de l'améliorer.
+
+**`RECORD_AUDIO` est bien absente du paquet livré** — vérifié sur l'APK, pas
+sur la configuration.
 
 > **À confirmer sur appareil.** Bloquer les permissions audio de `expo-audio`
 > est le bon choix du point de vue de la vie privée, mais aucune compilation

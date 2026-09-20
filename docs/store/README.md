@@ -224,12 +224,22 @@ dans [../MONETISATION.md](../MONETISATION.md).
 
 Régénérables par `npm run assets:icones`.
 
-### Manquants
-
-| Élément | Exigé par | Comment le produire |
+| Élément | Où | Format |
 |---|---|---|
-| Icône 512 × 512 | Google Play | Redimensionner `assets/icon.png` |
-| Bandeau 1024 × 500 | Google Play | À composer |
+| Icône 512 × 512 sans transparence | `docs/store/visuels/icone-512.png` | Google Play |
+| Bandeau 1024 × 500 sans transparence | `docs/store/visuels/bandeau-1024x500.png` | Google Play |
+
+Régénérables par `npm run assets:magasin`. Ces deux-là vivent **hors** de
+`assets/` : `assetBundlePatterns` embarque ce dossier en entier dans
+l'application, et un bandeau de magasin n'a rien à faire sur le téléphone du
+joueur.
+
+> **Le bandeau ne porte aucun texte, volontairement.** Google recadre cette
+> image différemment selon les emplacements et superpose parfois le titre :
+> un texte incrusté finirait coupé, et devrait être retraduit par langue. La
+> moitié droite est laissée libre pour cette superposition.
+
+### Manquants
 | Captures iPhone 6,7″ | App Store | Simulateur iOS, ou un iPhone réel |
 | Captures iPad 13″ | App Store — obligatoire car `supportsTablet` est activé | Simulateur iPad |
 | Captures téléphone Android | Google Play, au moins 2 | Émulateur ou téléphone |

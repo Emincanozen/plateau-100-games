@@ -57,3 +57,4 @@ dist-verif/
 dist-ios/
 dist-web/
 dist-ci/
+build-apk.log

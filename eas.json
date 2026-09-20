@@ -6,7 +6,10 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "PLATEAU_PUB_TEST": "1"
+      }
     },
     "apercu": {
       "distribution": "internal",
@@ -15,6 +18,10 @@
       },
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "_lisezMoi": "Force les blocs d'annonces de TEST via app.config.js. Sans cela, un paquet release sans identifiants reels n'afficherait aucune annonce, et l'APK d'essai ne servirait a rien pour verifier la publicite sur un telephone.",
+        "PLATEAU_PUB_TEST": "1"
       }
     },
     "production": {

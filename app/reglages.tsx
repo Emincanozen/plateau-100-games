@@ -7,6 +7,7 @@ import { useProgress } from '@/engine/progress';
 import { useRetour } from '@/engine/navigation';
 import { GAME_COUNT } from '@/games/registry';
 import { useRegiePub } from '@/pub/regie';
+import { EN_MODE_TEST } from '@/pub/config';
 import { Button, Card, Divider, Row, Segmented, Txt } from '@/ui';
 
 export default function Reglages() {
@@ -154,6 +155,10 @@ export default function Reglages() {
                 {diffusionActive
                   ? 'Publicités actives sur cet appareil.'
                   : 'Aucune publicité n’est diffusée sur cet appareil actuellement.'}
+                {/* Repère d'essai : sur un téléphone, c'est le seul moyen de
+                    savoir d'un coup d'œil si le paquet installé utilise les
+                    blocs de démonstration de Google ou de vrais blocs. */}
+                {EN_MODE_TEST ? ' Blocs d’annonces de test (mention « Test Ad »).' : ''}
               </Txt>
               <Txt variant="caption" tone="faint">
                 Le bouton ci-dessous efface définitivement tout ce qui est enregistré par
