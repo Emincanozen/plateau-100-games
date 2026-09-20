@@ -55,7 +55,7 @@ const CHOIX_SIGNATURE = `${MARQUE}
                 println '[Plateau] signature de PRODUCTION (' + project.property('PLATEAU_KEY_ALIAS') + ')'
             } else {
                 signingConfig signingConfigs.debug
-                println '[Plateau] signature de DEBOGAGE — paquet installable, NON publiable'
+                println '[Plateau] signature de DEBOGAGE - paquet installable, NON publiable'
             }`;
 
 module.exports = function withSignatureAndroid(config) {
