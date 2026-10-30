@@ -42,6 +42,9 @@ jobs:
       - name: TypeScript strict
         run: npm run typecheck
 
+      - name: Données locales corrompues
+        run: npm run test:stockage
+
       - name: Audit du catalogue
         run: npm run audit
 

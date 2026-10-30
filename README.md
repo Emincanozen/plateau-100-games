@@ -205,3 +205,7 @@ expo-haptics · expo-audio · expo-splash-screen.
 ## Licence
 
 MIT — voir [LICENSE](LICENSE).
+
+## Revue privée
+
+[Résultats et limites de la revue du 30 octobre 2026](REVIEW.md).

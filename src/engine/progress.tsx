@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { loadJSON, saveJSON } from './storage';
+import { normaliserProgression } from './progress-data';
 import type { ScoreKind } from './types';
 
 export interface GameStat {
@@ -53,9 +54,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let alive = true;
-    loadJSON<ProgressState>('progress', INITIAL).then((stored) => {
+    loadJSON<unknown>('progress', INITIAL).then((stored) => {
       if (!alive) return;
-      setState({ ...INITIAL, ...stored });
+      setState(normaliserProgression(stored));
       setReady(true);
     });
     return () => {

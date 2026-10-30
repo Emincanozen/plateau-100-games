@@ -206,3 +206,7 @@ Tout est détaillé dans [docs/PUBLICATION.md](docs/PUBLICATION.md) et
 | [docs/CONFIDENTIALITE.md](docs/CONFIDENTIALITE.md) | Audit de confidentialité et déclarations aux magasins |
 | [docs/MONETISATION.md](docs/MONETISATION.md) | Architecture publicitaire, consentement, identifiants AdMob, coûts et risques |
 | [docs/PROTOCOLE_APPAREIL.md](docs/PROTOCOLE_APPAREIL.md) | Le protocole d'essai sur téléphone — **tout est à NOT RUN** |
+
+## Revue du 30 octobre 2026
+
+Validation de la progression locale au chargement : collections et compteurs mal formés neutralisés sans perdre les données valides. `test:stockage` ajouté à `verifier` et à la CI. Audit fix compatible exécuté ; alertes de la chaîne Expo restantes. Export web réussi. Voir [REVIEW.md](REVIEW.md). Aucun essai appareil ni publication supplémentaire.
