@@ -92,15 +92,15 @@ Whether playing solo against deterministic AI heuristics or with a friend in pas
 ```mermaid
 flowchart TD
     subgraph UI_Layer["User Interface & Navigation (Expo Router)"]
-        A["Catalogue & Search Index (`app/index.tsx`)"]
-        B["Game Viewport Host (`app/game/[id].tsx`)"]
-        C["Settings & Preferences (`app/reglages.tsx`)"]
+        A["Catalogue & Search Index (app/index.tsx)"]
+        B["Game Viewport Host (app/game/[id].tsx)"]
+        C["Settings & Preferences (app/reglages.tsx)"]
     end
 
-    subgraph Core_Engine["Core Modular Engine (`src/`)"]
-        D["Central Registry (`src/games/registry.ts`)"]
-        E["Game Lifecycle Hooks (`src/engine/hooks.ts`)"]
-        F["Theme & Tokens (`src/theme/`)"]
+    subgraph Core_Engine["Core Modular Engine (src/)"]
+        D["Central Registry (src/games/registry.ts)"]
+        E["Game Lifecycle Hooks (src/engine/hooks.ts)"]
+        F["Theme & Tokens (src/theme/)"]
     end
 
     subgraph Game_Categories["100 Offline Game Modules"]
