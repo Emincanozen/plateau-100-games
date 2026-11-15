@@ -1,30 +1,73 @@
+<div align="center">
+
+![Plateau Banner](docs/screenshots/hero-banner.svg)
+
 # Plateau — 100 Offline Games Suite
 
-[![Expo SDK 57](https://img.shields.io/badge/Expo-SDK_57-000020?style=flat&logo=expo&logoColor=white)](https://expo.dev)
-[![React Native 0.86](https://img.shields.io/badge/React_Native-0.86-61DAFB?style=flat&logo=react&logoColor=black)](https://reactnative.dev)
-[![TypeScript Strict](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![100 Offline Games](https://img.shields.io/badge/Games-100%20Offline-success?style=flat)](docs/ANNEXE.md)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
+[![Expo SDK 57](https://img.shields.io/badge/Expo-SDK_57-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev)
+[![React Native 0.86](https://img.shields.io/badge/React_Native-0.86-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactnative.dev)
+[![TypeScript Strict](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![100 Offline Games](https://img.shields.io/badge/Games-100%20Offline-success?style=for-the-badge)](docs/ANNEXE.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-A complete mobile and web gaming suite built with React Native and Expo: **100 classic board, card, logic, arcade, dice, and paper-and-pencil games** unified into a single responsive catalogue with zero server dependencies.
+**A complete mobile and web gaming suite built with React Native and Expo: 100 classic board, card, logic, arcade, dice, and paper-and-pencil games unified into a single responsive catalogue with zero server dependencies.**
+
+[Overview](#overview) • [Live Demo](#live-demo) • [Screenshots](#screenshots) • [Highlights](#highlights--features) • [Architecture](#architecture) • [Install & Configure](#how-to-install--configure) • [How to Use](#how-to-use) • [Create & Customize](#how-to-create--customize) • [Verification](#quality-assurance--verification) • [License](#license)
+
+</div>
+
+---
+
+## Overview
 
 All 100 games function **100% offline**: no user accounts, no backend tracking, and no external API reliance. High scores, personal records, preferences, and favorites are persisted locally on the user's device.
+
+Whether playing solo against deterministic AI heuristics or with a friend in pass-and-play local multiplayer, Plateau delivers smooth 60 FPS interactions across web browsers, tablets, and native iOS / Android mobile environments.
+
+---
+
+## Live Demo
+
+<div align="center">
+
+![Plateau Demo](docs/screenshots/demo.gif)
+
+*Fluid transitions across the game catalogue, deterministic chess engine, connect four minimax AI, solitaire, and preferences.*
+
+</div>
 
 ---
 
 ## Screenshots
 
-| Home Catalogue & Search | Classic Chess Board |
-| :---: | :---: |
-| ![Plateau Home Screen](docs/screenshots/01_home_screen.png) | ![Chess Game Board](docs/screenshots/02_game_chess.png) |
-
-| Connect Four Board | Klondike Solitaire |
-| :---: | :---: |
-| ![Connect Four Board](docs/screenshots/03_game_connect4.png) | ![Solitaire Card Game](docs/screenshots/04_game_solitaire.png) |
-
-| Application Settings & Theme |
-| :---: |
-| ![Application Settings](docs/screenshots/05_settings.png) |
+<table width="100%">
+  <tr>
+    <td width="50%" align="center">
+      <b>Catalogue &amp; Game Search</b><br/><br/>
+      <img src="docs/screenshots/01_home_screen.webp" alt="Plateau Home Screen" width="100%"/>
+    </td>
+    <td width="50%" align="center">
+      <b>Classic Chess &amp; FIDE Engine</b><br/><br/>
+      <img src="docs/screenshots/02_game_chess.webp" alt="Chess Game Board" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <b>Connect Four &amp; Minimax AI</b><br/><br/>
+      <img src="docs/screenshots/03_game_connect4.webp" alt="Connect Four Board" width="100%"/>
+    </td>
+    <td width="50%" align="center">
+      <b>Klondike Solitaire Card Game</b><br/><br/>
+      <img src="docs/screenshots/04_game_solitaire.webp" alt="Solitaire Card Game" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <b>Application Settings &amp; Audio Preferences</b><br/><br/>
+      <img src="docs/screenshots/05_settings.webp" alt="Application Settings" width="60%"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -41,6 +84,47 @@ All 100 games function **100% offline**: no user accounts, no backend tracking, 
 - **Pass-and-Play Duo Mode:** Local 2-player multiplayer on a single device for compatible board and card games.
 - **Adaptive Theme:** Seamless light and dark mode support with tailored high-contrast game surfaces.
 - **Zero Network Requirement:** Fully playable offline in airplane mode or disconnected environments.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    subgraph UI_Layer["User Interface & Navigation (Expo Router)"]
+        A["Catalogue & Search Index (`app/index.tsx`)"]
+        B["Game Viewport Host (`app/game/[id].tsx`)"]
+        C["Settings & Preferences (`app/reglages.tsx`)"]
+    end
+
+    subgraph Core_Engine["Core Modular Engine (`src/`)"]
+        D["Central Registry (`src/games/registry.ts`)"]
+        E["Game Lifecycle Hooks (`src/engine/hooks.ts`)"]
+        F["Theme & Tokens (`src/theme/`)"]
+    end
+
+    subgraph Game_Categories["100 Offline Game Modules"]
+        G["♟️ Board Games (20)<br/>Chess, Othello, Hex, Morris..."]
+        H["🃏 Card Games (20)<br/>Solitaire, FreeCell, Spider..."]
+        I["🧩 Logic & Puzzles (20)<br/>2048, Sudoku, Minesweeper..."]
+        J["🕹️ Arcade Games (20)<br/>Snake, Space Invaders..."]
+        K["🎲 Dice Games (10)<br/>Yahtzee, 421, Farkle..."]
+        L["✏️ Paper Games (10)<br/>Wordle, Hangman, Dots..."]
+    end
+
+    subgraph Logic_AI["AI Engines & Local Persistence"]
+        M["Deterministic AI Engines<br/>Alpha-Beta, Minimax, Heuristics"]
+        N["Offline Storage & Scores<br/>AsyncStorage Schema"]
+    end
+
+    A --> D
+    B --> E
+    D --> G & H & I & J & K & L
+    G & H & I & J & K & L --> E
+    G & H & I & J & K & L --> M
+    E --> N
+    F -. Theme Tokens .-> UI_Layer
+```
 
 ---
 
