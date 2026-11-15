@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Expo & Build outputs
+.expo/
+dist/
+dist-*/
+web-build/
+expo-env.d.ts
+
+# Native builds
+/ios
+/android
+.kotlin/
+*.orig.*
+
+# Keystores and secrets - never in repository
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
+cles/
+
+# Logs and debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Metro & TypeScript
+.metro-health-check*
+*.tsbuildinfo
+*.tmp.json

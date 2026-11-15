@@ -1,0 +1,142 @@
+# Contrôles automatiques à chaque envoi.
+#
+# Aucun secret n'est utilisé ici : rien n'est publié, rien n'est signé, aucune
+# compilation EAS n'est déclenchée. Le workflow rejoue ce que
+# `npm run verifier` fait en local, plus trois contrôles de configuration.
+#
+# Les identifiants AdMob ne sont pas des secrets — ils figurent en clair dans
+# tout paquet livré — et n'ont donc rien à faire dans les secrets du dépôt.
+name: Vérifier
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Un seul travail à la fois par branche : un envoi rapide annule le précédent.
+concurrency:
+  group: verifier-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    name: Types, catalogue, confidentialité, fiches, règles, barèmes, publicité, moteurs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: TypeScript strict
+        run: npm run typecheck
+
+      - name: Données locales corrompues
+        run: npm run test:stockage
+
+      - name: Audit du catalogue
+        run: npm run audit
+
+      # Le code de l'application ne communique pas, les dépendances qui le
+      # peuvent sont recensées, les permissions sont justifiées.
+      - name: Audit de confidentialité
+        run: npm run audit:confidentialite
+
+      # Les chiffres des fiches de magasin correspondent au code.
+      - name: Fiches des magasins
+        run: npm run test:fiches
+
+      - name: Règles partagées
+        run: npm run test:regles
+
+      # Les barèmes propres aux jeux — c'est ce contrôle qui a trouvé la
+      # petite suite du zanzibar jamais reconnue.
+      - name: Barèmes des jeux
+        run: npm run test:regles-jeux
+
+      # Fréquence, consentement, pannes : la logique publicitaire, sans SDK.
+      - name: Logique publicitaire
+        run: npm run test:pub
+
+      - name: Moteur d'échecs
+        run: npm run test:echecs
+
+      - name: Moteur de backgammon
+        run: npm run test:backgammon
+
+  configuration:
+    name: Configuration Expo et bundle de production
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      # Attrape les champs retirés du schéma et les versions incompatibles —
+      # continue-on-error pour éviter les faux positifs dus aux sorties de patchs Expo.
+      - name: expo-doctor
+        run: npx expo-doctor@latest
+        continue-on-error: true
+
+      # Le bundle doit se construire pour les deux plateformes. Aucun compte
+      # n'est nécessaire : c'est Metro en local, pas EAS.
+      - name: Bundle iOS et Android
+        run: npx expo export --platform ios --platform android --output-dir dist-ci
+
+      # Le paquet web ne doit pas embarquer le module natif de Google. C'est
+      # arrivé : Metro résout les `require` statiquement, même dans un `try`,
+      # et la construction échouait. La séparation `.native.ts` le règle — ce
+      # contrôle vérifie qu'elle n'est pas défaite par inadvertance.
+      - name: Le paquet web se construit sans le SDK publicitaire
+        run: npx expo export --platform web --output-dir dist-web
+
+      - name: Aucun code publicitaire dans le paquet web
+        run: |
+          set -e
+          ATTEINTES=$(grep -rl "GoogleMobileAds" dist-web || true)
+          if [ -n "$ATTEINTES" ]; then
+            echo "Le SDK publicitaire est entré dans le paquet web :"
+            echo "$ATTEINTES"
+            exit 1
+          fi
+          echo "Paquet web propre — la séparation par plateforme tient."
+
+      # Génère les projets natifs. Sur Linux, contrairement à Windows, les
+      # deux plateformes passent : c'est le seul endroit où le projet iOS est
+      # produit automatiquement.
+      - name: Projets natifs (prebuild)
+        run: npx expo prebuild --clean --no-install --platform all
+
+      # Relance l'audit : il lit maintenant le manifeste Android **fusionné**,
+      # pas seulement app.json. C'est ainsi qu'on a découvert que expo-audio
+      # ajoutait RECORD_AUDIO alors que la politique annonçait « ni micro ».
+      - name: Audit de confidentialité sur le manifeste fusionné
+        run: npm run audit:confidentialite
+
+      - name: Le projet iOS a bien été produit
+        run: |
+          set -e
+          test -f ios/Podfile
+          grep -q "GADApplicationIdentifier" ios/*/Info.plist
+          echo "Info.plist contient l'identifiant AdMob."
